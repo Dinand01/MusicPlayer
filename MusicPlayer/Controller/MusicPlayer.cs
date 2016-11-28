@@ -13,13 +13,14 @@ using MusicPlayer.Extensions;
 using MusicPlayer.Models;
 using TagLib;
 using System.Net;
+using MusicPlayer.UI;
 
 namespace MusicPlayer.Controller
 {
     /// <summary>
     /// Plays the music
     /// </summary>
-    public partial class Player
+    internal partial class Player
     {
         #region Variables
 
@@ -70,7 +71,7 @@ namespace MusicPlayer.Controller
         }
 
         private Thread timetracker;
-        private GUI gui;
+        private IUI gui;
 
         private SongController songCtrl;
         private MediaFoundationReader playstream;
@@ -81,7 +82,7 @@ namespace MusicPlayer.Controller
         /// Initialises the player
         /// </summary>
         /// <param name="gui">The GUI</param>
-        public Player(GUI gui, bool isReceiveMode = false) 
+        public Player(IUI gui, bool isReceiveMode = false) 
         {
             this.gui = gui;
             waveOutDevice = new WaveOut();
@@ -143,7 +144,8 @@ namespace MusicPlayer.Controller
                 else
                 {
                     waveOutDevice.Play();
-                    gui.redrawTrackbar(0, (int) playstream.TotalTime.TotalSeconds);
+                    gui.SetSongDuration(playstream.TotalTime);
+                    ////gui.redrawTrackbar(0, (int) playstream.TotalTime.TotalSeconds);
                     if (timetracker != null)
                     {
                         timetracker.Abort();
@@ -222,7 +224,9 @@ namespace MusicPlayer.Controller
                         _networkServer.HostSong(currentSong);
                     }
 
-                    gui.SetActive(this);
+                    // Todo: ensure this exists
+                    gui.SetSong(currentSong);
+                    ////gui.SetActive(this);
                 }
                 else
                 {
@@ -308,7 +312,8 @@ namespace MusicPlayer.Controller
             if (!sourceList.Any(ct => ct.Location == song.Location))
             {
                 sourceList.Add(song);
-                gui.AddSongsToListView(sourceList);
+                gui.SetSongs(sourceList);
+                ////gui.AddSongsToListView(sourceList);
             }
 
             this.Play(song.Location);
@@ -392,7 +397,8 @@ namespace MusicPlayer.Controller
                 while (!_disposing && waveOutDevice != null 
                     && (waveOutDevice.PlaybackState == PlaybackState.Paused || waveOutDevice.PlaybackState == PlaybackState.Playing))
                 {
-                    gui.SetTrackbarPos((int)playstream.CurrentTime.TotalSeconds);
+                    gui.SetSongPosition(playstream.CurrentTime);
+                    ////gui.SetTrackbarPos((int)playstream.CurrentTime.TotalSeconds);
                     ThreadExtensions.SaveSleep(500);
                 }
             }

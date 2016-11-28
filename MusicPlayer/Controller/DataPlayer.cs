@@ -12,7 +12,7 @@ namespace MusicPlayer.Controller
     /// <summary>
     /// The Data part of the player.
     /// </summary>
-    public partial class Player
+    internal partial class Player
     {
         /// <summary>
         /// Gets a song from the list at the certain location

@@ -1,5 +1,6 @@
 ﻿using MusicPlayer.Extensions;
 using MusicPlayer.Models;
+using MusicPlayer.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace MusicPlayer.Controller
 {
-    public class NetworkClient
+    internal class NetworkClient
     {
         #region Variables
 
-        private GUI _gui;
+        private IUI _gui;
 
         private IPAddress _ip;
 
@@ -38,7 +39,7 @@ namespace MusicPlayer.Controller
         private int _errorCount = 0;
         #endregion
 
-        public NetworkClient(GUI gui, IPAddress address, int port)
+        public NetworkClient(IUI gui, IPAddress address, int port)
         {
             this._gui = gui;
             this._ip = address;

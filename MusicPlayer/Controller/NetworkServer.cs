@@ -17,7 +17,7 @@ namespace MusicPlayer.Controller
     /// New implementation to transfer data (transmit).
     /// When finished the NetworkControllers will be removed.
     /// </summary>
-    public class NetworkServer
+    internal class NetworkServer
     {
         #region Variables
 

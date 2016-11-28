@@ -16,7 +16,7 @@ namespace MusicPlayer
     /// <summary>
     /// Class describing the GUI and main actions of the program
     /// </summary>
-    public class GUI
+    internal class GUI
     {
         #region Variables
 
@@ -71,7 +71,7 @@ namespace MusicPlayer
         {
             previouskey = "";
 
-            _player = new Player(this);
+            ////_player = new Player(this);
             this._form = form1;
             _table = new TableLayoutPanel();
             _table.Parent = _form;
@@ -361,8 +361,7 @@ namespace MusicPlayer
 
                             _player.Dispose();
                             _player = null;
-                            _networkClient = new NetworkClient(this, parsedAddress, parsedPort);
-                            //player.ListenToAudioServer(ipadress, port, multicast);
+                            ////_networkClient = new NetworkClient(this, parsedAddress, parsedPort);
 
                         }
 
@@ -374,7 +373,7 @@ namespace MusicPlayer
 
                     if (_player == null)
                     {
-                        _player = new Player(this);
+                        ////_player = new Player(this);
                     }
                     else
                     {

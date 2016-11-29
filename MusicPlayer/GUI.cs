@@ -513,7 +513,7 @@ namespace MusicPlayer
                             _view.Invoke((MethodInvoker)(() => song = _player.GetSongAtLocation(_view.Items[i].Name)));
                             if (song != null && (song.Gengre == null || song.Album == null))
                             {
-                                var tempSong = _player.LoadDetails(song);
+                                var tempSong = _player.LoadDetailsOfSong(song);
                                 if (tempSong != null)
                                 {
                                     _view.Invoke((MethodInvoker)(() => _view.Items[i].SubItems.Clear()));

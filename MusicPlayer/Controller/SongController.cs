@@ -14,15 +14,28 @@ namespace MusicPlayer.Controller
     /// </summary>
     public class SongController
     {
-        private DbContext db;
+        /// <summary>
+        /// The entity framework db context.
+        /// </summary>
+        private DbContext _db;
         private List<Song> databaseSongs;
         private List<Song> dbSongQue;
         private static object _lock = new object();
 
-        public SongController() 
+        public SongController()
         {
             dbSongQue = new List<Song>();
-            this.db = new DbContext();
+            this._db = new DbContext();
+        }
+
+        /// <summary>
+        /// Gets the details of the given song.
+        /// </summary>
+        /// <param name="entry">The entry to find.</param>
+        /// <returns>The Song.</returns>
+        public Song GetDetails(Song entry)
+        {
+            return _db.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
         }
 
         /// <summary>
@@ -32,11 +45,16 @@ namespace MusicPlayer.Controller
         /// <returns></returns>
         public List<Song> GetAllForFolder(string folder)
         {
-           var items = db.Songs.Where(ct => ct.Location.StartsWith(folder));
+           var items = _db.Songs.Where(ct => ct.Location.StartsWith(folder));
            this.databaseSongs = items.ToList();
            return databaseSongs;
         }
 
+        /// <summary>
+        /// Adds o updates a db entry of a song.
+        /// </summary>
+        /// <param name="song">The new data.</param>
+        /// <returns>The song.</returns>
         public Song AddSongToDb(Song song)
         {
             if (this.databaseSongs == null)
@@ -46,7 +64,7 @@ namespace MusicPlayer.Controller
 
             try
             {
-                if (!this.databaseSongs.Any(ct => ct.Location == song.Location) && !db.Songs.Any(ct => ct.Location == song.Location))
+                if (!this.databaseSongs.Any(ct => ct.Location == song.Location) && !_db.Songs.Any(ct => ct.Location == song.Location))
                 {
                     try
                     {
@@ -90,8 +108,8 @@ namespace MusicPlayer.Controller
 
                     try
                     {
-                        db.Songs.AddRange(copy);
-                        db.SaveChanges();
+                        _db.Songs.AddRange(copy);
+                        _db.SaveChanges();
                     }
                     catch (Exception e)
                     {
@@ -103,7 +121,7 @@ namespace MusicPlayer.Controller
 
         public void Dispose() 
         {
-            this.db.Dispose();
+            this._db.Dispose();
         }
     }
 }

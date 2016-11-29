@@ -11,7 +11,7 @@ using MusicPlayer.Models;
 
 namespace MusicPlayer
 {
-    public partial class OpenSpecial : Form
+    internal partial class OpenSpecial : Form
     {
         public Song result;
         public OpenSpecial()

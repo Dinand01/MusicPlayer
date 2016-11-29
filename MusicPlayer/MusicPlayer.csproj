@@ -142,9 +142,10 @@
     </Compile>
     <Compile Include="Extensions\ReadFullyStream.cs" />
     <Compile Include="Extensions\TheadExtensions.cs" />
-    <Compile Include="Models\enum\ColorPallete.cs" />
+    <Compile Include="Models\ColorPallete.cs" />
     <Compile Include="Models\enum\Controls.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
+    <Compile Include="Models\enum\ViewType.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="MusicPlayer.cs">
       <SubType>Form</SubType>
@@ -245,6 +246,8 @@
   <ItemGroup>
     <Content Include="Packages\Eto.dll" />
     <Content Include="Packages\Eto.WinForms.dll" />
+    <EmbeddedResource Include="Resources\Copy Filled-100.png" />
+    <EmbeddedResource Include="Resources\Open Folder-96.png" />
     <EmbeddedResource Include="Resources\Home-96.png" />
     <EmbeddedResource Include="Resources\Audio File-96.png" />
   </ItemGroup>

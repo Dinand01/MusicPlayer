@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicPlayer.Controller;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,11 +9,14 @@ using System.Threading.Tasks;
 namespace MusicPlayer.Models
 {
     /// <summary>
-    /// Describes a song
+    /// Describes a song.
     /// </summary> 
-    [SerializableAttribute]
+    [Serializable]
     public class Song
     {
+        /// <summary>
+        /// Creates a new empty song.
+        /// </summary>
         public Song()
         {
             this.Location = null;
@@ -25,6 +29,10 @@ namespace MusicPlayer.Models
             this.Title = null;
         }
 
+        /// <summary>
+        /// Creates a song from a file path.
+        /// </summary>
+        /// <param name="path">The file path.</param>
         public Song(string path)
         {
             this.Location = path;

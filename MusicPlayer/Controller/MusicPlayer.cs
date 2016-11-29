@@ -27,7 +27,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// Conatins the list of songs (absolute paths)
         /// </summary>
-        private List<Song> sourceList;
+        private List<Song> _sourceList;
         private Random random;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace MusicPlayer.Controller
         {
             this.gui = gui;
             waveOutDevice = new WaveOut();
-            sourceList = new List<Song>();
+            _sourceList = new List<Song>();
             waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
             locker = false;
             this.songCtrl = new SongController();
@@ -108,6 +108,17 @@ namespace MusicPlayer.Controller
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets the current song collection.
+        /// </summary>
+        public List<Song> SongList
+        {
+            get
+            {
+                return _sourceList;
+            }
         }
 
         /// <summary>
@@ -282,25 +293,26 @@ namespace MusicPlayer.Controller
 
             if (filestoload.Count == 0)
             {
-                sourceList = new List<Song>();
+                _sourceList = new List<Song>();
                 foreach (string st in files)
                 {
                     string ex = Path.GetExtension(st).ToLower();
                     if ((ex == ".mp3" || ex == ".flac" || ex == ".wma") && st.IndexOfAny(System.IO.Path.GetInvalidPathChars()) < 0)
                     {
-                        sourceList.Add(new Song(st));
+                        Song newSong = new Song(st);
+                        _sourceList.Add(newSong);
                     }
                 }
             }
             else 
             {
-                sourceList = filestoload;
+                _sourceList = filestoload;
             }
 
             NextRandomSong();
             EnrichSource(null);
             
-            return sourceList;
+            return _sourceList;
         }
          
         /// <summary>
@@ -309,10 +321,10 @@ namespace MusicPlayer.Controller
         /// <param name="song">The song.</param>
         public void Play(Song song)
         {
-            if (!sourceList.Any(ct => ct.Location == song.Location))
+            if (!_sourceList.Any(ct => ct.Location == song.Location))
             {
-                sourceList.Add(song);
-                gui.SetSongs(sourceList);
+                _sourceList.Add(song);
+                ////gui.SetSongs(_sourceList);
                 ////gui.AddSongsToListView(sourceList);
             }
 
@@ -325,7 +337,7 @@ namespace MusicPlayer.Controller
         /// <param name="key"></param>
         public void Play(string key) {
 
-            var song = sourceList.FirstOrDefault(ct => ct.Location == key);
+            var song = _sourceList.FirstOrDefault(ct => ct.Location == key);
             if (song != null)
             {
                 Load(song);
@@ -343,9 +355,9 @@ namespace MusicPlayer.Controller
         {
             if (!locker)
             {
-                if (sourceList != null && sourceList.Count > 0)
+                if (_sourceList != null && _sourceList.Count > 0)
                 {
-                    var song = sourceList[random.Next(0, sourceList.Count)];
+                    var song = _sourceList[random.Next(0, _sourceList.Count)];
                     if (!hosting || Path.GetExtension(song.Location) == ".mp3")
                     {
                         Play(song);
@@ -368,7 +380,7 @@ namespace MusicPlayer.Controller
         /// <param name="destination"></param>
         public void CopyRandomSongs(string destination)
         {
-            List<Song> copylist = this.sourceList.ToList();
+            List<Song> copylist = this._sourceList.ToList();
             new Thread(() => new Progress(copylist, destination).ShowDialog()).Start();
         }
 

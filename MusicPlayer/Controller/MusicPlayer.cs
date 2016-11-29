@@ -189,7 +189,7 @@ namespace MusicPlayer.Controller
         /// Load a song
         /// </summary>
         /// <param name="path">the absolute path</param>
-        private void Load(String path)
+        private void Load(string path)
         {
             // dispose old mp3
             if (waveOutDevice.PlaybackState == PlaybackState.Playing || waveOutDevice.PlaybackState == PlaybackState.Paused)
@@ -263,8 +263,8 @@ namespace MusicPlayer.Controller
                             "\n Please install the media foundation codec");
                 }
             }
-                
-            PausePlay(null,null);
+
+            PausePlay(null, null);
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace MusicPlayer.Controller
                 _sourceList = filestoload;
             }
 
-            NextRandomSong();
+            //NextRandomSong();
             EnrichSource(null);
             
             return _sourceList;
@@ -466,7 +466,7 @@ namespace MusicPlayer.Controller
         {
             try
             {
-                System.Windows.Forms.TrackBar temp = (System.Windows.Forms.TrackBar)sender;
+                TrackBar temp = (TrackBar)sender;
                 int pos = temp.Value;
                 MoveToTime(new TimeSpan(0, 0, pos));
             }

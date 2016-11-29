@@ -145,6 +145,7 @@
     <Compile Include="Models\ColorPallete.cs" />
     <Compile Include="Models\enum\Controls.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
+    <Compile Include="Models\enum\UIElements.cs" />
     <Compile Include="Models\enum\ViewType.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="MusicPlayer.cs">
@@ -246,6 +247,9 @@
   <ItemGroup>
     <Content Include="Packages\Eto.dll" />
     <Content Include="Packages\Eto.WinForms.dll" />
+    <EmbeddedResource Include="Resources\Pause-96.png" />
+    <EmbeddedResource Include="Resources\Play-96.png" />
+    <EmbeddedResource Include="Resources\Speaker-96.png" />
     <EmbeddedResource Include="Resources\Copy Filled-100.png" />
     <EmbeddedResource Include="Resources\Open Folder-96.png" />
     <EmbeddedResource Include="Resources\Home-96.png" />

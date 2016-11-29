@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MusicPlayer.Extensions
 {
+    /// <summary>
+    /// Extensions for threads.
+    /// </summary>
     public class ThreadExtensions
     {
         public static void SaveSleep(int time)
@@ -15,7 +18,7 @@ namespace MusicPlayer.Extensions
             {
                 Thread.Sleep(time);
             }
-            catch
+            catch (Exception e)
             {
             }
         }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using MusicPlayer.Controller;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,11 +10,14 @@ using System.Threading.Tasks;
 namespace MusicPlayer.Models
 {
     /// <summary>
-    /// Describes a song
+    /// Describes a song.
     /// </summary> 
-    [SerializableAttribute]
+    [Serializable]
     public class Song
     {
+        /// <summary>
+        /// Creates a new empty song.
+        /// </summary>
         public Song()
         {
             this.Location = null;
@@ -23,11 +28,17 @@ namespace MusicPlayer.Models
             this.Gengre = null;
             this.SearchTerm = null;
             this.Title = null;
+            this.SourceIsDb = false;
         }
 
+        /// <summary>
+        /// Creates a song from a file path.
+        /// </summary>
+        /// <param name="path">The file path.</param>
         public Song(string path)
         {
             this.Location = path;
+            this.SourceIsDb = false;
             var temp = path.Split('\\').Last();
             var t2 = temp.Split('-');
             if (t2.Length > 1)
@@ -62,6 +73,12 @@ namespace MusicPlayer.Models
         public DateTime? DateCreated { get; set; }
 
         public string SearchTerm { get; set; }
+
+        /// <summary>
+        /// Gets or sets a boolean indicating whether the source is the database.
+        /// </summary>
+        [NotMapped]
+        public bool SourceIsDb { get; set; }
 
         public string[] ToSubItemArray()
         {

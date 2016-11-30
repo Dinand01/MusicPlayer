@@ -13,7 +13,7 @@ using MusicPlayer.Models;
 
 namespace MusicPlayer
 {
-    public partial class Progress : Form
+    internal partial class Progress : Form
     {
         public Progress(List<Song> source, string destination)
         {

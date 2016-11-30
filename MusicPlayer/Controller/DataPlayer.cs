@@ -12,7 +12,7 @@ namespace MusicPlayer.Controller
     /// <summary>
     /// The Data part of the player.
     /// </summary>
-    public partial class Player
+    internal partial class Player
     {
         /// <summary>
         /// Gets a song from the list at the certain location
@@ -22,9 +22,9 @@ namespace MusicPlayer.Controller
         public Song GetSongAtLocation(string location)
         {
             Song result = null;
-            if (sourceList != null)
+            if (_sourceList != null)
             {
-                result = sourceList.FirstOrDefault(ct => ct.Location == location);
+                result = _sourceList.FirstOrDefault(ct => ct.Location == location);
             }
 
             return result;
@@ -39,14 +39,14 @@ namespace MusicPlayer.Controller
         public Song SetSong(Song song)
         {
             int index = -1;
-            if (sourceList != null)
+            if (_sourceList != null)
             {
-                index = sourceList.FindIndex(ct => ct.Location == song.Location);
+                index = _sourceList.FindIndex(ct => ct.Location == song.Location);
             }
 
             if (index > -1)
             {
-                sourceList[index] = song;
+                _sourceList[index] = song;
             }
             else
             {
@@ -57,12 +57,12 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
-        /// Loads the deatisl of a song into the model
-        /// Adds the details to the db
+        /// Loads the details of a song into the model.
+        /// Adds the details to the db.
         /// </summary>
-        /// <param name="song">the song to load info of</param>
-        /// <returns>the loaded song or null</returns>
-        public Song LoadDetails(Song song)
+        /// <param name="song">The song to load info of.</param>
+        /// <returns>The loaded song or null.</returns>
+        public Song LoadDetailsOfSong(Song song)
         {
             Song result = null;
 
@@ -89,7 +89,9 @@ namespace MusicPlayer.Controller
                 {
                     title = title.TrimStart();
                     if (title != string.Empty)
+                    {
                         song.Title = title;
+                    }
                 }
 
                 songCtrl.AddSongToDb(song);
@@ -106,23 +108,48 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
-        /// Enriches the data of the sourceList via the db
+        /// Gets the details from the db or the file.
         /// </summary>
-        /// <param name="rootFolder">optional parameter</param>
+        /// <param name="song">The song.</param>
+        /// <returns>The enriched song.</returns>
+        public Song GetDetailsFromDbOrFile(Song song)
+        {
+            Song result = song;
+            var dbSong = songCtrl.GetDetails(song);
+            if (dbSong == null)
+            {
+                Song details = LoadDetailsOfSong(song);
+                if (details != null)
+                {
+                    result = songCtrl.AddSongToDb(details);
+                }
+            }
+            else
+            {
+                result = dbSong;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Enriches the data of the sourceList via the db.
+        /// </summary>
+        /// <param name="rootFolder">Optional parameter?</param>
         private void EnrichSource(string rootFolder)
         {
             if (rootFolder == null)
             {
-                rootFolder = GetRootFolder(sourceList.Select(ct => ct.Location).ToArray());
+                rootFolder = GetRootFolder(_sourceList.Select(ct => ct.Location).ToArray());
             }
 
             var dbSongs = songCtrl.GetAllForFolder(rootFolder);
-            for (int i = 0; i < sourceList.Count; i++)
+            for (int i = 0; i < _sourceList.Count; i++)
             {
-                var temp = dbSongs.FirstOrDefault(ct => ct.Location == sourceList[i].Location);
+                var temp = dbSongs.FirstOrDefault(ct => ct.Location == _sourceList[i].Location);
                 if (temp != null)
                 {
-                    sourceList[i] = temp;
+                    _sourceList[i] = temp;
                 }
             }
         }
@@ -155,6 +182,7 @@ namespace MusicPlayer.Controller
                         return ss[0].Substring(0, prefixLength);
                     }
                 }
+
                 prefixLength++;
             }
 

@@ -10,13 +10,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MusicPlayer.Extensions;
+using System.Data.Entity.Infrastructure;
+using MusicPlayer.UI;
+using Eto.Forms;
 
 namespace MusicPlayer
 {
-
-    public partial class MusicPlayer : Form
+    /// <summary>
+    /// Class containing the main form. 
+    /// TODO: replace GUI with web based UI using cefsharp.
+    /// </summary>
+    public partial class MusicPlayer : System.Windows.Forms.Form
     {
-        GUI Gui;
+        //private GUI Gui;
+        private EtoUI Gui;
 
         /// <summary>
         /// Register the default connection factory and create the connection string
@@ -26,23 +33,23 @@ namespace MusicPlayer
         public MusicPlayer(string[] args)
         {
             InitializeComponent();
+            //this.FormBorderStyle = FormBorderStyle.None;
 
-            string directory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-            directory = directory.Replace("file:\\", "");
-            var dataSource = "Data Source=" + directory + "\\MusicPlayer.DAL.DbContext.sdf;Persist Security Info=False;";
+            // Set config for the entity framework
 
-            System.Data.Entity.Database.DefaultConnectionFactory =
-            new System.Data.Entity.Infrastructure.SqlCeConnectionFactory(
-            "System.Data.SqlServerCe.4.0",
-            directory,
-            dataSource);
-            
-            //player = new Player();
-            Gui = new GUI(this);
-            if (args.Length != 0)
-                Gui.Open(args);
 
-            var test = dataSource;
+            // Populate window
+            //Gui = new GUI(this);
+            //if (args.Length != 0)
+            //{
+            //    Gui.Open(args);
+            //}
+
+            //Gui = new GUI(this);
+            Gui = new EtoUI();
+            var native = Gui.ToNative(true);
+            native.Location = new Point(0, 0);
+            Controls.Add(native);
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace MusicPlayer.Models
     /// The Message that can be send over the network.
     /// </summary>
     [Serializable]
-    public class Message
+    internal class Message
     {
         /// <summary>
         /// The ID or index of the data.

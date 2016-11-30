@@ -9,16 +9,21 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Data.Entity.Infrastructure;
+using MusicPlayer.UI;
 
 namespace MusicPlayer
 {
-    static class Program
+    /// <summary>
+    /// The main class.
+    /// </summary>
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -26,21 +31,52 @@ namespace MusicPlayer
             // Import the embedded resources
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args2) =>
             {
-                String resourceName = "MusicPlayer.Packages." + new AssemblyName(args2.Name).Name + ".dll";
+                string originalAssemblyName = new AssemblyName(args2.Name).Name + ".dll";
+                string resourceName = "MusicPlayer.Packages." + originalAssemblyName;
                 using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    Byte[] assemblyData = new Byte[stream.Length];
-                    stream.Read(assemblyData, 0, assemblyData.Length);
-                    return Assembly.Load(assemblyData);
+                    if (stream != null)
+                    {
+                        Byte[] assemblyData = new Byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        try
+                        {
+                            return Assembly.Load(assemblyData);
+                        }
+                        catch
+                        {
+                            using (FileStream fsDst = new FileStream(originalAssemblyName, FileMode.Create, FileAccess.Write))
+                            {
+                                fsDst.Write(assemblyData, 0, assemblyData.Length);
+                            }
+
+                            try
+                            {
+                                string location = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                                location = (location.EndsWith("\\") ? location : location + "\\") + originalAssemblyName;
+                                return Assembly.LoadFrom(location);
+                            }
+                            catch (Exception e)
+                            {
+                                return Assembly.Load(assemblyData);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             };
 
             InstallSQLServerCompact();
-            Application.Run(new MusicPlayer(args));
+            new Eto.Forms.Application().Run(new EtoUI());
+            ////Application.Run(new MusicPlayer(args));
         }
 
         /// <summary>
         /// Launches the installer for SQL server compact when it is not installed.
+        /// Creates the connection factory.
         /// </summary>
         private static void InstallSQLServerCompact()
         {
@@ -63,6 +99,12 @@ namespace MusicPlayer
                     File.Delete(tempFileName);
                 }
             }
+
+            string directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+            directory = directory.Replace("file:\\", "");
+            var dataSource = "Data Source=" + directory + "\\MusicPlayer.DAL.DbContext.sdf;Persist Security Info=False;";
+            Database.DefaultConnectionFactory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0", directory, dataSource);
+            var test = dataSource;
         }
 
         /// <summary>

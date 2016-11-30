@@ -18,7 +18,15 @@ namespace MusicPlayer.Controller
         /// The entity framework db context.
         /// </summary>
         private DbContext _db;
+
+        /// <summary>
+        /// The songs that are currently in the database.
+        /// </summary>
         private List<Song> databaseSongs;
+
+        /// <summary>
+        /// The Queue of song that will be added to the database.
+        /// </summary>
         private List<Song> dbSongQue;
         private static object _lock = new object();
 
@@ -35,7 +43,18 @@ namespace MusicPlayer.Controller
         /// <returns>The Song.</returns>
         public Song GetDetails(Song entry)
         {
-            return _db.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
+            var song = this.databaseSongs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
+            if (song == null)
+            {
+                song = _db.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
+                if(song != null)
+                {
+                    song.SourceIsDb = true;
+                    this.databaseSongs.Add(song);
+                }
+            }
+
+            return song;
         }
 
         /// <summary>
@@ -45,9 +64,10 @@ namespace MusicPlayer.Controller
         /// <returns></returns>
         public List<Song> GetAllForFolder(string folder)
         {
-           var items = _db.Songs.Where(ct => ct.Location.StartsWith(folder));
-           this.databaseSongs = items.ToList();
-           return databaseSongs;
+            var items = _db.Songs.Where(ct => ct.Location.StartsWith(folder));
+            this.databaseSongs = items.ToList();
+            this.databaseSongs.ForEach(s => s.SourceIsDb = true);
+            return databaseSongs;
         }
 
         /// <summary>
@@ -79,7 +99,8 @@ namespace MusicPlayer.Controller
             catch 
             { 
                 // Memory was in use
-                if (!this.databaseSongs.Any(ct => ct.Location == song.Location)){
+                if (!this.databaseSongs.Any(ct => ct.Location == song.Location))
+                {
                     dbSongQue.Add(song);
                     this.databaseSongs.Add(song);
                 }
@@ -88,6 +109,9 @@ namespace MusicPlayer.Controller
             return song;
         }
 
+        /// <summary>
+        /// Thread to save songs to the database.
+        /// </summary>
         private void AddsongsTodbThread()
         {
             lock (_lock)

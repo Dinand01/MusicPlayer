@@ -332,7 +332,7 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
-        /// Play from key (path)
+        /// Play from key (path).
         /// </summary>
         /// <param name="key"></param>
         public void Play(string key) {
@@ -404,18 +404,18 @@ namespace MusicPlayer.Controller
         /// </summary>
         private void UpdateTime()
         {
-            try
+            while (!_disposing && waveOutDevice != null
+                && (waveOutDevice.PlaybackState == PlaybackState.Paused || waveOutDevice.PlaybackState == PlaybackState.Playing))
             {
-                while (!_disposing && waveOutDevice != null 
-                    && (waveOutDevice.PlaybackState == PlaybackState.Paused || waveOutDevice.PlaybackState == PlaybackState.Playing))
+                try
                 {
                     gui.SetSongPosition(playstream.CurrentTime);
                     ////gui.SetTrackbarPos((int)playstream.CurrentTime.TotalSeconds);
                     ThreadExtensions.SaveSleep(500);
                 }
-            }
-            catch (Exception e)
-            {
+                catch (Exception e)
+                {
+                }
             }
         }
 
@@ -439,9 +439,6 @@ namespace MusicPlayer.Controller
                     {
                         var task = Task.Run(delegate()
                         {
-                            //waveOutDevice.Dispose();
-                            //waveOutDevice = new WaveOut();
-                            //waveOutDevice.Init(playstream);
                             playstream.Seek(pos, SeekOrigin.Begin);
                             waveOutDevice.Play();
                         });

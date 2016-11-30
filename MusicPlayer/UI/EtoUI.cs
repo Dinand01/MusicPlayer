@@ -48,9 +48,14 @@ namespace MusicPlayer.UI
         private string _filterText;
 
         /// <summary>
+        /// The current song to display.
+        /// </summary>
+        private string _currentSong;
+
+        /// <summary>
         /// The duration of the current song.
         /// </summary>
-        private TimeSpan currentSongDuration;
+        private TimeSpan _currentSongDuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EtoUI" /> class.
@@ -65,24 +70,6 @@ namespace MusicPlayer.UI
 
         #endregion
 
-        /// <summary>
-        /// Add all the main controls to the form.
-        /// </summary>
-        private void AddControls()
-        {
-            _uiElements = new Dictionary<UIElements, Control>();
-            this.Closing += EtoUI_Closing;
-            this.Size = new Eto.Drawing.Size(1600, 700);
-            this.Title = "MusicPlayer";
-            this.WindowStyle = Eto.Forms.WindowStyle.Default;
-            var formHandler = (System.Windows.Forms.Form)this.ControlObject;
-            formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            formHandler.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericSerif, (float)18);
-            //formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            //formHandler.AutoScaleDimensions = new System.Drawing.SizeF((float)2.25, (float)2.25);
-            RenderMain(ViewType.Home);
-        }
-
         #region Actions
 
         /// <summary>
@@ -92,7 +79,7 @@ namespace MusicPlayer.UI
         /// <param name="e">The evnt arguments.</param>
         private void HomeButton_Click(object sender, EventArgs e)
         {
-            RenderMain(ViewType.Home);
+            Render(ViewType.Home);
         }
 
         /// <summary>
@@ -102,22 +89,7 @@ namespace MusicPlayer.UI
         /// <param name="e">The event arguments.</param>
         private void AudioButton_Click(object sender, EventArgs e)
         {
-            RenderMain(ViewType.Playing);
-        }
-
-        /// <summary>
-        /// Pauses or plays the music.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void PlayPauseButton_Click(object sender, EventArgs e)
-        {
-            if (_player != null)
-            {
-                _player.PausePlay(null, null);
-                string resource = _player.IsPlaying() ? "Pause-96.png" : "Play-96.png";
-                ((Button)_uiElements[UIElements.PlayPauseButton]).Image = new Bitmap(Resource.GetImage(resource), 45, 45);
-            }
+            Render(ViewType.Playing);
         }
 
         /// <summary>
@@ -136,7 +108,7 @@ namespace MusicPlayer.UI
             if (result == DialogResult.Ok)
             {
                 List<Song> temp = _player.LoadAll(openFileDialog1.Filenames.ToArray(), null);
-                RenderMain(ViewType.Playing);
+                Render(ViewType.Playing);
                 _player.Play(temp.FirstOrDefault());
             }
         }
@@ -157,7 +129,7 @@ namespace MusicPlayer.UI
                     EnsurePlayer();
                     string folder = dialog.Directory;
                     List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories), null);
-                    RenderMain(ViewType.Playing);
+                    Render(ViewType.Playing);
                     _player.Play(temp.FirstOrDefault());
                 }
             }
@@ -165,22 +137,7 @@ namespace MusicPlayer.UI
 
         #endregion
 
-        /// <summary>
-        /// Ensures that a musicplayer exists.
-        /// </summary>
-        /// <param name="reset">Dispose and create a new player.</param>
-        private void EnsurePlayer(bool reset = false)
-        {
-            if(reset && _player != null)
-            {
-                _player.Dispose();
-            }
-
-            if(_player == null)
-            {
-                _player = new Player(this);
-            }
-        }
+        #region Interface
 
         /// <summary>
         /// Sets the song duration on the UI.
@@ -188,7 +145,7 @@ namespace MusicPlayer.UI
         /// <param name="duration">The duration.</param>
         public void SetSongDuration(TimeSpan duration)
         {
-            currentSongDuration = duration;
+            _currentSongDuration = duration;
             if(_uiElements.ContainsKey(UIElements.Slider) && _uiElements[UIElements.Slider] != null)
             {
                 ((Slider)_uiElements[UIElements.Slider]).MaxValue = (int)duration.TotalMilliseconds;
@@ -198,12 +155,25 @@ namespace MusicPlayer.UI
 
         public void SetSongs(List<Song> songs)
         {
-            ////throw new NotImplementedException();
+            
         }
 
+        /// <summary>
+        /// Sets the current active song.
+        /// </summary>
+        /// <param name="song">The song to set.</param>
         public void SetSong(Song song)
         {
-            ////throw new NotImplementedException();
+            if (!song.SourceIsDb)
+            {
+                song = _player.GetDetailsFromDbOrFile(song);
+            }
+
+            _currentSong = song.Band + " - " + song.Title;
+            if (_uiElements.ContainsKey(UIElements.CurrentSong) && _uiElements[UIElements.CurrentSong] != null)
+            {
+                ((Label)_uiElements[UIElements.CurrentSong]).Text = _currentSong;
+            }
         }
 
         /// <summary>
@@ -220,7 +190,7 @@ namespace MusicPlayer.UI
                 {
                     if (slider.MaxValue < currentTime.TotalMilliseconds)
                     {
-                        SetSongDuration(currentSongDuration);
+                        SetSongDuration(_currentSongDuration);
                     }
 
                     slider.Value = (int)currentTime.TotalMilliseconds;
@@ -233,7 +203,27 @@ namespace MusicPlayer.UI
             throw new NotImplementedException();
         }
 
+        #endregion
+
         #region MainUI
+
+        /// <summary>
+        /// Add all the main controls to the form.
+        /// </summary>
+        private void AddControls()
+        {
+            _uiElements = new Dictionary<UIElements, Control>();
+            this.Closing += EtoUI_Closing;
+            this.Size = new Eto.Drawing.Size(1600, 700);
+            this.Title = "MusicPlayer";
+            this.WindowStyle = Eto.Forms.WindowStyle.Default;
+            var formHandler = (System.Windows.Forms.Form)this.ControlObject;
+            formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            formHandler.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericSerif, (float)18);
+            //formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            //formHandler.AutoScaleDimensions = new System.Drawing.SizeF((float)2.25, (float)2.25);
+            Render(ViewType.Home);
+        }
 
         /// <summary>
         /// Creates the toolbar.
@@ -243,6 +233,10 @@ namespace MusicPlayer.UI
         {
             _uiElements[UIElements.HomeButton] = CreateToolBarbutton("Return to home", Resource.GetImage("Home-96.png"), HomeButton_Click);
             _uiElements[UIElements.AudioButton] = CreateToolBarbutton("Currently Playing", Resource.GetImage("Speaker-96.png"), AudioButton_Click, _player != null && _player.IsPlaying());
+            _uiElements[UIElements.Notification] = new Label
+            {
+                Text = string.Empty
+            };
 
             mainLayout.Rows.Add(new TableRow
             {
@@ -272,11 +266,7 @@ namespace MusicPlayer.UI
                                         },
                                         new TableCell
                                         {
-                                            Control = new Label
-                                            {
-                                                ID = Models.Controls.NotificationTop.ToString(),
-                                                Text = string.Empty
-                                            },
+                                            Control =  _uiElements[UIElements.Notification],
                                             ScaleWidth = true
                                         },
                                         null
@@ -383,6 +373,7 @@ namespace MusicPlayer.UI
         {
             var contentCell = GetContent();
             _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, true, 112);
+            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, true, 112);
             _uiElements[UIElements.Slider] = new Slider
             {
                 Width = 300,
@@ -394,6 +385,16 @@ namespace MusicPlayer.UI
             var nativeSlider = (System.Windows.Forms.TrackBar)_uiElements[UIElements.Slider].ControlObject;
             nativeSlider.TickStyle = System.Windows.Forms.TickStyle.None;
             nativeSlider.Scroll += NativeSlider_Scroll;
+            _uiElements[UIElements.CurrentSong] = new Label
+            {
+                TextColor = ColorPallete.Colors[ColorPallete.Color.Primary4],
+                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary2],
+                Text = _currentSong,
+                TextAlignment = Eto.Forms.TextAlignment.Center
+            };
+
+            var uilabel = (Label)_uiElements[UIElements.CurrentSong];
+            uilabel.Font = new Font(uilabel.Font.Family, 14, Eto.Drawing.FontStyle.Bold);
 
             // Create the action row.
             TableLayout contentLayout = new TableLayout();
@@ -418,7 +419,16 @@ namespace MusicPlayer.UI
                                             ScaleWidth = false,
                                             Control = _uiElements[UIElements.PlayPauseButton]
                                         },
-                                        null,
+                                        new TableCell
+                                        {
+                                            ScaleWidth = false,
+                                            Control = _uiElements[UIElements.NextButton]
+                                        },
+                                        new TableCell
+                                        {
+                                            ScaleWidth = true,
+                                            Control = _uiElements[UIElements.CurrentSong]
+                                        },
                                         new TableCell
                                         {
                                             ScaleWidth = false,
@@ -524,7 +534,34 @@ namespace MusicPlayer.UI
 
             contentLayout.Rows.Add(contentRow);
             contentCell.Control = contentLayout;
-            this.Content = _mainLayout;
+        }
+
+        /// <summary>
+        /// Pauses or plays the music.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void PlayPauseButton_Click(object sender, EventArgs e)
+        {
+            if (_player != null)
+            {
+                _player.PausePlay(null, null);
+                string resource = _player.IsPlaying() ? "Pause-96.png" : "Play-96.png";
+                ((Button)_uiElements[UIElements.PlayPauseButton]).Image = new Bitmap(Resource.GetImage(resource), 45, 45);
+            }
+        }
+
+        /// <summary>
+        /// Skips the song.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void NextButton_Click(object sender, EventArgs e)
+        {
+            if (_player != null)
+            {
+                _player.NextRandomSong();
+            }
         }
 
         /// <summary>
@@ -578,8 +615,6 @@ namespace MusicPlayer.UI
                 }
 
                 songList = songList.OrderBy(s => s.Band).ThenBy(s => s.Title).Take(100).ToList();
-
-
                 if (songTable.Rows == null || songTable.Rows.Count < 100)
                 {
                     for (int i = 0; i < 100; i++)
@@ -588,9 +623,16 @@ namespace MusicPlayer.UI
                     }
                 }
 
+                var songListResult = songList.ToList();
                 int row = 0;
-                foreach (var song in songList)
+                for (; row < songList.Count(); row++)
                 {
+                    var song = songListResult[row];
+                    if (!song.SourceIsDb)
+                    {
+                        song = _player.GetDetailsFromDbOrFile(song);
+                    }
+
                     var rowLabels = songTable.Rows[row].OfType<DynamicControl>().Select(r => r.Control).OfType<Label>().ToList();
                     foreach (Label l in rowLabels)
                     {
@@ -673,6 +715,8 @@ namespace MusicPlayer.UI
 
         #endregion
 
+        #region Common
+
         /// <summary>
         /// Clears the content row, only navigation remains.
         /// </summary>
@@ -697,11 +741,29 @@ namespace MusicPlayer.UI
         }
 
         /// <summary>
+        /// Ensures that a musicplayer exists.
+        /// </summary>
+        /// <param name="reset">Dispose and create a new player.</param>
+        private void EnsurePlayer(bool reset = false)
+        {
+            if (reset && _player != null)
+            {
+                _player.Dispose();
+            }
+
+            if (_player == null)
+            {
+                _player = new Player(this);
+            }
+        }
+
+        /// <summary>
         /// Renders the main layout (refresh).
         /// Eto does not support content changes.
         /// </summary>
-        private void RenderMain(ViewType type)
+        private void Render(ViewType type)
         {
+            this.SuspendLayout();
             _uiElements[UIElements.Slider] = null;
             _mainLayout = new TableLayout
             {
@@ -724,7 +786,23 @@ namespace MusicPlayer.UI
                     break;
             }
 
-            this.Content = _mainLayout;
+            Task.Run(delegate ()
+            {
+                if (this.Content != null)
+                {
+                    var nativeTable = (System.Windows.Forms.Form)this.ControlObject;
+                    nativeTable.Invoke((System.Windows.Forms.MethodInvoker)(delegate ()
+                    {
+                        this.Content = _mainLayout;
+                        this.ResumeLayout();
+                    }));
+                }
+                else
+                {
+                    this.Content = _mainLayout;
+                    this.ResumeLayout();
+                }
+            });
         }
 
         /// <summary>
@@ -745,5 +823,7 @@ namespace MusicPlayer.UI
                 _player.Dispose();
             }
         }
+
+        #endregion
     }
 }

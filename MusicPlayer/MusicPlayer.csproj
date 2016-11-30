@@ -143,7 +143,6 @@
     <Compile Include="Extensions\ReadFullyStream.cs" />
     <Compile Include="Extensions\TheadExtensions.cs" />
     <Compile Include="Models\ColorPallete.cs" />
-    <Compile Include="Models\enum\Controls.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
     <Compile Include="Models\enum\UIElements.cs" />
     <Compile Include="Models\enum\ViewType.cs" />
@@ -247,6 +246,7 @@
   <ItemGroup>
     <Content Include="Packages\Eto.dll" />
     <Content Include="Packages\Eto.WinForms.dll" />
+    <EmbeddedResource Include="Resources\End-96.png" />
     <EmbeddedResource Include="Resources\Pause-96.png" />
     <EmbeddedResource Include="Resources\Play-96.png" />
     <EmbeddedResource Include="Resources\Speaker-96.png" />

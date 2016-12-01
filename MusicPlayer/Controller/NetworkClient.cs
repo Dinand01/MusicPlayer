@@ -18,6 +18,9 @@ namespace MusicPlayer.Controller
     {
         #region Variables
 
+        /// <summary>
+        /// The user interface.
+        /// </summary>
         private IUI _gui;
 
         private IPAddress _ip;
@@ -37,6 +40,23 @@ namespace MusicPlayer.Controller
         private bool _run = true;
 
         private int _errorCount = 0;
+
+        /// <summary>
+        /// The song that were received song this object exists.
+        /// </summary>
+        private List<Song> _receivedSongs = new List<Song>();
+
+        /// <summary>
+        /// Gets a list of received song.
+        /// </summary>
+        public List<Song> ReceivedSongs
+        {
+            get
+            {
+                return _receivedSongs;
+            }
+        }
+
         #endregion
 
         public NetworkClient(IUI gui, IPAddress address, int port)
@@ -73,49 +93,52 @@ namespace MusicPlayer.Controller
         /// </summary>
         private void Receive()
         {
-            _clientSocket.ReceiveBufferSize = 262144;
-            _clientSocket.SendBufferSize = 262144;
-            NetworkStream stream = _clientSocket.GetStream();
-            FileStream filestream = null;
-            Message previousMessage = null;
-            bool error = false;
-
-            while (_run && !error)
+            if (_clientSocket != null)
             {
-                if (stream != null && stream.CanRead)
+                _clientSocket.ReceiveBufferSize = 262144;
+                _clientSocket.SendBufferSize = 262144;
+                NetworkStream stream = _clientSocket.GetStream();
+                FileStream filestream = null;
+                Message previousMessage = null;
+                bool error = false;
+
+                while (_run && !error)
                 {
-                    try
+                    if (stream != null && stream.CanRead)
                     {
-                        var formatter = new BinaryFormatter();
-                        Message message = (Message)formatter.Deserialize(stream);
-                        HandleMessages(message, previousMessage, ref filestream);
-                        previousMessage = message;
-                        error = false;
-                        _errorCount = 0;
+                        try
+                        {
+                            var formatter = new BinaryFormatter();
+                            Message message = (Message)formatter.Deserialize(stream);
+                            HandleMessages(message, previousMessage, ref filestream);
+                            previousMessage = message;
+                            error = false;
+                            _errorCount = 0;
+                        }
+                        catch (Exception e)
+                        {
+                            ThreadExtensions.SaveSleep(10);
+                            _errorCount++;
+                        }
                     }
-                    catch(Exception e)
+                    else
                     {
                         ThreadExtensions.SaveSleep(10);
-                        _errorCount++;
                     }
                 }
-                else
-                {
-                    ThreadExtensions.SaveSleep(10);
-                }
-            }
 
-            stream.Dispose();
-            _clientSocket.Close();
+                stream.Dispose();
+                _clientSocket.Close();
 
-            if (error && _run && _errorCount > 10)
-            {
-                error = true;
-                _clientSocket = CreateTcpClient();
-                if (_clientSocket != null)
+                if (error && _run && _errorCount > 10)
                 {
-                    _receiver = new Thread(newt => Receive());
-                    _receiver.Start();
+                    error = true;
+                    _clientSocket = CreateTcpClient();
+                    if (_clientSocket != null)
+                    {
+                        _receiver = new Thread(newt => Receive());
+                        _receiver.Start();
+                    }
                 }
             }
         }
@@ -177,6 +200,7 @@ namespace MusicPlayer.Controller
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
             _currentSong = message.Song;
             _currentSong.Location = filePath;
+            _currentSong.SourceIsDb = true;
             _currentSong.DateAdded = DateTime.Now;
             _currentSong.DateCreated = DateTime.Now;
             _currentFileIndex = 0;
@@ -229,6 +253,7 @@ namespace MusicPlayer.Controller
                         try
                         {
                             this._player = new Player(_gui, true);
+                            _player.SetSongs(_receivedSongs);
                             _player.Play(_currentSong);
                         }
                         catch (Exception e)
@@ -268,8 +293,11 @@ namespace MusicPlayer.Controller
 
             if (!_player.IsPlaying())
             {
+                _player.SetSongs(_receivedSongs);
                 _player.Play(_currentSong);
             }
+
+            _receivedSongs.Add(_currentSong);
         }
 
         /// <summary>
@@ -296,15 +324,7 @@ namespace MusicPlayer.Controller
         {
             TcpClient clientSocket = new System.Net.Sockets.TcpClient();
             clientSocket.ReceiveBufferSize = 64000;
-            try
-            {
-                clientSocket.Connect(_ip, _port);
-            }
-            catch
-            {
-                clientSocket = null;
-            }
-
+            clientSocket.Connect(_ip, _port);
             return clientSocket;
         }
     }

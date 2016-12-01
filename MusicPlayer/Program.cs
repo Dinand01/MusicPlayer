@@ -28,6 +28,13 @@ namespace MusicPlayer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            AppDomain.CurrentDomain.UnhandledException += delegate (object sender, UnhandledExceptionEventArgs eventArgs)
+            {
+                var exception = (Exception)eventArgs.ExceptionObject;
+                MessageBox.Show("Fatal error: " + exception.ToString());
+                Environment.Exit(1);
+            };
+
             // Import the embedded resources
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args2) =>
             {

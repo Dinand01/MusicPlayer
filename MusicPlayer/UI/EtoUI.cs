@@ -12,6 +12,7 @@ using System.Resources;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
+using System.Windows.Threading;
 
 namespace MusicPlayer.UI
 {
@@ -58,6 +59,16 @@ namespace MusicPlayer.UI
         private TimeSpan _currentSongDuration;
 
         /// <summary>
+        /// The network client.
+        /// </summary>
+        private NetworkClient _networkClient;
+
+        /// <summary>
+        /// The dispatcher for the ui thread.
+        /// </summary>
+        private Dispatcher _uiDispatcher = Dispatcher.CurrentDispatcher;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EtoUI" /> class.
         /// </summary>
         public EtoUI()
@@ -93,6 +104,16 @@ namespace MusicPlayer.UI
         }
 
         /// <summary>
+        /// Returns to the client view.
+        /// </summary>
+        /// <param name="sender">The button.</param>
+        /// <param name="e">The event arguments.</param>
+        private void ClientButton_Click(object sender, EventArgs e)
+        {
+            Render(ViewType.Client);
+        }
+
+        /// <summary>
         /// Returns to the playing page.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -117,6 +138,7 @@ namespace MusicPlayer.UI
             DialogResult result = openFileDialog1.ShowDialog(_mainLayout);
             if (result == DialogResult.Ok)
             {
+                RemoveNetworkClient();
                 List<Song> temp = _player.LoadAll(openFileDialog1.Filenames.ToArray(), null);
                 Render(ViewType.Playing);
                 _player.Play(temp.FirstOrDefault());
@@ -136,6 +158,7 @@ namespace MusicPlayer.UI
                 dialog.Directory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
                 if (dialog.ShowDialog(this) == DialogResult.Ok)
                 {
+                    RemoveNetworkClient();
                     EnsurePlayer();
                     string folder = dialog.Directory;
                     List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories), null);
@@ -156,16 +179,30 @@ namespace MusicPlayer.UI
         public void SetSongDuration(TimeSpan duration)
         {
             _currentSongDuration = duration;
-            if(_uiElements.ContainsKey(UIElements.Slider) && _uiElements[UIElements.Slider] != null)
+            _uiDispatcher.Invoke(delegate ()
             {
-                ((Slider)_uiElements[UIElements.Slider]).MaxValue = (int)duration.TotalMilliseconds;
-                ((Slider)_uiElements[UIElements.Slider]).Value = 0;
-            }
+                if (_uiElements.ContainsKey(UIElements.Slider) && _uiElements[UIElements.Slider] != null)
+                {
+                    ((Slider)_uiElements[UIElements.Slider]).MaxValue = (int)duration.TotalMilliseconds;
+                    ((Slider)_uiElements[UIElements.Slider]).Value = 0;
+                }
+            });
         }
 
+        /// <summary>
+        /// Sets the available songs.
+        /// </summary>
+        /// <param name="songs">The songs to set.</param>
         public void SetSongs(List<Song> songs)
         {
-            
+            try
+            {
+                Render(ViewType.Playing, false);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         /// <summary>
@@ -180,10 +217,13 @@ namespace MusicPlayer.UI
             }
 
             _currentSong = song.Band + " - " + song.Title;
-            if (_uiElements.ContainsKey(UIElements.CurrentSong) && _uiElements[UIElements.CurrentSong] != null)
+            _uiDispatcher.Invoke(delegate ()
             {
-                ((Label)_uiElements[UIElements.CurrentSong]).Text = _currentSong;
-            }
+                if (_uiElements.ContainsKey(UIElements.CurrentSong) && _uiElements[UIElements.CurrentSong] != null)
+                {
+                    ((Label)_uiElements[UIElements.CurrentSong]).Text = _currentSong;
+                }
+            });
         }
 
         /// <summary>
@@ -192,20 +232,23 @@ namespace MusicPlayer.UI
         /// <param name="currentTime">The current song time.</param>
         public void SetSongPosition(TimeSpan currentTime)
         {
-            if (_uiElements.ContainsKey(UIElements.Slider) && _uiElements[UIElements.Slider] != null)
+            _uiDispatcher.Invoke(delegate ()
             {
-                var slider = ((Slider)_uiElements[UIElements.Slider]);
-                var trackbar = (System.Windows.Forms.TrackBar)slider.ControlObject;
-                trackbar.Invoke((System.Windows.Forms.MethodInvoker)(delegate () 
+                if (_uiElements.ContainsKey(UIElements.Slider) && _uiElements[UIElements.Slider] != null)
                 {
-                    if (slider.MaxValue < currentTime.TotalMilliseconds)
+                    var slider = ((Slider)_uiElements[UIElements.Slider]);
+                    var trackbar = (System.Windows.Forms.TrackBar)slider.ControlObject;
+                    trackbar.Invoke((System.Windows.Forms.MethodInvoker)(delegate ()
                     {
-                        SetSongDuration(_currentSongDuration);
-                    }
+                        if (slider.MaxValue < currentTime.TotalMilliseconds)
+                        {
+                            SetSongDuration(_currentSongDuration);
+                        }
 
-                    slider.Value = (int)currentTime.TotalMilliseconds;
-                }));
-            }
+                        slider.Value = (int)currentTime.TotalMilliseconds;
+                    }));
+                }
+            });
         }
 
         public void SetNotification(string message)
@@ -243,6 +286,7 @@ namespace MusicPlayer.UI
         {
             _uiElements[UIElements.HomeButton] = CreateToolBarbutton("Return to home", Resource.GetImage("Home-96.png"), HomeButton_Click);
             _uiElements[UIElements.ServerButton] = CreateToolBarbutton("Host server", Resource.GetImage("Satellite Sending Signal-96.png"), ServerButton_Click, _player != null && _player.Hosting);
+            _uiElements[UIElements.ClientButton] = CreateToolBarbutton("Connect to a stream", Resource.GetImage("GPS Searching-96.png"), ClientButton_Click, _networkClient != null);
             _uiElements[UIElements.AudioButton] = CreateToolBarbutton("Currently Playing", Resource.GetImage("Speaker-96.png"), AudioButton_Click, _player != null && _player.IsPlaying());
             _uiElements[UIElements.Notification] = new Label
             {
@@ -282,6 +326,11 @@ namespace MusicPlayer.UI
                                         },
                                         new TableCell
                                         {
+                                            Control = _uiElements[UIElements.ClientButton],
+                                            ScaleWidth = false
+                                        },
+                                        new TableCell
+                                        {
                                             Control =  _uiElements[UIElements.Notification],
                                             ScaleWidth = true
                                         },
@@ -302,8 +351,10 @@ namespace MusicPlayer.UI
         /// <param name="image">The image.</param>
         /// <param name="handler">The handler.</param>
         /// <param name="visible">A boolean indicating whether the button should be visible.</param>
+        /// <param name="width">The width of the button.</param>
+        /// <param name="enabled">A boolean indicating whether the button was enabled.</param>
         /// <returns>The button.</returns>
-        private Button CreateToolBarbutton(string toolTip, Bitmap image, EventHandler<EventArgs> handler, bool visible = true, int width = 22)
+        private Button CreateToolBarbutton(string toolTip, Bitmap image, EventHandler<EventArgs> handler, bool visible = true, int width = 22, bool enabled = true)
         {
             var button = new Button
             {
@@ -311,7 +362,8 @@ namespace MusicPlayer.UI
                 Width = width,
                 BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary2],
                 ToolTip = toolTip,
-                Visible = visible
+                Visible = visible,
+                Enabled = enabled
             };
 
             button.Click += handler;
@@ -353,7 +405,7 @@ namespace MusicPlayer.UI
             mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
             mainActions2.Cells.Add(new TableCell { ScaleWidth = false });
             mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
-            mainActions2.Cells.Add(CreateActionCell(OpenFromFile_Click, "Connect to stream", Resource.GetImage("GPS Searching-96.png")));
+            mainActions2.Cells.Add(CreateActionCell(ClientButton_Click, "Connect to stream", Resource.GetImage("GPS Searching-96.png")));
             mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
             mainActions2.Cells.Add(new TableCell { ScaleWidth = false });
             mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
@@ -407,14 +459,15 @@ namespace MusicPlayer.UI
         private void ShowPlayingContent()
         {
             var contentCell = GetContent();
-            _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, true, 56);
-            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, true, 56);
+            _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, _networkClient == null, 56);
+            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, _networkClient == null, 56);
             _uiElements[UIElements.Slider] = new Slider
             {
                 Width = 150,
                 Cursor = Cursors.VerticalSplit,
                 Height = 17,
-                MinValue = 0
+                MinValue = 0,
+                Enabled = _networkClient == null
             };
 
             var nativeSlider = (System.Windows.Forms.TrackBar)_uiElements[UIElements.Slider].ControlObject;
@@ -639,10 +692,10 @@ namespace MusicPlayer.UI
         /// <param name="searchTerm">The searhc term of the collection.</param>
         private void RenderPartialSongList(DynamicLayout songTable, string searchTerm)
         {
-            if (_player != null && _player.SongList != null)
+            if ((_player != null && _player.SongList != null) || _networkClient != null && _networkClient.ReceivedSongs != null)
             {
                 songTable.SuspendLayout();
-                IEnumerable<Song> songList = _player.SongList;
+                IEnumerable<Song> songList = _player == null ? _networkClient.ReceivedSongs : _player.SongList;
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
                     songList = _player.SongList.Where(s => s.Title.ToLower().Contains(searchTerm.ToLower()) || s.Band != null && s.Band.ToLower().Contains(searchTerm.ToLower()));
@@ -785,7 +838,7 @@ namespace MusicPlayer.UI
             var nativebutton = (System.Windows.Forms.Button)serverStatusButton.ControlObject;
             nativebutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             nativebutton.FlatAppearance.BorderSize = 0;
-            _uiElements[UIElements.ServerButton] = serverStatusButton;
+            _uiElements[UIElements.ServerStatusButton] = serverStatusButton;
 
             TableLayout content = new TableLayout
             {
@@ -860,7 +913,7 @@ namespace MusicPlayer.UI
                                                 null,
                                                 new TableCell
                                                 {
-                                                    Control = _uiElements[UIElements.ServerButton]
+                                                    Control = _uiElements[UIElements.ServerStatusButton]
                                                 },
                                                 null
                                             }
@@ -903,6 +956,204 @@ namespace MusicPlayer.UI
             else
             {
                 _player.DisconnectFromAudioServer();
+                Render(ViewType.Home);
+            }
+        }
+
+        #endregion
+
+        #region Client
+
+        /// <summary>
+        /// Shows the client settings page.
+        /// </summary>
+        private void ShowClientSettings()
+        {
+            var contentCell = GetContent();
+            _uiElements[UIElements.IPPort] = new TextBox
+            {
+                Text = "8963",
+                ToolTip = "The port the client will connect to",
+                PlaceholderText = "Please enter a port (TCP)",
+                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary1],
+                TextColor = Colors.White
+            };
+
+            var nativePort = (System.Windows.Forms.TextBox)_uiElements[UIElements.IPPort].ControlObject;
+            nativePort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            nativePort.Font = new System.Drawing.Font(nativePort.Font.FontFamily, 14);
+            nativePort.Margin = new System.Windows.Forms.Padding(5);
+
+            _uiElements[UIElements.IPAddress] = new TextBox
+            {
+                Text = "127.0.0.1",
+                ToolTip = "The ip address the client will connect to",
+                PlaceholderText = "Please enter an ip address",
+                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary1],
+                TextColor = Colors.White
+            };
+
+            var nativeAddress = (System.Windows.Forms.TextBox)_uiElements[UIElements.IPAddress].ControlObject;
+            nativeAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            nativeAddress.Font = new System.Drawing.Font(nativePort.Font.FontFamily, 14);
+            nativeAddress.Margin = new System.Windows.Forms.Padding(5);
+
+            var clientStatusButton = new Button
+            {
+                Text = _networkClient != null ? "Disconnect" : "Connect",
+                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary2],
+                TextColor = Colors.White,
+                Font = new Font(SystemFont.TitleBar, 8),
+            };
+
+            clientStatusButton.Click += ClientStatusButton_Click;
+            var nativebutton = (System.Windows.Forms.Button)clientStatusButton.ControlObject;
+            nativebutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            nativebutton.FlatAppearance.BorderSize = 0;
+            _uiElements[UIElements.ClientStatusButton] = clientStatusButton;
+
+            TableLayout content = new TableLayout
+            {
+                Rows =
+                {
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            null,
+                            new TableCell
+                            {
+                                ScaleWidth = false,
+                                Control = new Label
+                                {
+                                    Text = "Connect to a stream",
+                                    TextAlignment = Eto.Forms.TextAlignment.Center,
+                                    Font = new Font(SystemFont.TitleBar, 12),
+                                    TextColor = ColorPallete.Colors[ColorPallete.Color.Primary1]
+                                }
+                            },
+                            null
+                        }
+                    },
+                    null,
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            null,
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Spacing = new Size(10, 10),
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null,
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.IPAddress]
+                                                },
+                                                null
+                                            }
+                                        },
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null,
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.IPPort]
+                                                },
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            null
+                        }
+                    },
+                    null,
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            null,
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null,
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.ClientStatusButton]
+                                                },
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            null
+                        }
+                    },
+                    null
+                }
+            };
+
+            contentCell.Control = content;
+        }
+
+        /// <summary>
+        /// Attempt to connect to a server.
+        /// </summary>
+        /// <param name="sender">The button</param>
+        /// <param name="e">The event arguments.</param>
+        private void ClientStatusButton_Click(object sender, EventArgs e)
+        {
+            if (_networkClient == null)
+            {
+                string ipAddress = ((TextBox)_uiElements[UIElements.IPAddress]).Text;
+                string port = ((TextBox)_uiElements[UIElements.IPPort]).Text;
+                int portParsed = 0;
+                IPAddress ipParsed = IPAddress.Any;
+                if (int.TryParse(port, out portParsed) && IPAddress.TryParse(ipAddress, out ipParsed))
+                {
+                    if (_player != null)
+                    {
+                        _player.Dispose();
+                    }
+
+                    try
+                    {
+                        _networkClient = new NetworkClient(this, ipParsed, portParsed);
+                        Render(ViewType.Playing);
+                    }
+                    catch
+                    {
+                        _networkClient = null;
+                        MessageBox.Show("Could not connect to the specified server", MessageBoxType.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("The entered ip address or port is not valid");
+                }
+            }
+            else
+            {
+                RemoveNetworkClient();
                 Render(ViewType.Home);
             }
         }
@@ -955,50 +1206,72 @@ namespace MusicPlayer.UI
         /// Renders the main layout (refresh).
         /// Eto does not support content changes.
         /// </summary>
-        private void Render(ViewType type)
+        /// <param name="type">The view to render.</param>
+        /// <param name="async">Render the view assynchronously.</param>
+        private void Render(ViewType type, bool async = true)
         {
-            this.SuspendLayout();
-            _uiElements[UIElements.Slider] = null;
-            _mainLayout = new TableLayout
+            if (async)
             {
-                Spacing = new Eto.Drawing.Size(5, 5),
-                BackgroundColor = new Color((float)0.027, (float)0.043, (float)0.067, 1)
-            };
-
-            // Create the top row
-            CreateToolBar(_mainLayout);
-
-            switch (type)
-            {
-                case ViewType.Playing:
-                    _uiElements[UIElements.AudioButton].Visible = true;
-                    ShowPlayingContent();
-                    break;
-                case ViewType.Server:
-                    ShowServerSettings();
-                    break;
-                case ViewType.Home:
-                default:
-                    CreateMainActions();
-                    break;
+                Task.Run(delegate ()
+                {
+                    RenderSync(type);
+                });
             }
-
-            Task.Run(delegate ()
+            else
             {
-                if (this.Content != null)
+                RenderSync(type);
+            }
+        }
+
+        /// <summary>
+        /// Renders a view synchronously.
+        /// </summary>
+        /// <param name="type">The view.</param>
+        private void RenderSync(ViewType type)
+        {
+            var nativeForm = (System.Windows.Forms.Form)this.ControlObject;
+            _uiDispatcher.Invoke(delegate ()
+            {
+                if (!this.IsSuspended)
                 {
-                    var nativeTable = (System.Windows.Forms.Form)this.ControlObject;
-                    nativeTable.Invoke((System.Windows.Forms.MethodInvoker)(delegate ()
-                    {
-                        this.Content = _mainLayout;
-                        this.ResumeLayout();
-                        this.Width = this.Width == 901 ? 900 : 901;
-                    }));
+                    this.SuspendLayout();
                 }
-                else
+
+                _uiElements[UIElements.Slider] = null;
+                _mainLayout = new TableLayout
                 {
-                    this.Content = _mainLayout;
-                    this.ResumeLayout();
+                    Spacing = new Eto.Drawing.Size(5, 5),
+                    BackgroundColor = new Color((float)0.027, (float)0.043, (float)0.067, 1)
+                };
+
+                // Create the top row
+                CreateToolBar(_mainLayout);
+
+                switch (type)
+                {
+                    case ViewType.Playing:
+                        _uiElements[UIElements.AudioButton].Visible = true;
+                        ShowPlayingContent();
+                        break;
+                    case ViewType.Server:
+                        ShowServerSettings();
+                        break;
+                    case ViewType.Client:
+                        ShowClientSettings();
+                        break;
+                    case ViewType.Home:
+                    default:
+                        CreateMainActions();
+                        break;
+                }
+
+                this.Content = _mainLayout;
+                this.ResumeLayout();
+
+                if (type == ViewType.Playing)
+                {
+                    this.Width = this.Width + 1;
+                    this.Width = this.Width - 1;
                 }
             });
         }
@@ -1012,10 +1285,24 @@ namespace MusicPlayer.UI
         }
 
         /// <summary>
+        /// Removes the network client.
+        /// </summary>
+        private void RemoveNetworkClient()
+        {
+            if(_networkClient != null)
+            {
+                _networkClient.Dispose();
+                _networkClient = null;
+            }
+        }
+
+        /// <summary>
         /// Disposes off all assets.
         /// </summary>
         public new void Dispose()
         {
+            RemoveNetworkClient();
+
             if (_player != null)
             {
                 _player.Dispose();

@@ -246,9 +246,12 @@ namespace MusicPlayer.Controller
                         _networkServer.HostSong(currentSong);
                     }
 
-                    // Todo: ensure this exists
+                    if (_isReceiveMode)
+                    {
+                        gui.SetSongs(_sourceList);
+                    }
+
                     gui.SetSong(currentSong);
-                    ////gui.SetActive(this);
                 }
                 else
                 {
@@ -325,6 +328,15 @@ namespace MusicPlayer.Controller
             
             return _sourceList;
         }
+
+        /// <summary>
+        /// Sets the available songs for the player.
+        /// </summary>
+        /// <param name="songs">The songs to set.</param>
+        public void SetSongs(List<Song> songs)
+        {
+            _sourceList = songs;
+        }
          
         /// <summary>
         /// Play a song object.
@@ -335,8 +347,6 @@ namespace MusicPlayer.Controller
             if (!_sourceList.Any(ct => ct.Location == song.Location))
             {
                 _sourceList.Add(song);
-                ////gui.SetSongs(_sourceList);
-                ////gui.AddSongsToListView(sourceList);
             }
 
             this.Play(song.Location);

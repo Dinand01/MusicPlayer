@@ -32,6 +32,11 @@ namespace MusicPlayer.Models
         ServerButton,
 
         /// <summary>
+        /// The client button.
+        /// </summary>
+        ClientButton,
+
+        /// <summary>
         /// The top notification (visible on all pages).
         /// </summary>
         Notification,
@@ -62,8 +67,18 @@ namespace MusicPlayer.Models
         IPPort,
 
         /// <summary>
+        /// The ip adress textbox.
+        /// </summary>
+        IPAddress,
+
+        /// <summary>
         /// The button used to connect or disconnect a server.
         /// </summary>
-        ServerStatusButton
+        ServerStatusButton,
+
+        /// <summary>
+        /// The client status button.
+        /// </summary>
+        ClientStatusButton
     }
 }

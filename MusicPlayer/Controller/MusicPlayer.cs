@@ -25,6 +25,17 @@ namespace MusicPlayer.Controller
         #region Variables
 
         /// <summary>
+        /// A boolean indicating whether the music is being hosted.
+        /// </summary>
+        public bool Hosting
+        {
+            get
+            {
+                return hosting;
+            }
+        }
+
+        /// <summary>
         /// Conatins the list of songs (absolute paths)
         /// </summary>
         private List<Song> _sourceList;
@@ -479,7 +490,10 @@ namespace MusicPlayer.Controller
         {
             hosting = true;
             _networkServer = new NetworkServer(port, this);
-            _networkServer.HostSong(currentSong);
+            if (currentSong != null)
+            {
+                _networkServer.HostSong(currentSong);
+            }
         }
 
         /// <summary>
@@ -511,6 +525,8 @@ namespace MusicPlayer.Controller
                 _networkServer.Dispose();
                 _networkServer = null;
             }
+
+            hosting = false;
         }
 
         /// <summary>

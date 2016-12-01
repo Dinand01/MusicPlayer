@@ -70,7 +70,7 @@ namespace MusicPlayer
             };
 
             InstallSQLServerCompact();
-            new Eto.Forms.Application().Run(new EtoUI());
+            UIFactory.CreateEtoUI();
             ////Application.Run(new MusicPlayer(args));
         }
 

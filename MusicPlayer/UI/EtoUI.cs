@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using MusicPlayer.Models;
 using System.Resources;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.IO;
+using System.Net;
 
 namespace MusicPlayer.UI
 {
@@ -76,10 +76,20 @@ namespace MusicPlayer.UI
         /// Returns to the home page.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The evnt arguments.</param>
+        /// <param name="e">The event arguments.</param>
         private void HomeButton_Click(object sender, EventArgs e)
         {
             Render(ViewType.Home);
+        }
+
+        /// <summary>
+        /// Go to the server page.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void ServerButton_Click(object sender, EventArgs e)
+        {
+            Render(ViewType.Server);
         }
 
         /// <summary>
@@ -214,14 +224,14 @@ namespace MusicPlayer.UI
         {
             _uiElements = new Dictionary<UIElements, Control>();
             this.Closing += EtoUI_Closing;
-            this.Size = new Eto.Drawing.Size(1600, 700);
+            ////this.Size = new Eto.Drawing.Size(1600, 700);
             this.Title = "MusicPlayer";
             this.WindowStyle = Eto.Forms.WindowStyle.Default;
             var formHandler = (System.Windows.Forms.Form)this.ControlObject;
-            formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            formHandler.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericSerif, (float)18);
-            //formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            //formHandler.AutoScaleDimensions = new System.Drawing.SizeF((float)2.25, (float)2.25);
+            formHandler.Size = new System.Drawing.Size(900, 450);
+            formHandler.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericSerif, (float)10);
+            formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            //formHandler.AutoScaleDimensions = new System.Drawing.SizeF((float)0.2, (float)0.2);
             Render(ViewType.Home);
         }
 
@@ -232,6 +242,7 @@ namespace MusicPlayer.UI
         private void CreateToolBar(TableLayout mainLayout)
         {
             _uiElements[UIElements.HomeButton] = CreateToolBarbutton("Return to home", Resource.GetImage("Home-96.png"), HomeButton_Click);
+            _uiElements[UIElements.ServerButton] = CreateToolBarbutton("Host server", Resource.GetImage("Satellite Sending Signal-96.png"), ServerButton_Click, _player != null && _player.Hosting);
             _uiElements[UIElements.AudioButton] = CreateToolBarbutton("Currently Playing", Resource.GetImage("Speaker-96.png"), AudioButton_Click, _player != null && _player.IsPlaying());
             _uiElements[UIElements.Notification] = new Label
             {
@@ -247,7 +258,7 @@ namespace MusicPlayer.UI
                         Control = new TableLayout
                         {
                             Spacing = new Eto.Drawing.Size(5, 5),
-                            Padding = new Padding(0, 0, 0, 5),
+                            Padding = new Padding(0, 0, 0, 2),
                             Rows =
                             {
                                 new TableRow
@@ -262,6 +273,11 @@ namespace MusicPlayer.UI
                                         new TableCell
                                         {
                                             Control = _uiElements[UIElements.AudioButton],
+                                            ScaleWidth = false
+                                        },
+                                        new TableCell
+                                        {
+                                            Control = _uiElements[UIElements.ServerButton],
                                             ScaleWidth = false
                                         },
                                         new TableCell
@@ -287,11 +303,11 @@ namespace MusicPlayer.UI
         /// <param name="handler">The handler.</param>
         /// <param name="visible">A boolean indicating whether the button should be visible.</param>
         /// <returns>The button.</returns>
-        private Button CreateToolBarbutton(string toolTip, Bitmap image, EventHandler<EventArgs> handler, bool visible = true, int width = 45)
+        private Button CreateToolBarbutton(string toolTip, Bitmap image, EventHandler<EventArgs> handler, bool visible = true, int width = 22)
         {
             var button = new Button
             {
-                Image = new Bitmap(image, 45, 45),
+                Image = new Bitmap(image, 22, 22),
                 Width = width,
                 BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary2],
                 ToolTip = toolTip,
@@ -315,16 +331,35 @@ namespace MusicPlayer.UI
             TableLayout actionsLayout = new TableLayout();
             TableRow mainActions = new TableRow();
             mainActions.ScaleHeight = false;
-            mainActions.Cells.Add(null);
+            mainActions.Cells.Add(new TableCell { ScaleWidth = true });
             mainActions.Cells.Add(CreateActionCell(OpenFromFile_Click, "Open files", Resource.GetImage("Audio File-96.png")));
-            mainActions.Cells.Add(null);
+            mainActions.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions.Cells.Add(new TableCell { ScaleWidth = false });
+            mainActions.Cells.Add(new TableCell { ScaleWidth = true });
             mainActions.Cells.Add(CreateActionCell(OpenFromFolder_Click, "Open files in folder", Resource.GetImage("Open Folder-96.png")));
-            mainActions.Cells.Add(null);
+            mainActions.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions.Cells.Add(new TableCell { ScaleWidth = false });
+            mainActions.Cells.Add(new TableCell { ScaleWidth = true });
             mainActions.Cells.Add(CreateActionCell(OpenFromFile_Click, "Open", Resource.GetImage("Copy Filled-100.png")));
-            mainActions.Cells.Add(null);
+            mainActions.Cells.Add(new TableCell { ScaleWidth = true });
             actionsLayout.Rows.Add(null);
             actionsLayout.Rows.Add(mainActions);
             actionsLayout.Rows.Add(null);
+            TableRow mainActions2 = new TableRow();
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = false });
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions2.Cells.Add(CreateActionCell(ServerButton_Click, "Host stream", Resource.GetImage("Satellite Sending Signal-96.png")));
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = false });
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions2.Cells.Add(CreateActionCell(OpenFromFile_Click, "Connect to stream", Resource.GetImage("GPS Searching-96.png")));
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = false });
+            mainActions2.Cells.Add(new TableCell { ScaleWidth = true });
+            actionsLayout.Rows.Add(mainActions2);
+            actionsLayout.Rows.Add(null);
+
             contentCell.Control = actionsLayout;
         }
 
@@ -338,7 +373,7 @@ namespace MusicPlayer.UI
         private TableCell CreateActionCell(EventHandler<EventArgs> handler, string toolTip, Bitmap image)
         {
             Button openFromFile = new Button();
-            openFromFile.ToolTip = "Open";
+            openFromFile.ToolTip = toolTip;
             openFromFile.ImagePosition = ButtonImagePosition.Above;
             openFromFile.BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary0];
             openFromFile.MouseEnter += (sender, e) =>
@@ -351,8 +386,8 @@ namespace MusicPlayer.UI
                 ((Button)sender).BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary0];
             };
 
-            openFromFile.Image = new Bitmap(image, 94, 94);
-            openFromFile.MinimumSize = new Eto.Drawing.Size(200, 200);
+            openFromFile.Image = new Bitmap(image, 50, 50);
+            openFromFile.MinimumSize = new Eto.Drawing.Size(100, 100);
 
             openFromFile.Click += handler;
             var systemButton = ((System.Windows.Forms.Button)openFromFile.ControlObject);
@@ -372,13 +407,13 @@ namespace MusicPlayer.UI
         private void ShowPlayingContent()
         {
             var contentCell = GetContent();
-            _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, true, 112);
-            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, true, 112);
+            _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, true, 56);
+            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, true, 56);
             _uiElements[UIElements.Slider] = new Slider
             {
-                Width = 300,
+                Width = 150,
                 Cursor = Cursors.VerticalSplit,
-                Height = 35,
+                Height = 17,
                 MinValue = 0
             };
 
@@ -451,23 +486,22 @@ namespace MusicPlayer.UI
             };
 
             RenderPartialSongList(songTable, string.Empty);
-
             _uiElements[UIElements.MusicList] = new Scrollable
             {
                 Border = BorderType.None,
-                ScrollSize = new Eto.Drawing.Size(5, 5)
+                Content = songTable
             };
 
             var nativeScrollable = (System.Windows.Forms.ScrollableControl)_uiElements[UIElements.MusicList].ControlObject;
-            ((Scrollable)_uiElements[UIElements.MusicList]).Content = songTable;
+            ((Scrollable)_uiElements[UIElements.MusicList]).UpdateScrollSizes();
 
             var filterbox = new TextBox
             {
                 ToolTip = "Search",
-                Width = 285,
+                Width = 142,
                 ShowBorder = false,
                 PlaceholderText = "Filter",
-                Height = 30,
+                Height = 15,
                 BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary3],
                 TextColor = Colors.White
             };
@@ -496,7 +530,7 @@ namespace MusicPlayer.UI
                                             ScaleWidth = true,
                                             Control = new TableLayout
                                             {
-                                                Padding = new Padding(5, 5),
+                                                Padding = new Padding(2, 2),
                                                 Rows =
                                                 {
                                                     new TableRow
@@ -547,7 +581,7 @@ namespace MusicPlayer.UI
             {
                 _player.PausePlay(null, null);
                 string resource = _player.IsPlaying() ? "Pause-96.png" : "Play-96.png";
-                ((Button)_uiElements[UIElements.PlayPauseButton]).Image = new Bitmap(Resource.GetImage(resource), 45, 45);
+                ((Button)_uiElements[UIElements.PlayPauseButton]).Image = new Bitmap(Resource.GetImage(resource), 25, 25);
             }
         }
 
@@ -667,11 +701,11 @@ namespace MusicPlayer.UI
         {
             return new Control[]
             {
-               CreateSongLabel(song, song != null ? song.Title : string.Empty, "Title"),
-               CreateSongLabel(song, song != null ? song.Band : string.Empty, "Band"),
-               CreateSongLabel(song, song != null ? song.Gengre : string.Empty, "Gengre"),
-               CreateSongLabel(song, song != null ? song.DateAdded.ToString() : string.Empty, "Date Added"),
-               CreateSongLabel(song, song != null ? song.DateCreated.ToString() : string.Empty, "Date Created")
+               CreateSongLabel(song, song != null ? song.Title : "Test", "Title"),
+               CreateSongLabel(song, song != null ? song.Band : "Test", "Band"),
+               CreateSongLabel(song, song != null ? song.Gengre : "Test", "Gengre"),
+               CreateSongLabel(song, song != null ? song.DateAdded.ToString() : "Test", "Date Added"),
+               CreateSongLabel(song, song != null ? song.DateCreated.ToString() : "Test", "Date Created")
             };
         }
 
@@ -691,7 +725,9 @@ namespace MusicPlayer.UI
                 Cursor = new Cursor(CursorType.Pointer),
                 DataContext = song,
                 TextColor = Colors.White,
-                Visible = song == null ? false : true
+                Visible = song == null ? false : true,
+                 VerticalAlignment = Eto.Forms.VerticalAlignment.Center,
+                Width = 100
             };
 
             l.MouseDoubleClick += L_MouseDoubleClick;
@@ -710,6 +746,164 @@ namespace MusicPlayer.UI
             if(song != null)
             {
                 _player.Load(song);
+            }
+        }
+
+        #endregion
+
+        #region Server
+
+        /// <summary>
+        /// Shows the server settings page.
+        /// </summary>
+        private void ShowServerSettings()
+        {
+            var contentCell = GetContent();
+            _uiElements[UIElements.IPPort] = new TextBox
+            {
+                Text = "8963",
+                ToolTip = "The port the server will be hosted on",
+                PlaceholderText = "Please enter a port (TCP)",
+                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary1],
+                TextColor = Colors.White
+            };
+
+            var nativePort = (System.Windows.Forms.TextBox)_uiElements[UIElements.IPPort].ControlObject;
+            nativePort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            nativePort.Font = new System.Drawing.Font(nativePort.Font.FontFamily, 14);
+            nativePort.Margin = new System.Windows.Forms.Padding(5);
+
+            var serverStatusButton = new Button
+            {
+                Text = _player != null && _player.Hosting ? "Disconnect" : "Stream",
+                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary2],
+                TextColor = Colors.White,
+                Font = new Font(SystemFont.TitleBar, 8),
+            };
+
+            serverStatusButton.Click += ServerStatusButton_Click;
+            var nativebutton = (System.Windows.Forms.Button)serverStatusButton.ControlObject;
+            nativebutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            nativebutton.FlatAppearance.BorderSize = 0;
+            _uiElements[UIElements.ServerButton] = serverStatusButton;
+
+            TableLayout content = new TableLayout
+            {
+                Rows =
+                {
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            null,
+                            new TableCell
+                            {
+                                ScaleWidth = false,
+                                Control = new Label
+                                {
+                                    Text = "Host a stream",
+                                    TextAlignment = Eto.Forms.TextAlignment.Center,
+                                    Font = new Font(SystemFont.TitleBar, 12),
+                                    TextColor = ColorPallete.Colors[ColorPallete.Color.Primary1],
+                                    ToolTip = "Remember to forward the port below to your local ip adres when hosting a stream over the internet"
+                                }
+                            },
+                            null
+                        }
+                    },
+                    null,
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            null,
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null, 
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.IPPort]
+                                                },
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            null
+                        }
+                    },
+                    null,
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            null,
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null,
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.ServerButton]
+                                                },
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            null
+                        }
+                    },
+                    null
+                }
+            };
+
+            contentCell.Control = content;
+        }
+
+        /// <summary>
+        /// Connects of disconnects a server.
+        /// </summary>
+        /// <param name="sender">The button.</param>
+        /// <param name="e">The event arguments.</param>
+        private void ServerStatusButton_Click(object sender, EventArgs e)
+        {
+            EnsurePlayer();
+            if (!_player.Hosting)
+            {
+                string port = ((TextBox)_uiElements[UIElements.IPPort]).Text;
+                int parsedPort = 0;
+                if (int.TryParse(port, out parsedPort))
+                {
+                    _player.StartAudioServer(IPAddress.Loopback, parsedPort);
+                    Render(ViewType.Home);
+                }
+                else
+                {
+                    MessageBox.Show("The entered port was not a number", MessageBoxType.Warning);
+                }
+            }
+            else
+            {
+                _player.DisconnectFromAudioServer();
+                Render(ViewType.Home);
             }
         }
 
@@ -780,6 +974,9 @@ namespace MusicPlayer.UI
                     _uiElements[UIElements.AudioButton].Visible = true;
                     ShowPlayingContent();
                     break;
+                case ViewType.Server:
+                    ShowServerSettings();
+                    break;
                 case ViewType.Home:
                 default:
                     CreateMainActions();
@@ -795,6 +992,7 @@ namespace MusicPlayer.UI
                     {
                         this.Content = _mainLayout;
                         this.ResumeLayout();
+                        this.Width = this.Width == 901 ? 900 : 901;
                     }));
                 }
                 else

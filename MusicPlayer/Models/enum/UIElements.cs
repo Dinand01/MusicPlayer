@@ -27,6 +27,11 @@ namespace MusicPlayer.Models
         AudioButton,
 
         /// <summary>
+        /// The button to access the server page.
+        /// </summary>
+        ServerButton,
+
+        /// <summary>
         /// The top notification (visible on all pages).
         /// </summary>
         Notification,
@@ -49,6 +54,16 @@ namespace MusicPlayer.Models
         /// <summary>
         /// The label that displays the current song.
         /// </summary>
-        CurrentSong
+        CurrentSong,
+
+        /// <summary>
+        /// The entered ip port.
+        /// </summary>
+        IPPort,
+
+        /// <summary>
+        /// The button used to connect or disconnect a server.
+        /// </summary>
+        ServerStatusButton
     }
 }

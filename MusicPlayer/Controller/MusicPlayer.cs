@@ -56,6 +56,11 @@ namespace MusicPlayer.Controller
         private bool _isCopying;
 
         /// <summary>
+        /// The currently set volume.
+        /// </summary>
+        private int _volume = 100;
+
+        /// <summary>
         /// Indicates that the class is disposing, all threads should have this var in the while loop.
         /// </summary>
         private bool _disposing = false;
@@ -91,6 +96,7 @@ namespace MusicPlayer.Controller
         {
             this.gui = gui;
             waveOutDevice = new WaveOut();
+            _volume = (int)waveOutDevice.Volume * 100;
             _sourceList = new List<Song>();
             waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
             locker = false;
@@ -232,6 +238,7 @@ namespace MusicPlayer.Controller
                 locker = false;
                 waveOutDevice = new WaveOut();
                 waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
+                SetVolume(_volume);
             }
 
             string extension = Path.GetExtension(path);
@@ -250,7 +257,6 @@ namespace MusicPlayer.Controller
                     RepositionInRead = true,
                     SingleReaderObject = true
                 });
-                //playstream = new MediaFoundationReader(path);
 
                 if (playstream != null)
                 {
@@ -363,6 +369,27 @@ namespace MusicPlayer.Controller
             {
                 MessageBox.Show("Error: " + key + " not found!");
             }
+        }
+
+        /// <summary>
+        /// Sets the volume of the waveout device.
+        /// </summary>
+        /// <param name="percentage">The volume in percentage.</param>
+        public void SetVolume(int percentage)
+        {
+            if (percentage <= 100 && percentage > -1)
+            {
+                _volume = percentage;
+                waveOutDevice.Volume = percentage / (float)100;
+            }
+        }
+
+        /// <summary>
+        /// Gets the volume.
+        /// </summary>
+        public int GetVolume()
+        {
+            return _volume;
         }
 
         /// <summary>

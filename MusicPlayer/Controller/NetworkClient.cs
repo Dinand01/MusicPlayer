@@ -72,6 +72,32 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// Gets the volume of the embedded player.
+        /// </summary>
+        /// <returns>The volume.</returns>
+        public int GetVolume()
+        {
+            if(_player != null)
+            {
+                return _player.GetVolume();
+            }
+
+            return 100;
+        }
+
+        /// <summary>
+        /// Sets the volume of the embedded player.
+        /// </summary>
+        /// <param name="value">The volume.</param>
+        public void SetVolume(int value)
+        {
+            if(_player != null)
+            {
+                _player.SetVolume(value);
+            }
+        }
+
+        /// <summary>
         /// Disposes of this thread;
         /// </summary>
         public void Dispose()

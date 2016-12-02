@@ -539,12 +539,14 @@ namespace MusicPlayer.UI
                 Cursor = Cursors.VerticalSplit,
                 Height = 17,
                 MinValue = 0,
+                ToolTip = "Song position",
                 Enabled = _networkClient == null
             };
 
             var nativeSlider = (System.Windows.Forms.TrackBar)_uiElements[UIElements.Slider].ControlObject;
             nativeSlider.TickStyle = System.Windows.Forms.TickStyle.None;
             nativeSlider.Scroll += NativeSlider_Scroll;
+
             _uiElements[UIElements.CurrentSong] = new Label
             {
                 TextColor = ColorPallete.Colors[ColorPallete.Color.Primary4],
@@ -635,6 +637,21 @@ namespace MusicPlayer.UI
             var nativeFilterBox = (System.Windows.Forms.TextBox)filterbox.ControlObject;
             nativeFilterBox.Padding = new System.Windows.Forms.Padding(5);
 
+            var volume = new Slider
+            {
+                Width = 65,
+                Cursor = Cursors.VerticalSplit,
+                Height = 13,
+                MinValue = 0,
+                MaxValue = 100,
+                ToolTip = "Volume",
+                Value = _player != null ? _player.GetVolume() : _networkClient.GetVolume()
+            };
+
+            var nativeVolume = (System.Windows.Forms.TrackBar)volume.ControlObject;
+            nativeVolume.TickStyle = System.Windows.Forms.TickStyle.None;
+            nativeVolume.Scroll += NativeVolume_Scroll;
+
             TableRow contentRow = new TableRow
             {
                 Cells =
@@ -662,6 +679,10 @@ namespace MusicPlayer.UI
                                                     {
                                                         Cells =
                                                         {
+                                                            new TableCell
+                                                            {
+                                                                Control = volume
+                                                            },
                                                             null,
                                                             new TableCell
                                                             {
@@ -693,6 +714,25 @@ namespace MusicPlayer.UI
 
             contentLayout.Rows.Add(contentRow);
             contentCell.Control = contentLayout;
+        }
+
+        /// <summary>
+        /// Event handler for the volume change.
+        /// </summary>
+        /// <param name="sender">The forms trackbar.</param>
+        /// <param name="e">The event arguments.</param>
+        private void NativeVolume_Scroll(object sender, EventArgs e)
+        {
+            int volume = ((System.Windows.Forms.TrackBar)sender).Value;
+            if(_player != null)
+            {
+                _player.SetVolume(volume);
+            }
+
+            if(_networkClient != null)
+            {
+                _networkClient.SetVolume(volume);
+            }
         }
 
         /// <summary>

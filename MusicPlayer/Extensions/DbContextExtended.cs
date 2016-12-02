@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlServerCe;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.SqlServer;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using MusicPlayer.DAL;
 using System.Data.Entity.SqlServerCompact;
 
 namespace MusicPlayer.Extensions
@@ -29,7 +20,7 @@ namespace MusicPlayer.Extensions
         {
             SetProviderServices("System.Data.SqlServerCe.4.0", SqlCeProviderServices.Instance);
 
-            SetExecutionStrategy("System.Data.SqlServerCe.4.0", () => new SqlAzureExecutionStrategy());
+            SetExecutionStrategy("System.Data.SqlServerCe.4.0", () => new SqlAzureExecutionStrategy(10, new TimeSpan(0,0,0,1)));
             SetDefaultConnectionFactory(new LocalDbConnectionFactory("v4.0"));
         }
 

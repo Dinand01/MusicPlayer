@@ -46,7 +46,16 @@ namespace MusicPlayer.Controller
             var song = this.databaseSongs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
             if (song == null)
             {
-                song = _db.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
+                try
+                {
+                    song = _db.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
+                }
+                catch
+                {
+                    // Memory was in use
+                    // TODO: create single point of access for db
+                }
+
                 if(song != null)
                 {
                     song.SourceIsDb = true;
@@ -86,12 +95,7 @@ namespace MusicPlayer.Controller
             {
                 if (!this.databaseSongs.Any(ct => ct.Location == song.Location) && !_db.Songs.Any(ct => ct.Location == song.Location))
                 {
-                    try
-                    {
-                        dbSongQue.Add(song);
-                    }
-                    catch { }
-
+                    dbSongQue.Add(song);
                     this.databaseSongs.Add(song);
                     Task.Delay(10000).ContinueWith(t => AddsongsTodbThread());
                 }

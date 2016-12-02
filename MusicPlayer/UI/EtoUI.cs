@@ -770,7 +770,7 @@ namespace MusicPlayer.UI
                 IEnumerable<Song> songList = _player == null ? _networkClient.ReceivedSongs : _player.SongList;
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    songList = _player.SongList.Where(s => s.Title.ToLower().Contains(searchTerm.ToLower()) || s.Band != null && s.Band.ToLower().Contains(searchTerm.ToLower()));
+                    songList = _player.SongList.Where(s => s.Title.ToLower().Contains(searchTerm.ToLower()) || (s.Band != null && s.Band.ToLower().Contains(searchTerm.ToLower())));
                 }
 
                 songList = songList.OrderBy(s => s.Band).ThenBy(s => s.Title).Take(100).ToList();
@@ -784,12 +784,12 @@ namespace MusicPlayer.UI
 
                 var songListResult = songList.ToList();
                 int row = 0;
-                for (; row < songList.Count(); row++)
+                for (; row < songListResult.Count; row++)
                 {
                     var song = songListResult[row];
                     if (!song.SourceIsDb)
                     {
-                        song = _player.GetDetailsFromDbOrFile(song);
+                     song = _player.GetDetailsFromDbOrFile(song);
                     }
 
                     var rowLabels = songTable.Rows[row].Cells.Select(c => c.Control).OfType<Label>().ToList();
@@ -804,7 +804,6 @@ namespace MusicPlayer.UI
                     rowLabels[2].Text = song.Gengre;
                     rowLabels[3].Text = song.DateAdded.ToString();
                     rowLabels[4].Text = song.DateCreated.ToString();
-                    row++;
                 }
 
                 if(row < 100)

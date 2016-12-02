@@ -76,12 +76,37 @@ namespace MusicPlayer.UI
         /// <summary>
         /// Initializes a new instance of the <see cref="EtoUI" /> class.
         /// </summary>
-        public EtoUI()
+        public EtoUI() : base(null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EtoUI" /> class.
+        /// </summary>
+        /// <param name="args">The arguments (files).</param>
+        public EtoUI(string[] args)
         {
             AddControls();
             _filterDelay = new UITimer();
             _filterDelay.Interval = 0.5;
             _filterDelay.Elapsed += FilterDelay_Elapsed;
+            if(args != null && args.Length > 0)
+            {
+                try
+                {
+                    EnsurePlayer();
+                    var temp = _player.LoadAll(args);
+                    _player.Play(temp.FirstOrDefault());
+                    if (_player.IsPlaying())
+                    {
+                        Render(ViewType.Home);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Invalid file", MessageBoxType.Warning);
+                }
+            }
         }
 
         #endregion
@@ -310,14 +335,12 @@ namespace MusicPlayer.UI
             _uiElements = new Dictionary<UIElements, Control>();
             this.Closing += EtoUI_Closing;
             this.Icon = new Icon(1, Resource.GetImage("Music-96.png"));
-            ////this.Size = new Eto.Drawing.Size(1600, 700);
-            this.Title = "MusicPlayer";
-            this.WindowStyle = Eto.Forms.WindowStyle.Default;
+            this.Title = "Musicplayer";
+            this.WindowStyle = WindowStyle.Default;
             var formHandler = (System.Windows.Forms.Form)this.ControlObject;
             formHandler.Size = new System.Drawing.Size(900, 450);
             formHandler.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericSerif, (float)10);
             formHandler.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            //formHandler.AutoScaleDimensions = new System.Drawing.SizeF((float)0.2, (float)0.2);
             Render(ViewType.Home);
         }
 

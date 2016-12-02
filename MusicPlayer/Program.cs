@@ -77,8 +77,7 @@ namespace MusicPlayer
             };
 
             InstallSQLServerCompact();
-            UIFactory.CreateEtoUI();
-            ////Application.Run(new MusicPlayer(args));
+            UIFactory.CreateEtoUI(args);
         }
 
         /// <summary>

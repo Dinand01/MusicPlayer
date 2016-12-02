@@ -69,6 +69,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Music-96.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -147,47 +150,13 @@
     <Compile Include="Models\enum\UIElements.cs" />
     <Compile Include="Models\enum\ViewType.cs" />
     <Compile Include="Models\Message.cs" />
-    <Compile Include="MusicPlayer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MusicPlayer.Designer.cs">
-      <DependentUpon>MusicPlayer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI.cs" />
     <Compile Include="Models\Song.cs" />
-    <Compile Include="OpenSpecial.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OpenSpecial.Designer.cs">
-      <DependentUpon>OpenSpecial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controller\MusicPlayer.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Progress.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Progress.Designer.cs">
-      <DependentUpon>Progress.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CopyRandomSongs.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CopyRandomSongs.Designer.cs">
-      <DependentUpon>CopyRandomSongs.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\EtoUI.cs" />
     <Compile Include="UI\IUI.cs" />
     <Compile Include="UI\UIFactory.cs" />
-    <EmbeddedResource Include="MusicPlayer.resx">
-      <DependentUpon>MusicPlayer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OpenSpecial.resx">
-      <DependentUpon>OpenSpecial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Progress.resx">
-      <DependentUpon>Progress.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -198,9 +167,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="CopyRandomSongs.resx">
-      <DependentUpon>CopyRandomSongs.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -257,9 +223,6 @@
     <EmbeddedResource Include="Resources\Audio File-96.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Packages\widevinecdmadapter.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\Satellite Sending Signal-96.png" />
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +230,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Music-96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Music-96.ico" />
+    <Content Include="Resources\Music-96.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

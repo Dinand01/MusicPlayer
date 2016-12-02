@@ -15,9 +15,10 @@ namespace MusicPlayer.UI
         /// <summary>
         /// creates the ETO based UI.
         /// </summary>
-        public static void CreateEtoUI()
+        ///<param name="args">The arguments.</param>
+        public static void CreateEtoUI(string[] args = null)
         {
-            new Application().Run(new EtoUI());
+            new Application().Run(new EtoUI(args));
         }
     }
 }

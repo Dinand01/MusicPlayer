@@ -1,6 +1,8 @@
 # MusicPlayer
 A .NET music player capable of streaming music to multiple clients over TCP.
 
+![Alt Text](https://cloud.githubusercontent.com/assets/5968317/20836835/7ffef63e-b8a1-11e6-905d-40233ea39408.JPG)
+
 Available functionality:
 
     Audio playback for all files supported by the system

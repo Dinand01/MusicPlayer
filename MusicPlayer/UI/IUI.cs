@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MusicPlayer.UI
 {
+    /// <summary>
+    /// The interface for a user interface.
+    /// </summary>
     internal interface IUI
     {
         void SetSongDuration(TimeSpan duration);
@@ -18,5 +21,7 @@ namespace MusicPlayer.UI
         void SetSongPosition(TimeSpan currentTime);
 
         void SetNotification(string message);
+
+        void SetCopyProgress(int value, int total);
     }
 }

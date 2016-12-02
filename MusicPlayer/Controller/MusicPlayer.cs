@@ -25,17 +25,6 @@ namespace MusicPlayer.Controller
         #region Variables
 
         /// <summary>
-        /// A boolean indicating whether the music is being hosted.
-        /// </summary>
-        public bool Hosting
-        {
-            get
-            {
-                return hosting;
-            }
-        }
-
-        /// <summary>
         /// Conatins the list of songs (absolute paths)
         /// </summary>
         private List<Song> _sourceList;
@@ -60,6 +49,11 @@ namespace MusicPlayer.Controller
         /// Indicates whether the class is owned by another class and is only receiving commands.
         /// </summary>
         private bool _isReceiveMode;
+
+        /// <summary>
+        /// A boolean indicating whether files are being copied.
+        /// </summary>
+        private bool _isCopying;
 
         /// <summary>
         /// Indicates that the class is disposing, all threads should have this var in the while loop.
@@ -108,6 +102,17 @@ namespace MusicPlayer.Controller
         #region PlayerInformation
 
         /// <summary>
+        /// A boolean indicating whether the music is being hosted.
+        /// </summary>
+        public bool Hosting
+        {
+            get
+            {
+                return hosting;
+            }
+        }
+
+        /// <summary>
         /// Returns a boolean whether the player is playing.
         /// </summary>
         /// <returns>The boolean.</returns>
@@ -119,6 +124,15 @@ namespace MusicPlayer.Controller
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets a boolean indcating whether files are being copied.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsCopying()
+        {
+            return _isCopying;
         }
 
         /// <summary>
@@ -287,45 +301,27 @@ namespace MusicPlayer.Controller
         /// <param name="files">The file locations.</param>
         /// <param name="number">The number of files to load.</param>
         /// <returns>A List of songs.</returns>
-        public List<Song> LoadAll(string[] files, int? number){
+        public List<Song> LoadAll(string[] files)
+        {
             if (waveOutDevice != null && waveOutDevice.PlaybackState != PlaybackState.Stopped)
             {
                 locker = true;
                 waveOutDevice.Stop();
             }
 
-            List<Song> filestoload = new List<Song>();
-
-            if (number != null)
+            _sourceList = new List<Song>();
+            foreach (string st in files)
             {
-                Random r = new Random();
-                while (filestoload.Count < number) 
+                string ex = Path.GetExtension(st).ToLower();
+                if ((ex == ".mp3" || ex == ".flac" || ex == ".wma") && st.IndexOfAny(System.IO.Path.GetInvalidPathChars()) < 0)
                 {
-                    filestoload.Add(new Song(TakeRandom(files)));
+                    Song newSong = new Song(st);
+                    _sourceList.Add(newSong);
                 }
-            }
-
-            if (filestoload.Count == 0)
-            {
-                _sourceList = new List<Song>();
-                foreach (string st in files)
-                {
-                    string ex = Path.GetExtension(st).ToLower();
-                    if ((ex == ".mp3" || ex == ".flac" || ex == ".wma") && st.IndexOfAny(System.IO.Path.GetInvalidPathChars()) < 0)
-                    {
-                        Song newSong = new Song(st);
-                        _sourceList.Add(newSong);
-                    }
-                }
-            }
-            else 
-            {
-                _sourceList = filestoload;
             }
 
             //NextRandomSong();
             EnrichSource(null);
-            
             return _sourceList;
         }
 
@@ -399,10 +395,50 @@ namespace MusicPlayer.Controller
         /// Copies all songs from the sourcelist to the destination folder
         /// </summary>
         /// <param name="destination"></param>
-        public void CopyRandomSongs(string destination)
+        public void CopyRandomSongs(string destination, int amount)
         {
-            List<Song> copylist = this._sourceList.ToList();
-            new Thread(() => new Progress(copylist, destination).ShowDialog()).Start();
+            List<Song> copylist = new List<Song>();
+            if(this._sourceList.Count <= amount)
+            {
+                copylist = this._sourceList;
+            }
+            else
+            {
+                while(copylist.Count < amount)
+                {
+                    copylist.Add(TakeRandom(copylist));
+                }
+            }
+
+            _isCopying = true;
+            Task.Run(() => Copy(copylist, destination));
+        }
+
+        /// <summary>
+        /// Copies the source files to the destination.
+        /// </summary>
+        /// <param name="source">The files to copy.</param>
+        /// <param name="destination">The destination.</param>
+        private void Copy(List<Song> source, string destination)
+        {
+            for (int i = 0; i < source.Count; i++)
+            {
+                _isCopying = true;
+                string path = source[i].Location;
+                gui.SetCopyProgress((int)(((i + 1) / (double)source.Count) * 100), 100);
+
+                try
+                {
+                    System.IO.File.Copy(path, destination + "\\" + Path.GetFileName(path), true);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
+
+            _isCopying = false;
+            gui.SetCopyProgress(100, 100);
         }
 
         /// <summary>
@@ -523,13 +559,6 @@ namespace MusicPlayer.Controller
         /// </summary>
         public void DisconnectFromAudioServer()
         {
-            if (waveOutDevice.PlaybackState == PlaybackState.Playing || waveOutDevice.PlaybackState == PlaybackState.Paused)
-            {
-                locker = true;
-                waveOutDevice.Stop();
-                locker = false;
-            }
-
             if (_networkServer != null)
             {
                 _networkServer.Dispose();
@@ -540,19 +569,14 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
-        /// Takes a random valid song
+        /// Takes a random valid song.
         /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        private string TakeRandom(string[] list)
+        /// <param name="list">The already chosen song, they will not be chosen again.</param>
+        /// <returns>A random song.</returns>
+        private Song TakeRandom(List<Song> alreadyChosenSongs)
         {
-            string rand = list[random.Next(0, list.Length - 1)];
-            string ex = Path.GetExtension(rand).ToLower();
-            if (!(ex == ".mp3" || ex == ".flac" || ex == ".wma"))
-            {
-                rand = TakeRandom(list);
-            }
-
+            List<Song> pool = this._sourceList.Except(alreadyChosenSongs).ToList();
+            Song rand = pool[random.Next(0, pool.Count - 1)];
             return rand;
         }
 

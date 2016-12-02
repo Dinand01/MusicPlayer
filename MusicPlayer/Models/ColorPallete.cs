@@ -66,5 +66,15 @@ namespace MusicPlayer.Models
                 ScR = col.R
             });
         }
+
+        /// <summary>
+        /// Extension Method to convert to a system color.
+        /// </summary>
+        /// <param name="col">The eto color.</param>
+        /// <returns>The system color.</returns>
+        public static System.Drawing.Color ToColor(this Eto.Drawing.Color col)
+        {
+            return System.Drawing.Color.FromArgb(col.Ab, col.Rb, col.Gb, col.Bb);
+        }
     }
 }

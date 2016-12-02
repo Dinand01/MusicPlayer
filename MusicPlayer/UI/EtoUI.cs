@@ -26,7 +26,7 @@ namespace MusicPlayer.UI
         /// <summary>
         /// The main music player logic.
         /// </summary>
-        private Player _player;
+        private Player _player, _copyFiles;
 
         /// <summary>
         /// The main table layout.
@@ -52,6 +52,11 @@ namespace MusicPlayer.UI
         /// The current song to display.
         /// </summary>
         private string _currentSong;
+
+        /// <summary>
+        /// The copy files directories.
+        /// </summary>
+        private string _sourceDir, _destDir;
 
         /// <summary>
         /// The duration of the current song.
@@ -124,6 +129,16 @@ namespace MusicPlayer.UI
         }
 
         /// <summary>
+        /// Opens the copy window.
+        /// </summary>
+        /// <param name="sender"><The button./param>
+        /// <param name="e">The evnt args.</param>
+        private void OpenCopy_Click(object sender, EventArgs e)
+        {
+            Render(ViewType.Copy);
+        }
+
+        /// <summary>
         /// Loads the files selected in a file dialog.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -139,7 +154,7 @@ namespace MusicPlayer.UI
             if (result == DialogResult.Ok)
             {
                 RemoveNetworkClient();
-                List<Song> temp = _player.LoadAll(openFileDialog1.Filenames.ToArray(), null);
+                List<Song> temp = _player.LoadAll(openFileDialog1.Filenames.ToArray());
                 Render(ViewType.Playing);
                 _player.Play(temp.FirstOrDefault());
             }
@@ -161,7 +176,7 @@ namespace MusicPlayer.UI
                     RemoveNetworkClient();
                     EnsurePlayer();
                     string folder = dialog.Directory;
-                    List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories), null);
+                    List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories));
                     Render(ViewType.Playing);
                     _player.Play(temp.FirstOrDefault());
                 }
@@ -185,6 +200,33 @@ namespace MusicPlayer.UI
                 {
                     ((Slider)_uiElements[UIElements.Slider]).MaxValue = (int)duration.TotalMilliseconds;
                     ((Slider)_uiElements[UIElements.Slider]).Value = 0;
+                }
+            });
+        }
+
+        /// <summary>
+        /// Sets the progress of the copy thread.
+        /// </summary>
+        /// <param name="value">The current value.</param>
+        /// <param name="total">The maximum value.</param>
+        public void SetCopyProgress(int value, int total)
+        {
+            _uiDispatcher.Invoke(delegate ()
+            {
+                if (_uiElements.ContainsKey(UIElements.CopyProgress) && _uiElements[UIElements.CopyProgress] != null)
+                {
+                    ((ProgressBar)_uiElements[UIElements.CopyProgress]).MaxValue = total;
+                    ((ProgressBar)_uiElements[UIElements.CopyProgress]).Value = value;
+                }
+
+                if(value == total || !_copyFiles.IsCopying())
+                {
+                    _destDir = _sourceDir = string.Empty;
+                    if (_copyFiles != null)
+                    {
+                        _copyFiles.Dispose();
+                        _copyFiles = null;
+                    }
                 }
             });
         }
@@ -267,6 +309,7 @@ namespace MusicPlayer.UI
         {
             _uiElements = new Dictionary<UIElements, Control>();
             this.Closing += EtoUI_Closing;
+            this.Icon = new Icon(1, Resource.GetImage("Music-96.png"));
             ////this.Size = new Eto.Drawing.Size(1600, 700);
             this.Title = "MusicPlayer";
             this.WindowStyle = Eto.Forms.WindowStyle.Default;
@@ -287,7 +330,8 @@ namespace MusicPlayer.UI
             _uiElements[UIElements.HomeButton] = CreateToolBarbutton("Return to home", Resource.GetImage("Home-96.png"), HomeButton_Click);
             _uiElements[UIElements.ServerButton] = CreateToolBarbutton("Host server", Resource.GetImage("Satellite Sending Signal-96.png"), ServerButton_Click, _player != null && _player.Hosting);
             _uiElements[UIElements.ClientButton] = CreateToolBarbutton("Connect to a stream", Resource.GetImage("GPS Searching-96.png"), ClientButton_Click, _networkClient != null);
-            _uiElements[UIElements.AudioButton] = CreateToolBarbutton("Currently Playing", Resource.GetImage("Speaker-96.png"), AudioButton_Click, _player != null && _player.IsPlaying());
+            _uiElements[UIElements.AudioButton] = CreateToolBarbutton("Currently Playing", Resource.GetImage("Speaker-96.png"), AudioButton_Click, (_player != null && _player.IsPlaying()) || _networkClient != null);
+            _uiElements[UIElements.CopyButton] = CreateToolBarbutton("Currently copying", Resource.GetImage("Copy Filled-100.png"), OpenCopy_Click, _copyFiles != null && _copyFiles.IsCopying());
             _uiElements[UIElements.Notification] = new Label
             {
                 Text = string.Empty
@@ -301,7 +345,7 @@ namespace MusicPlayer.UI
                     {
                         Control = new TableLayout
                         {
-                            Spacing = new Eto.Drawing.Size(5, 5),
+                            Spacing = new Eto.Drawing.Size(0, 5),
                             Padding = new Padding(0, 0, 0, 2),
                             Rows =
                             {
@@ -327,6 +371,11 @@ namespace MusicPlayer.UI
                                         new TableCell
                                         {
                                             Control = _uiElements[UIElements.ClientButton],
+                                            ScaleWidth = false
+                                        },
+                                        new TableCell
+                                        {
+                                            Control = _uiElements[UIElements.CopyButton],
                                             ScaleWidth = false
                                         },
                                         new TableCell
@@ -392,7 +441,7 @@ namespace MusicPlayer.UI
             mainActions.Cells.Add(new TableCell { ScaleWidth = true });
             mainActions.Cells.Add(new TableCell { ScaleWidth = false });
             mainActions.Cells.Add(new TableCell { ScaleWidth = true });
-            mainActions.Cells.Add(CreateActionCell(OpenFromFile_Click, "Open", Resource.GetImage("Copy Filled-100.png")));
+            mainActions.Cells.Add(CreateActionCell(OpenCopy_Click, "Copy random files", Resource.GetImage("Copy Filled-100.png")));
             mainActions.Cells.Add(new TableCell { ScaleWidth = true });
             actionsLayout.Rows.Add(null);
             actionsLayout.Rows.Add(mainActions);
@@ -459,8 +508,8 @@ namespace MusicPlayer.UI
         private void ShowPlayingContent()
         {
             var contentCell = GetContent();
-            _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, _networkClient == null, 56);
-            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, _networkClient == null, 56);
+            _uiElements[UIElements.PlayPauseButton] = CreateToolBarbutton("Play or pause the music", Resource.GetImage("Pause-96.png"), PlayPauseButton_Click, _networkClient == null, 60);
+            _uiElements[UIElements.NextButton] = CreateToolBarbutton("Skip to the next song", Resource.GetImage("End-96.png"), NextButton_Click, _networkClient == null, 60);
             _uiElements[UIElements.Slider] = new Slider
             {
                 Width = 150,
@@ -533,7 +582,7 @@ namespace MusicPlayer.UI
             contentLayout.Rows.Add(controlRow);
 
             // Create the list view.
-            var songTable = new DynamicLayout
+            var songTable = new TableLayout
             {
                 BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary3]
             };
@@ -669,7 +718,7 @@ namespace MusicPlayer.UI
         /// <param name="e">The parameters.</param>
         private void FilterDelay_Elapsed(object sender, EventArgs e)
         {
-            RenderPartialSongList((DynamicLayout)((Scrollable)_uiElements[UIElements.MusicList]).Content, _filterText);
+            RenderPartialSongList((TableLayout)((Scrollable)_uiElements[UIElements.MusicList]).Content, _filterText);
             _filterDelay.Stop();
         }
 
@@ -690,7 +739,7 @@ namespace MusicPlayer.UI
         /// </summary>
         /// <param name="songTable">The container to render songs in.</param>
         /// <param name="searchTerm">The searhc term of the collection.</param>
-        private void RenderPartialSongList(DynamicLayout songTable, string searchTerm)
+        private void RenderPartialSongList(TableLayout songTable, string searchTerm)
         {
             if ((_player != null && _player.SongList != null) || _networkClient != null && _networkClient.ReceivedSongs != null)
             {
@@ -706,7 +755,7 @@ namespace MusicPlayer.UI
                 {
                     for (int i = 0; i < 100; i++)
                     {
-                        songTable.AddRow(CreateSongRow(null));
+                        songTable.Rows.Add(CreateSongRow(null));
                     }
                 }
 
@@ -720,7 +769,7 @@ namespace MusicPlayer.UI
                         song = _player.GetDetailsFromDbOrFile(song);
                     }
 
-                    var rowLabels = songTable.Rows[row].OfType<DynamicControl>().Select(r => r.Control).OfType<Label>().ToList();
+                    var rowLabels = songTable.Rows[row].Cells.Select(c => c.Control).OfType<Label>().ToList();
                     foreach (Label l in rowLabels)
                     {
                         l.Visible = true;
@@ -737,7 +786,7 @@ namespace MusicPlayer.UI
 
                 if(row < 100)
                 {
-                    songTable.Rows.Skip(row).OfType<DynamicRow>().SelectMany(r => r.OfType<DynamicControl>().Select(c => c.Control)).ToList()
+                    songTable.Rows.Skip(row).OfType<TableRow>().SelectMany(r => r.Cells.Select(c => c.Control)).ToList()
                         .ForEach(c => c.Visible = false);
                 }
 
@@ -750,15 +799,15 @@ namespace MusicPlayer.UI
         /// </summary>
         /// <param name="song">The song.</param>
         /// <returns>The row.</returns>
-        private Control[] CreateSongRow(Song song)
+        private TableCell[] CreateSongRow(Song song)
         {
-            return new Control[]
+            return new TableCell[]
             {
-               CreateSongLabel(song, song != null ? song.Title : "Test", "Title"),
-               CreateSongLabel(song, song != null ? song.Band : "Test", "Band"),
-               CreateSongLabel(song, song != null ? song.Gengre : "Test", "Gengre"),
-               CreateSongLabel(song, song != null ? song.DateAdded.ToString() : "Test", "Date Added"),
-               CreateSongLabel(song, song != null ? song.DateCreated.ToString() : "Test", "Date Created")
+               new TableCell(CreateSongLabel(song, song != null ? song.Title : "Test", "Title")),
+               new TableCell(CreateSongLabel(song, song != null ? song.Band : "Test", "Band")),
+               new TableCell(CreateSongLabel(song, song != null ? song.Gengre : "Test", "Gengre")),
+               new TableCell(CreateSongLabel(song, song != null ? song.DateAdded.ToString() : "Test", "Date Added")),
+               new TableCell(CreateSongLabel(song, song != null ? song.DateCreated.ToString() : "Test", "Date Created"))
             };
         }
 
@@ -970,33 +1019,8 @@ namespace MusicPlayer.UI
         private void ShowClientSettings()
         {
             var contentCell = GetContent();
-            _uiElements[UIElements.IPPort] = new TextBox
-            {
-                Text = "8963",
-                ToolTip = "The port the client will connect to",
-                PlaceholderText = "Please enter a port (TCP)",
-                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary1],
-                TextColor = Colors.White
-            };
-
-            var nativePort = (System.Windows.Forms.TextBox)_uiElements[UIElements.IPPort].ControlObject;
-            nativePort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            nativePort.Font = new System.Drawing.Font(nativePort.Font.FontFamily, 14);
-            nativePort.Margin = new System.Windows.Forms.Padding(5);
-
-            _uiElements[UIElements.IPAddress] = new TextBox
-            {
-                Text = "127.0.0.1",
-                ToolTip = "The ip address the client will connect to",
-                PlaceholderText = "Please enter an ip address",
-                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary1],
-                TextColor = Colors.White
-            };
-
-            var nativeAddress = (System.Windows.Forms.TextBox)_uiElements[UIElements.IPAddress].ControlObject;
-            nativeAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            nativeAddress.Font = new System.Drawing.Font(nativePort.Font.FontFamily, 14);
-            nativeAddress.Margin = new System.Windows.Forms.Padding(5);
+            _uiElements[UIElements.IPPort] = CreateTextBox("8963", "The port the client will connect to", "Please enter a port (TCP)", ColorPallete.Colors[ColorPallete.Color.Primary1]);
+            _uiElements[UIElements.IPAddress] = CreateTextBox("127.0.0.1", "The ip address the client will connect to", "Please enter an ip address", ColorPallete.Colors[ColorPallete.Color.Primary1]);
 
             var clientStatusButton = new Button
             {
@@ -1160,7 +1184,218 @@ namespace MusicPlayer.UI
 
         #endregion
 
+        #region Copy
+
+        /// <summary>
+        /// Creates the copy content window.
+        /// </summary>
+        private void CreateCopyContent()
+        {
+            var contentCell = GetContent();
+            var progressBar = new ProgressBar
+            {
+                MaxValue = 100,
+                MinValue = 0,
+                Value = 0,
+                Visible = _copyFiles != null,
+                Width = 450,
+                Height = 5
+            };
+
+            _uiElements[UIElements.CopyProgress] = progressBar;
+            _uiElements[UIElements.CopyAmount] = CreateTextBox("500", "Enter the amount of songs to copy", "Enter a number", ColorPallete.Colors[ColorPallete.Color.Primary1]);
+
+            TableLayout layout = new TableLayout
+            {
+                Rows =
+                {
+                    null,
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Visible = _copyFiles == null || !_copyFiles.IsCopying(),
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null,
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.CopyAmount]
+                                                },
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    null,
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Visible = _copyFiles == null || !_copyFiles.IsCopying(),
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null,
+                                                CreateActionCell(CopySourceFolder_Click, "The source to copy files from", Resource.GetImage("Open Folder-96.png")),
+                                                null,
+                                                CreateActionCell(CopyDestFolder_Click, "The destination folder", Resource.GetImage("Open Folder-96.png")),
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            new TableCell
+                            {
+                                Control = new TableLayout
+                                {
+                                    Visible = _copyFiles != null && _copyFiles.IsCopying(),
+                                    Rows =
+                                    {
+                                        new TableRow
+                                        {
+                                            Cells =
+                                            {
+                                                null, 
+                                                new TableCell
+                                                {
+                                                    Control = _uiElements[UIElements.CopyProgress]
+                                                },
+                                                null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    null
+                }
+            };
+
+            contentCell.Control = layout;
+        }
+
+        /// <summary>
+        /// Selects the soure folder (recursive).
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void CopySourceFolder_Click(object sender, EventArgs e)
+        {
+            using (SelectFolderDialog dialog = new SelectFolderDialog())
+            {
+                dialog.Title = "Select a folder that contains music files";
+                dialog.Directory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dialog.ShowDialog(this) == DialogResult.Ok)
+                {
+                    _sourceDir = dialog.Directory;
+                    CopyFiles();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Selects the destination folder (recursive).
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void CopyDestFolder_Click(object sender, EventArgs e)
+        {
+            using (SelectFolderDialog dialog = new SelectFolderDialog())
+            {
+                dialog.Title = "Select destination folder";
+                dialog.Directory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dialog.ShowDialog(this) == DialogResult.Ok)
+                {
+                    _destDir = dialog.Directory;
+                    CopyFiles();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensures that a musicplayer exists.
+        /// </summary>
+        private void CopyFiles()
+        {
+            if (!string.IsNullOrEmpty(_sourceDir) && !string.IsNullOrEmpty(_destDir))
+            {
+                if (_copyFiles != null)
+                {
+                    _copyFiles.Dispose();
+                }
+
+                _copyFiles = new Player(this);
+                _copyFiles.LoadAll(Directory.GetFiles(_sourceDir, "*.*", SearchOption.AllDirectories));
+                int amount = 0;
+                if (int.TryParse(((TextBox)_uiElements[UIElements.CopyAmount]).Text, out amount))
+                {
+                    _copyFiles.CopyRandomSongs(_destDir, amount);
+                    Render(ViewType.Copy);
+                }
+                else
+                {
+                    MessageBox.Show("The amount of song is not a number", MessageBoxType.Warning);
+                }
+            }
+
+        }
+
+        #endregion
+
         #region Common
+
+        /// <summary>
+        /// Creates a textbox.
+        /// </summary>
+        /// <param name="value">The initial value.</param>
+        /// <param name="toolTip">The tooltip.</param>
+        /// <param name="placeHolder">The placeholder.</param>
+        /// <param name="background">The backgroundColor.</param>
+        /// <returns>A textbox.</returns>
+        private TextBox CreateTextBox(string value, string toolTip, string placeHolder, Color background)
+        {
+            var result = new TextBox
+            {
+                Text = value,
+                ToolTip = toolTip,
+                PlaceholderText = placeHolder,
+                BackgroundColor = background,
+                TextColor = Colors.White
+            };
+
+            var nativeTextBox = (System.Windows.Forms.TextBox)result.ControlObject;
+            nativeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            nativeTextBox.Font = new System.Drawing.Font(nativeTextBox.Font.FontFamily, 14);
+            nativeTextBox.Margin = new System.Windows.Forms.Padding(5);
+            return result;
+        }
 
         /// <summary>
         /// Clears the content row, only navigation remains.
@@ -1232,12 +1467,8 @@ namespace MusicPlayer.UI
             var nativeForm = (System.Windows.Forms.Form)this.ControlObject;
             _uiDispatcher.Invoke(delegate ()
             {
-                if (!this.IsSuspended)
-                {
-                    this.SuspendLayout();
-                }
-
                 _uiElements[UIElements.Slider] = null;
+                _uiElements[UIElements.CopyProgress] = null;
                 _mainLayout = new TableLayout
                 {
                     Spacing = new Eto.Drawing.Size(5, 5),
@@ -1259,6 +1490,9 @@ namespace MusicPlayer.UI
                     case ViewType.Client:
                         ShowClientSettings();
                         break;
+                    case ViewType.Copy:
+                        CreateCopyContent();
+                        break;
                     case ViewType.Home:
                     default:
                         CreateMainActions();
@@ -1266,13 +1500,6 @@ namespace MusicPlayer.UI
                 }
 
                 this.Content = _mainLayout;
-                this.ResumeLayout();
-
-                if (type == ViewType.Playing)
-                {
-                    this.Width = this.Width + 1;
-                    this.Width = this.Width - 1;
-                }
             });
         }
 
@@ -1306,6 +1533,11 @@ namespace MusicPlayer.UI
             if (_player != null)
             {
                 _player.Dispose();
+            }
+
+            if(_copyFiles != null)
+            {
+                _copyFiles.Dispose();
             }
         }
 

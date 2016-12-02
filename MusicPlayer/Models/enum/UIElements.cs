@@ -37,6 +37,11 @@ namespace MusicPlayer.Models
         ClientButton,
 
         /// <summary>
+        /// The copy button.
+        /// </summary>
+        CopyButton,
+
+        /// <summary>
         /// The top notification (visible on all pages).
         /// </summary>
         Notification,
@@ -79,6 +84,16 @@ namespace MusicPlayer.Models
         /// <summary>
         /// The client status button.
         /// </summary>
-        ClientStatusButton
+        ClientStatusButton,
+
+        /// <summary>
+        /// The source folder to copy files from.
+        /// </summary>
+        CopyAmount,
+
+        /// <summary>
+        /// The copy progress bar.
+        /// </summary>
+        CopyProgress
     }
 }

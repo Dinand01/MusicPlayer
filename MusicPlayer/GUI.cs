@@ -211,7 +211,7 @@ namespace MusicPlayer
 
         public void Open(string[] args)
         {
-            List<Song> temp = _player.LoadAll(args, null);
+            List<Song> temp = _player.LoadAll(args);
 
             AddSongsToListView(temp, _view);
 
@@ -400,7 +400,7 @@ namespace MusicPlayer
             DialogResult result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                List<Song> temp = _player.LoadAll(openFileDialog1.FileNames, null);
+                List<Song> temp = _player.LoadAll(openFileDialog1.FileNames);
 
                 AddSongsToListView(temp, _view);
                 _view.Columns[0].Width = -1;
@@ -423,7 +423,7 @@ namespace MusicPlayer
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     string folder = dialog.SelectedPath;
-                    List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories), null);
+                    List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories));
                     AddSongsToListView(temp, _view);
 
                     _view.Columns[0].Width = -1;
@@ -455,14 +455,13 @@ namespace MusicPlayer
                 querry.Dispose();
 
                 var allFiles = Directory.GetFiles(source, "*.*", SearchOption.AllDirectories);
-                List<Song> tempLoadedFiles = _player.LoadAll(allFiles, number);
+                List<Song> tempLoadedFiles = _player.LoadAll(allFiles);
 
                 AddSongsToListView(tempLoadedFiles, _view);
 
-
                 _view.Columns[0].Width = -1;
                 _view.Columns[1].Width = -1;
-                _player.CopyRandomSongs(destination);
+                _player.CopyRandomSongs(destination, number);
             }
         }
 

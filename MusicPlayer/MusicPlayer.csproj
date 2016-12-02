@@ -265,6 +265,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\GPS Searching-96.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Music-96.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <!--<PostBuildEvent>

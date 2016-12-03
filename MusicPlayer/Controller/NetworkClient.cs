@@ -39,6 +39,8 @@ namespace MusicPlayer.Controller
 
         private bool _run = true;
 
+        private int _volume = 100;
+
         private int _errorCount = 0;
 
         /// <summary>
@@ -77,12 +79,7 @@ namespace MusicPlayer.Controller
         /// <returns>The volume.</returns>
         public int GetVolume()
         {
-            if(_player != null)
-            {
-                return _player.GetVolume();
-            }
-
-            return 100;
+            return _volume;
         }
 
         /// <summary>
@@ -95,6 +92,8 @@ namespace MusicPlayer.Controller
             {
                 _player.SetVolume(value);
             }
+
+            _volume = value;
         }
 
         /// <summary>

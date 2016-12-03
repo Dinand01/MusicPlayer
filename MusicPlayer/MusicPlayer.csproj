@@ -232,7 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Music-96.ico" />
-    <Content Include="Packages\SSCERuntime_x64-ENU.exe" />
+    <EmbeddedResource Include="Packages\SSCERuntime_x64-ENU.exe" />
     <Content Include="Resources\Music-96.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

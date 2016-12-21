@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Data.Entity.Infrastructure;
 using MusicPlayer.UI;
 
 namespace MusicPlayer
@@ -94,23 +87,24 @@ namespace MusicPlayer
                 {
                     Byte[] assemblyData = new Byte[stream.Length];
                     stream.Read(assemblyData, 0, assemblyData.Length);
-
                     using (FileStream fsDst = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
                     {
                         fsDst.Write(assemblyData, 0, assemblyData.Length);
                     }
 
-                    var installer = Process.Start(tempFileName);
+                    var psi = new ProcessStartInfo();
+                    psi.FileName = tempFileName;
+                    psi.Verb = "runas";
+                    var installer = Process.Start(psi);
                     installer.WaitForExit();
                     File.Delete(tempFileName);
                 }
             }
 
-            string directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+            string directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
             directory = directory.Replace("file:\\", "");
             var dataSource = "Data Source=" + directory + "\\MusicPlayer.DAL.DbContext.sdf;Persist Security Info=False;";
-            Database.DefaultConnectionFactory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0", directory, dataSource);
-            var test = dataSource;
+            System.Data.Entity.Database.DefaultConnectionFactory = new System.Data.Entity.Infrastructure.SqlCeConnectionFactory("System.Data.SqlServerCe.4.0", directory, dataSource);
         }
 
         /// <summary>
@@ -121,7 +115,13 @@ namespace MusicPlayer
         {
             try
             {
-                var path = Assembly.GetAssembly(typeof(System.Data.SqlServerCe.SqlCeException)).CodeBase.Substring(8);
+                var type = Type.GetType("System.Data.SqlServerCe.SqlCeException");
+                if(type == null)
+                {
+                    return false;
+                }
+
+                var path = Assembly.GetAssembly(type).CodeBase.Substring(8);
                 if (File.Exists(path))
                 {
                     return true;

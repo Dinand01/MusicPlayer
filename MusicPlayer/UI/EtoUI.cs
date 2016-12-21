@@ -312,8 +312,27 @@ namespace MusicPlayer.UI
                             SetSongDuration(_currentSongDuration);
                         }
 
-                        slider.Value = (int)currentTime.TotalMilliseconds;
+                        if (currentTime.TotalMilliseconds < slider.MaxValue)
+                        {
+                            slider.Value = (int)currentTime.TotalMilliseconds;
+                        }
                     }));
+                }
+            });
+        }
+
+        /// <summary>
+        /// Sets the volume.
+        /// </summary>
+        /// <param name="value">The value in percent.</param>
+        public void SetVolume(int value)
+        {
+            _uiDispatcher.Invoke(delegate ()
+            {
+                if (_uiElements.ContainsKey(UIElements.Volume) && _uiElements[UIElements.Volume] != null)
+                {
+                    var slider = ((Slider)_uiElements[UIElements.Volume]);
+                    slider.Value = value;
                 }
             });
         }
@@ -637,7 +656,7 @@ namespace MusicPlayer.UI
             var nativeFilterBox = (System.Windows.Forms.TextBox)filterbox.ControlObject;
             nativeFilterBox.Padding = new System.Windows.Forms.Padding(5);
 
-            var volume = new Slider
+            _uiElements[UIElements.Volume] = new Slider
             {
                 Width = 65,
                 Cursor = Cursors.VerticalSplit,
@@ -645,10 +664,10 @@ namespace MusicPlayer.UI
                 MinValue = 0,
                 MaxValue = 100,
                 ToolTip = "Volume",
-                Value = _player != null ? _player.GetVolume() : _networkClient.GetVolume()
+                Value = Player.GetVolume()
             };
 
-            var nativeVolume = (System.Windows.Forms.TrackBar)volume.ControlObject;
+            var nativeVolume = (System.Windows.Forms.TrackBar)_uiElements[UIElements.Volume].ControlObject;
             nativeVolume.TickStyle = System.Windows.Forms.TickStyle.None;
             nativeVolume.Scroll += NativeVolume_Scroll;
 
@@ -681,7 +700,7 @@ namespace MusicPlayer.UI
                                                         {
                                                             new TableCell
                                                             {
-                                                                Control = volume
+                                                                Control = _uiElements[UIElements.Volume]
                                                             },
                                                             null,
                                                             new TableCell

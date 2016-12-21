@@ -14,6 +14,8 @@ using MusicPlayer.Models;
 using TagLib;
 using System.Net;
 using MusicPlayer.UI;
+using NAudio.Wave.SampleProviders;
+using NAudio.CoreAudioApi;
 
 namespace MusicPlayer.Controller
 {
@@ -28,7 +30,7 @@ namespace MusicPlayer.Controller
         /// Conatins the list of songs (absolute paths)
         /// </summary>
         private List<Song> _sourceList;
-        private Random random;
+        private Random _random;
 
         /// <summary>
         ///  audio output.
@@ -58,7 +60,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The currently set volume.
         /// </summary>
-        private int _volume = 100;
+        private static int _volume = 100;
 
         /// <summary>
         /// Indicates that the class is disposing, all threads should have this var in the while loop.
@@ -101,8 +103,9 @@ namespace MusicPlayer.Controller
             waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
             locker = false;
             this.songCtrl = new SongController();
-            random = new Random();
+            _random = new Random();
             this._isReceiveMode = isReceiveMode;
+            _volume = GetVolume();
         }
 
         #region PlayerInformation
@@ -387,9 +390,21 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// Gets the volume.
         /// </summary>
-        public int GetVolume()
+        public static int GetVolume()
         {
             return _volume;
+        }
+
+        /// <summary>
+        /// Not in use, may be usefull in the future.
+        /// </summary>
+        /// <returns></returns>
+        private static int GetVolumeOfDefaultAudioDevice()
+        {
+            MMDeviceEnumerator devEnum = new MMDeviceEnumerator();
+            MMDevice defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            int leftVolume = (int)(defaultDevice.AudioMeterInformation.PeakValues[0] * 100);
+            return leftVolume;
         }
 
         /// <summary>
@@ -401,7 +416,7 @@ namespace MusicPlayer.Controller
             {
                 if (_sourceList != null && _sourceList.Count > 0)
                 {
-                    var song = _sourceList[random.Next(0, _sourceList.Count)];
+                    var song = _sourceList[_random.Next(0, _sourceList.Count)];
                     if (!hosting || Path.GetExtension(song.Location) == ".mp3")
                     {
                         Play(song);
@@ -494,7 +509,6 @@ namespace MusicPlayer.Controller
                 try
                 {
                     gui.SetSongPosition(playstream.CurrentTime);
-                    ////gui.SetTrackbarPos((int)playstream.CurrentTime.TotalSeconds);
                     ThreadExtensions.SaveSleep(500);
                 }
                 catch (Exception e)
@@ -508,33 +522,11 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void OnWaveOutStop(object sender, EventArgs e) {
+        public void OnWaveOutStop(object sender, EventArgs e)
+        {
             if (!_isReceiveMode)
             {
                 NextRandomSong();
-            }
-            else
-            {
-                if (playstream != null && !locker)
-                {
-                    locker = true;
-                    var pos = playstream.Position;
-                    if (pos < playstream.Length)
-                    {
-                        var task = Task.Run(delegate()
-                        {
-                            playstream.Seek(pos, SeekOrigin.Begin);
-                            waveOutDevice.Play();
-                        });
-
-                        if (task.Wait(2000))
-                        {
-                            waveOutDevice.Play();
-                        }
-                    }
-
-                    locker = false;
-                }
             }
         }
 
@@ -603,7 +595,7 @@ namespace MusicPlayer.Controller
         private Song TakeRandom(List<Song> alreadyChosenSongs)
         {
             List<Song> pool = this._sourceList.Except(alreadyChosenSongs).ToList();
-            Song rand = pool[random.Next(0, pool.Count - 1)];
+            Song rand = pool[_random.Next(0, pool.Count - 1)];
             return rand;
         }
 

@@ -23,5 +23,7 @@ namespace MusicPlayer.UI
         void SetNotification(string message);
 
         void SetCopyProgress(int value, int total);
+
+        void SetVolume(int value);
     }
 }

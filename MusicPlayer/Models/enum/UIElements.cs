@@ -94,6 +94,11 @@ namespace MusicPlayer.Models
         /// <summary>
         /// The copy progress bar.
         /// </summary>
-        CopyProgress
+        CopyProgress,
+
+        /// <summary>
+        /// The volume slider.
+        /// </summary>
+        Volume
     }
 }

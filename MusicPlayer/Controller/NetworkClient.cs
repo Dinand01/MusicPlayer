@@ -39,8 +39,6 @@ namespace MusicPlayer.Controller
 
         private bool _run = true;
 
-        private int _volume = 100;
-
         private int _errorCount = 0;
 
         /// <summary>
@@ -79,7 +77,7 @@ namespace MusicPlayer.Controller
         /// <returns>The volume.</returns>
         public int GetVolume()
         {
-            return _volume;
+            return Player.GetVolume();
         }
 
         /// <summary>
@@ -92,8 +90,6 @@ namespace MusicPlayer.Controller
             {
                 _player.SetVolume(value);
             }
-
-            _volume = value;
         }
 
         /// <summary>
@@ -144,6 +140,18 @@ namespace MusicPlayer.Controller
                         {
                             ThreadExtensions.SaveSleep(10);
                             _errorCount++;
+
+                            if (_errorCount > 10)
+                            {
+                                error = true;
+                                ThreadExtensions.SaveSleep(2000);
+                                _clientSocket = CreateTcpClient();
+                                if (_clientSocket != null)
+                                {
+                                    _receiver = new Thread(newt => Receive());
+                                    _receiver.Start();
+                                }
+                            }
                         }
                     }
                     else
@@ -152,18 +160,10 @@ namespace MusicPlayer.Controller
                     }
                 }
 
-                stream.Dispose();
-                _clientSocket.Close();
-
-                if (error && _run && _errorCount > 10)
+                if (!error)
                 {
-                    error = true;
-                    _clientSocket = CreateTcpClient();
-                    if (_clientSocket != null)
-                    {
-                        _receiver = new Thread(newt => Receive());
-                        _receiver.Start();
-                    }
+                    stream.Dispose();
+                    _clientSocket.Close();
                 }
             }
         }
@@ -278,6 +278,7 @@ namespace MusicPlayer.Controller
                         try
                         {
                             this._player = new Player(_gui, true);
+                            _receivedSongs.Add(_currentSong);
                             _player.SetSongs(_receivedSongs);
                             _player.Play(_currentSong);
                         }
@@ -321,8 +322,6 @@ namespace MusicPlayer.Controller
                 _player.SetSongs(_receivedSongs);
                 _player.Play(_currentSong);
             }
-
-            _receivedSongs.Add(_currentSong);
         }
 
         /// <summary>
@@ -334,9 +333,9 @@ namespace MusicPlayer.Controller
             if (_player != null)
             {
                 var current = _player.GetCurrentTime();
-                if (current != null && ((TimeSpan)(current - message.Duration)).Duration() > new TimeSpan(0, 0, 2))
+                if (current != null && ((TimeSpan)(current - message.Duration)).Duration() > new TimeSpan(0, 0, 0, 0, 100))
                 {
-                    _player.MoveToTime(message.Duration + new TimeSpan(400));
+                    _player.MoveToTime(message.Duration + new TimeSpan(0, 0, 0, 0, 100));
                 }
             }
         }
@@ -347,9 +346,18 @@ namespace MusicPlayer.Controller
         /// <returns></returns>
         private TcpClient CreateTcpClient()
         {
-            TcpClient clientSocket = new System.Net.Sockets.TcpClient();
-            clientSocket.ReceiveBufferSize = 64000;
-            clientSocket.Connect(_ip, _port);
+            TcpClient clientSocket = null;
+            try
+            {
+                clientSocket = new TcpClient();
+                clientSocket.ReceiveBufferSize = 64000;
+                clientSocket.Connect(_ip, _port);
+            }
+            catch
+            {
+                clientSocket = null;
+            }
+
             return clientSocket;
         }
     }

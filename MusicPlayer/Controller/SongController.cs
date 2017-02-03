@@ -15,11 +15,6 @@ namespace MusicPlayer.Controller
     public class SongController
     {
         /// <summary>
-        /// The entity framework db context.
-        /// </summary>
-        private DbContext _db;
-
-        /// <summary>
         /// The songs that are currently in the database.
         /// </summary>
         private List<Song> databaseSongs;
@@ -33,7 +28,6 @@ namespace MusicPlayer.Controller
         public SongController()
         {
             dbSongQue = new List<Song>();
-            this._db = new DbContext();
         }
 
         /// <summary>
@@ -41,19 +35,23 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="entry">The entry to find.</param>
         /// <returns>The Song.</returns>
-        public Song GetDetails(Song entry)
+        public Song GetDetails(Song entry, int retrycount = 0)
         {
             var song = this.databaseSongs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
             if (song == null)
             {
                 try
                 {
-                    song = _db.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
+                    song = DbContextStore.Ctrl.Context.Songs.FirstOrDefault(s => s.Location.ToLower() == entry.Location.ToLower());
                 }
                 catch
                 {
-                    // Memory was in use
-                    // TODO: create single point of access for db
+                    if(retrycount > 10)
+                    {
+                        throw new Exception("Database connection failed");
+                    }
+
+                    return GetDetails(entry, retrycount++);
                 }
 
                 if(song != null)
@@ -73,7 +71,7 @@ namespace MusicPlayer.Controller
         /// <returns></returns>
         public List<Song> GetAllForFolder(string folder)
         {
-            var items = _db.Songs.Where(ct => ct.Location.StartsWith(folder));
+            var items = DbContextStore.Ctrl.Context.Songs.Where(ct => ct.Location.StartsWith(folder));
             this.databaseSongs = items.ToList();
             this.databaseSongs.ForEach(s => s.SourceIsDb = true);
             return databaseSongs;
@@ -93,7 +91,7 @@ namespace MusicPlayer.Controller
 
             try
             {
-                if (!this.databaseSongs.Any(ct => ct.Location == song.Location) && !_db.Songs.Any(ct => ct.Location == song.Location))
+                if (!this.databaseSongs.Any(ct => ct.Location == song.Location) && !DbContextStore.Ctrl.Context.Songs.Any(ct => ct.Location == song.Location))
                 {
                     dbSongQue.Add(song);
                     this.databaseSongs.Add(song);
@@ -136,20 +134,16 @@ namespace MusicPlayer.Controller
 
                     try
                     {
-                        _db.Songs.AddRange(copy);
-                        _db.SaveChanges();
+                        DbContextStore.Ctrl.Context.Songs.AddRange(copy);
+                        DbContextStore.Ctrl.Context.SaveChanges();
                     }
                     catch (Exception e)
                     {
+                        DbContextStore.Ctrl.Invalidate();
                         Debug.Write("Could not save songs to db", e.Message);
                     }
                 }
             }
-        }
-
-        public void Dispose() 
-        {
-            this._db.Dispose();
         }
     }
 }

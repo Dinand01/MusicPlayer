@@ -27,10 +27,19 @@ namespace MusicPlayer.Controller
         #region Variables
 
         /// <summary>
-        /// Conatins the list of songs (absolute paths)
+        /// Contains the list of songs (absolute paths).
         /// </summary>
         private List<Song> _sourceList;
+
+        /// <summary>
+        /// Used for providing random songs.
+        /// </summary>
         private Random _random;
+
+        /// <summary>
+        /// An integer indicating the current song index, when -1 the songs are randomly selected.
+        /// </summary>
+        private int currentIdx = -1;
 
         /// <summary>
         ///  audio output.
@@ -67,26 +76,29 @@ namespace MusicPlayer.Controller
         /// </summary>
         private bool _disposing = false;
 
+        /// <summary>
+        /// TODO: clean this up.
+        /// </summary>
         private bool locker;
 
         /// <summary>
         /// The current song.
         /// </summary>
-        private Song currentSong;
+        private Song _currentSong;
 
-        public Song ActiveSong
-        {
-            get
-            {
-                return this.currentSong;
-            }
-        }
+        private Thread _timetracker;
 
-        private Thread timetracker;
-        private IUI gui;
+        /// <summary>
+        /// The ui interface, used to send events to the user interface.
+        /// </summary>
+        private IUI _gui;
 
-        private SongController songCtrl;
-        private MediaFoundationReader playstream;
+        private SongController _songCtrl;
+
+        /// <summary>
+        /// The Naudio foundation reader, used to decode audio files.
+        /// </summary>
+        private MediaFoundationReader _playstream;
 
         #endregion
 
@@ -96,16 +108,15 @@ namespace MusicPlayer.Controller
         /// <param name="gui">The GUI</param>
         public Player(IUI gui, bool isReceiveMode = false) 
         {
-            this.gui = gui;
+            this._gui = gui;
             waveOutDevice = new WaveOut();
-            _volume = (int)waveOutDevice.Volume * 100;
+            _volume = SettingController.Get(SettingType.Volume).AsInt(50);
             _sourceList = new List<Song>();
             waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
             locker = false;
-            this.songCtrl = new SongController();
+            this._songCtrl = new SongController();
             _random = new Random();
             this._isReceiveMode = isReceiveMode;
-            _volume = GetVolume();
         }
 
         #region PlayerInformation
@@ -127,7 +138,7 @@ namespace MusicPlayer.Controller
         /// <returns>The boolean.</returns>
         public bool IsPlaying()
         {
-            if (waveOutDevice != null && (waveOutDevice.PlaybackState == PlaybackState.Playing) && playstream != null)
+            if (waveOutDevice != null && (waveOutDevice.PlaybackState == PlaybackState.Playing) && _playstream != null)
             {
                 return true;
             }
@@ -142,6 +153,17 @@ namespace MusicPlayer.Controller
         public bool IsCopying()
         {
             return _isCopying;
+        }
+
+        /// <summary>
+        /// Gets the current active song.
+        /// </summary>
+        public Song ActiveSong
+        {
+            get
+            {
+                return this._currentSong;
+            }
         }
 
         /// <summary>
@@ -161,12 +183,35 @@ namespace MusicPlayer.Controller
         /// <returns>The current time or null.</returns>
         public TimeSpan? GetCurrentTime()
         {
-            if (IsPlaying() && playstream != null)
+            if (IsPlaying() && _playstream != null)
             {
-                return playstream.CurrentTime;
+                return _playstream.CurrentTime;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets or sets a boolean indicating whether schuffle is on.
+        /// </summary>
+        public bool Shuffle
+        {
+            get
+            {
+                return currentIdx == -1;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    currentIdx = -1;
+                }
+                else
+                {
+                    currentIdx = 0;
+                }
+            }
         }
 
         #endregion
@@ -174,11 +219,11 @@ namespace MusicPlayer.Controller
         #region PlayerControls
 
         /// <summary>
-        /// Pauses or plays the music
+        /// Pauses or plays the music.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void PausePlay(object sender, EventArgs e) 
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public void TogglePlay(object sender = null, EventArgs e = null) 
         {
             try
             {
@@ -189,15 +234,14 @@ namespace MusicPlayer.Controller
                 else
                 {
                     waveOutDevice.Play();
-                    gui.SetSongDuration(playstream.TotalTime);
-                    ////gui.redrawTrackbar(0, (int) playstream.TotalTime.TotalSeconds);
-                    if (timetracker != null)
+                    _gui.SetSongDuration(_playstream.TotalTime);
+                    if (_timetracker != null)
                     {
-                        timetracker.Abort();
+                        _timetracker.Abort();
                     }
 
-                    timetracker = new Thread(UpdateTime);
-                    timetracker.Start();
+                    _timetracker = new Thread(UpdateTime);
+                    _timetracker.Start();
                 }
             }
             catch (Exception ee)
@@ -215,7 +259,7 @@ namespace MusicPlayer.Controller
         /// <param name="song">The song object.</param>
         public void Load(Song song)
         {
-            currentSong = song;
+            _currentSong = song;
             this.Load(song.Location);
         }
 
@@ -225,56 +269,37 @@ namespace MusicPlayer.Controller
         /// <param name="path">the absolute path</param>
         private void Load(string path)
         {
-            // dispose old mp3
-            if (waveOutDevice.PlaybackState == PlaybackState.Playing || waveOutDevice.PlaybackState == PlaybackState.Paused)
-            {
-                locker = true;
-                try
-                {
-                    waveOutDevice.Stop();
-                }
-                catch
-                {
-                }
-
-                waveOutDevice.Dispose();
-                locker = false;
-                waveOutDevice = new WaveOut();
-                waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
-                SetVolume(_volume);
-            }
-
-            string extension = Path.GetExtension(path);
+            DisposeWaveOut(true);
 
             // Start foundation reader
             try
             {
-                if (playstream != null)
+                if (_playstream != null)
                 {
-                    playstream.Dispose();
-                    playstream = null;
+                    _playstream.Dispose();
+                    _playstream = null;
                 }
 
-                playstream = new MediaFoundationReader(path, new MediaFoundationReader.MediaFoundationReaderSettings
+                _playstream = new MediaFoundationReader(path, new MediaFoundationReader.MediaFoundationReaderSettings
                 {
                     RepositionInRead = true,
                     SingleReaderObject = true
                 });
 
-                if (playstream != null)
+                if (_playstream != null)
                 {
-                    waveOutDevice.Init(playstream);
+                    waveOutDevice.Init(_playstream);
                     if (_networkServer != null)
                     {
-                        _networkServer.HostSong(currentSong);
+                        _networkServer.HostSong(_currentSong);
                     }
 
                     if (_isReceiveMode)
                     {
-                        gui.SetSongs(_sourceList);
+                        _gui.SetSongs(_sourceList);
                     }
 
-                    gui.SetSong(currentSong);
+                    _gui.SetSong(_currentSong);
                 }
                 else
                 {
@@ -288,11 +313,12 @@ namespace MusicPlayer.Controller
             {
                 if (!_isReceiveMode)
                 {
-                    NextRandomSong();
+                    NextSong();
                 }
             }
             catch (Exception e) 
             {
+                string extension = Path.GetExtension(path);
                 Console.WriteLine("ERRROR on Load: " + e.Message + "\n" + e.StackTrace + "\n" + e.InnerException);
                 if (!_isReceiveMode)
                 {
@@ -301,7 +327,7 @@ namespace MusicPlayer.Controller
                 }
             }
 
-            PausePlay(null, null);
+            TogglePlay();
         }
 
         /// <summary>
@@ -329,7 +355,6 @@ namespace MusicPlayer.Controller
                 }
             }
 
-            //NextRandomSong();
             EnrichSource(null);
             return _sourceList;
         }
@@ -361,9 +386,26 @@ namespace MusicPlayer.Controller
         /// Play from key (path).
         /// </summary>
         /// <param name="key"></param>
-        public void Play(string key) {
+        public void Play(string key = null)
+        {
+            Song song;
+            if(key == null)
+            {
+                if(currentIdx == -1)
+                {
+                    NextSong();
+                    return;
+                }
+                else
+                {
+                    song = _sourceList[currentIdx];
+                }
+            }
+            else
+            {
+                song = _sourceList.FirstOrDefault(ct => ct.Location == key);
+            }
 
-            var song = _sourceList.FirstOrDefault(ct => ct.Location == key);
             if (song != null)
             {
                 Load(song);
@@ -384,6 +426,7 @@ namespace MusicPlayer.Controller
             {
                 _volume = percentage;
                 waveOutDevice.Volume = percentage / (float)100;
+                SettingController.Set(SettingType.Volume, Convert.ToString(percentage));
             }
         }
 
@@ -410,20 +453,39 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// Starts a next random song from the source list.
         /// </summary>
-        public void NextRandomSong()
+        public void NextSong()
         {
             if (!locker)
             {
                 if (_sourceList != null && _sourceList.Count > 0)
                 {
-                    var song = _sourceList[_random.Next(0, _sourceList.Count)];
+                    int idx = -1;
+                    if (currentIdx == -1)
+                    {
+                        idx = _random.Next(0, _sourceList.Count);
+                    }
+                    else
+                    {
+                        if (currentIdx + 1 < _sourceList.Count)
+                        {
+                            currentIdx++;
+                        }
+                        else
+                        {
+                            currentIdx = 0;
+                        }
+
+                        idx = currentIdx;
+                    }
+
+                    var song = _sourceList[idx];
                     if (!hosting || Path.GetExtension(song.Location) == ".mp3")
                     {
                         Play(song);
                     }
                     else
                     {
-                        NextRandomSong();
+                        NextSong();
                     }
                 }
             }
@@ -467,7 +529,7 @@ namespace MusicPlayer.Controller
             {
                 _isCopying = true;
                 string path = source[i].Location;
-                gui.SetCopyProgress((int)(((i + 1) / (double)source.Count) * 100), 100);
+                _gui.SetCopyProgress((int)(((i + 1) / (double)source.Count) * 100), 100);
 
                 try
                 {
@@ -480,7 +542,7 @@ namespace MusicPlayer.Controller
             }
 
             _isCopying = false;
-            gui.SetCopyProgress(100, 100);
+            _gui.SetCopyProgress(100, 100);
         }
 
         /// <summary>
@@ -489,7 +551,7 @@ namespace MusicPlayer.Controller
         /// <param name="time">The time.</param>
         public void MoveToTime(TimeSpan time)
         {
-            playstream.CurrentTime = time;
+            _playstream.CurrentTime = time;
             if (hosting && _networkServer != null)
             {
                 _networkServer.GotoPosition(time);
@@ -508,7 +570,7 @@ namespace MusicPlayer.Controller
             {
                 try
                 {
-                    gui.SetSongPosition(playstream.CurrentTime);
+                    _gui.SetSongPosition(_playstream.CurrentTime);
                     ThreadExtensions.SaveSleep(500);
                 }
                 catch (Exception e)
@@ -526,7 +588,7 @@ namespace MusicPlayer.Controller
         {
             if (!_isReceiveMode)
             {
-                NextRandomSong();
+                NextSong();
             }
         }
 
@@ -555,9 +617,9 @@ namespace MusicPlayer.Controller
         {
             hosting = true;
             _networkServer = new NetworkServer(port, this);
-            if (currentSong != null)
+            if (_currentSong != null)
             {
-                _networkServer.HostSong(currentSong);
+                _networkServer.HostSong(_currentSong);
             }
         }
 
@@ -638,6 +700,35 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// Disposes of the wave out device.
+        /// </summary>
+        /// <param name="reinit">A boolean indicating whether to reinitialize the wave out device.</param>
+        private void DisposeWaveOut(bool reinit = false)
+        {
+            if (waveOutDevice.PlaybackState == PlaybackState.Playing || waveOutDevice.PlaybackState == PlaybackState.Paused)
+            {
+                locker = true;
+                try
+                {
+                    waveOutDevice.Stop();
+                }
+                catch
+                {
+                }
+
+                waveOutDevice.Dispose();
+
+                if (reinit)
+                {
+                    locker = false;
+                    waveOutDevice = new WaveOut();
+                    waveOutDevice.PlaybackStopped += new EventHandler<StoppedEventArgs>(OnWaveOutStop);
+                    SetVolume(_volume);
+                }
+            }
+        }
+
+        /// <summary>
         /// Disposes this class properly
         /// </summary>
         public void Dispose()
@@ -646,22 +737,17 @@ namespace MusicPlayer.Controller
             {
                 _disposing = true;
                 locker = true;
-                songCtrl.Dispose();
 
                 if (_networkServer != null)
                 {
                     _networkServer.Dispose();
                 }
 
-                if (waveOutDevice != null)
-                {
-                    waveOutDevice.Dispose();
-                    waveOutDevice = null;
-                }
+                DisposeWaveOut();
 
-                if (playstream != null)
+                if (_playstream != null)
                 {
-                    playstream.Dispose();
+                    _playstream.Dispose();
                 }
             }
             catch 

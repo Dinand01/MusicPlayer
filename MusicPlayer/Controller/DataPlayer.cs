@@ -94,7 +94,7 @@ namespace MusicPlayer.Controller
                     }
                 }
 
-                songCtrl.AddSongToDb(song);
+                _songCtrl.AddSongToDb(song);
                 result = SetSong(song);
 
                 file.Dispose();
@@ -115,13 +115,13 @@ namespace MusicPlayer.Controller
         public Song GetDetailsFromDbOrFile(Song song)
         {
             Song result = song;
-            var dbSong = songCtrl.GetDetails(song);
+            var dbSong = _songCtrl.GetDetails(song);
             if (dbSong == null)
             {
                 Song details = LoadDetailsOfSong(song);
                 if (details != null)
                 {
-                    result = songCtrl.AddSongToDb(details);
+                    result = _songCtrl.AddSongToDb(details);
                 }
             }
             else
@@ -143,7 +143,7 @@ namespace MusicPlayer.Controller
                 rootFolder = GetRootFolder(_sourceList.Select(ct => ct.Location).ToArray());
             }
 
-            var dbSongs = songCtrl.GetAllForFolder(rootFolder);
+            var dbSongs = _songCtrl.GetAllForFolder(rootFolder);
             for (int i = 0; i < _sourceList.Count; i++)
             {
                 var temp = dbSongs.FirstOrDefault(ct => ct.Location == _sourceList[i].Location);

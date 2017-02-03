@@ -20,7 +20,6 @@ namespace MusicPlayer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             AppDomain.CurrentDomain.UnhandledException += delegate (object sender, UnhandledExceptionEventArgs eventArgs)
             {
                 var exception = (Exception)eventArgs.ExceptionObject;
@@ -115,7 +114,7 @@ namespace MusicPlayer
         {
             try
             {
-                var type = Type.GetType("System.Data.SqlServerCe.SqlCeException");
+                var type = Type.GetType("System.Data.SqlServerCe.SqlCeException, System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91");
                 if(type == null)
                 {
                     return false;

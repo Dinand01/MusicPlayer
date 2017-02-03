@@ -13,6 +13,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Windows.Threading;
+using MusicPlayer.DAL;
+using MusicPlayer.Extensions;
 
 namespace MusicPlayer.UI
 {
@@ -203,7 +205,7 @@ namespace MusicPlayer.UI
                     string folder = dialog.Directory;
                     List<Song> temp = _player.LoadAll(Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories));
                     Render(ViewType.Playing);
-                    _player.Play(temp.FirstOrDefault());
+                    _player.Play();
                 }
             }
         }
@@ -332,6 +334,7 @@ namespace MusicPlayer.UI
                 if (_uiElements.ContainsKey(UIElements.Volume) && _uiElements[UIElements.Volume] != null)
                 {
                     var slider = ((Slider)_uiElements[UIElements.Volume]);
+                    
                     slider.Value = value;
                 }
             });
@@ -444,18 +447,27 @@ namespace MusicPlayer.UI
         /// <param name="visible">A boolean indicating whether the button should be visible.</param>
         /// <param name="width">The width of the button.</param>
         /// <param name="enabled">A boolean indicating whether the button was enabled.</param>
+        /// <param name="height">The height of the button.</param>
+        /// <param name="color">The background color of the button.</param>
         /// <returns>The button.</returns>
-        private Button CreateToolBarbutton(string toolTip, Bitmap image, EventHandler<EventArgs> handler, bool visible = true, int width = 22, bool enabled = true)
+        private Button CreateToolBarbutton(string toolTip, Bitmap image, EventHandler<EventArgs> handler, bool visible = true, int width = 22, bool enabled = true, int imageWidth = 22, 
+                                            int? height = null, ColorPallete.Color color = ColorPallete.Color.Primary2)
         {
             var button = new Button
             {
-                Image = new Bitmap(image, 22, 22),
+                Image = new Bitmap(image, imageWidth, imageWidth),
+                ImagePosition = ButtonImagePosition.Overlay,
                 Width = width,
-                BackgroundColor = ColorPallete.Colors[ColorPallete.Color.Primary2],
+                BackgroundColor = ColorPallete.Colors[color],
                 ToolTip = toolTip,
                 Visible = visible,
                 Enabled = enabled
             };
+
+            if(height != null)
+            {
+                button.Height = (int)height;
+            }
 
             button.Click += handler;
             var nativeButton = (System.Windows.Forms.Button)button.ControlObject;
@@ -671,6 +683,10 @@ namespace MusicPlayer.UI
             nativeVolume.TickStyle = System.Windows.Forms.TickStyle.None;
             nativeVolume.Scroll += NativeVolume_Scroll;
 
+            bool shuffle = SettingController.Get(SettingType.Shuffle).AsBoolean(true);
+            var backColor = shuffle ? ColorPallete.Color.Primary1 : ColorPallete.Color.Primary2;
+            var shuffleButton = CreateToolBarbutton("Shuffle", Resource.GetImage("Shuffle-96.png"), ShuffleButton_Click, true, 25, true, 11, 9, backColor);
+
             TableRow contentRow = new TableRow
             {
                 Cells =
@@ -698,6 +714,10 @@ namespace MusicPlayer.UI
                                                     {
                                                         Cells =
                                                         {
+                                                            new TableCell
+                                                            {
+                                                                Control = shuffleButton
+                                                            },
                                                             new TableCell
                                                             {
                                                                 Control = _uiElements[UIElements.Volume]
@@ -763,7 +783,7 @@ namespace MusicPlayer.UI
         {
             if (_player != null)
             {
-                _player.PausePlay(null, null);
+                _player.TogglePlay(null, null);
                 string resource = _player.IsPlaying() ? "Pause-96.png" : "Play-96.png";
                 ((Button)_uiElements[UIElements.PlayPauseButton]).Image = new Bitmap(Resource.GetImage(resource), 25, 25);
             }
@@ -778,8 +798,21 @@ namespace MusicPlayer.UI
         {
             if (_player != null)
             {
-                _player.NextRandomSong();
+                _player.NextSong();
             }
+        }
+
+        /// <summary>
+        /// Shuffle Click event handler.
+        /// </summary>
+        /// <param name="sender">The sender object.</param>
+        /// <param name="e">The evnt args.</param>
+        private void ShuffleButton_Click(object sender, EventArgs e)
+        {
+            bool newValue = !SettingController.Get(SettingType.Shuffle).AsBoolean(true);
+            SettingController.Set(SettingType.Shuffle, newValue.ToString());
+            _player.Shuffle = newValue;
+            Render(ViewType.Playing);
         }
 
         /// <summary>
@@ -829,10 +862,10 @@ namespace MusicPlayer.UI
                 IEnumerable<Song> songList = _player == null ? _networkClient.ReceivedSongs : _player.SongList;
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    songList = _player.SongList.Where(s => s.Title.ToLower().Contains(searchTerm.ToLower()) || (s.Band != null && s.Band.ToLower().Contains(searchTerm.ToLower())));
+                    songList = _player.SongList.Where(s => s.Title.ToLower().Contains(searchTerm.ToLower()) || (s.Band != null && s.Band.ToLower().Contains(searchTerm.ToLower()))).OrderBy(s => s.Band).ThenBy(s => s.Title);
                 }
 
-                songList = songList.OrderBy(s => s.Band).ThenBy(s => s.Title).Take(100).ToList();
+                songList = songList.Take(100).ToList();
                 if (songTable.Rows == null || songTable.Rows.Count < 100)
                 {
                     for (int i = 0; i < 100; i++)
@@ -848,7 +881,7 @@ namespace MusicPlayer.UI
                     var song = songListResult[row];
                     if (!song.SourceIsDb)
                     {
-                     song = _player.GetDetailsFromDbOrFile(song);
+                        song = _player.GetDetailsFromDbOrFile(song);
                     }
 
                     var rowLabels = songTable.Rows[row].Cells.Select(c => c.Control).OfType<Label>().ToList();
@@ -858,8 +891,8 @@ namespace MusicPlayer.UI
                         l.DataContext = song;
                     }
 
-                    rowLabels[0].Text = song.Title;
-                    rowLabels[1].Text = song.Band;
+                    rowLabels[0].Text = song.Band;
+                    rowLabels[1].Text = song.Title;
                     rowLabels[2].Text = song.Gengre;
                     rowLabels[3].Text = song.DateAdded.ToString();
                     rowLabels[4].Text = song.DateCreated.ToString();
@@ -884,8 +917,8 @@ namespace MusicPlayer.UI
         {
             return new TableCell[]
             {
-               new TableCell(CreateSongLabel(song, song != null ? song.Title : "Test", "Title")),
-               new TableCell(CreateSongLabel(song, song != null ? song.Band : "Test", "Band")),
+               new TableCell(CreateSongLabel(song, song != null ? song.Title : "Test", "Band")),
+               new TableCell(CreateSongLabel(song, song != null ? song.Band : "Test", "Title")),
                new TableCell(CreateSongLabel(song, song != null ? song.Gengre : "Test", "Gengre")),
                new TableCell(CreateSongLabel(song, song != null ? song.DateAdded.ToString() : "Test", "Date Added")),
                new TableCell(CreateSongLabel(song, song != null ? song.DateCreated.ToString() : "Test", "Date Created"))
@@ -1101,7 +1134,9 @@ namespace MusicPlayer.UI
         {
             var contentCell = GetContent();
             _uiElements[UIElements.IPPort] = CreateTextBox("8963", "The port the client will connect to", "Please enter a port (TCP)", ColorPallete.Colors[ColorPallete.Color.Primary1]);
-            _uiElements[UIElements.IPAddress] = CreateTextBox("127.0.0.1", "The ip address the client will connect to", "Please enter an ip address", ColorPallete.Colors[ColorPallete.Color.Primary1]);
+            string ip = SettingController.Get(SettingType.RemoteIP);
+            ip = string.IsNullOrEmpty(ip) ? "127.0.0.1" : ip;
+            _uiElements[UIElements.IPAddress] = CreateTextBox(ip, "The ip address the client will connect to", "Please enter an ip address", ColorPallete.Colors[ColorPallete.Color.Primary1]);
 
             var clientStatusButton = new Button
             {
@@ -1243,6 +1278,7 @@ namespace MusicPlayer.UI
                     try
                     {
                         _networkClient = new NetworkClient(this, ipParsed, portParsed);
+                        SettingController.Set(SettingType.RemoteIP, ipAddress);
                         Render(ViewType.Playing);
                     }
                     catch
@@ -1515,6 +1551,7 @@ namespace MusicPlayer.UI
             if (_player == null)
             {
                 _player = new Player(this);
+                _player.Shuffle = SettingController.Get(SettingType.Shuffle).AsBoolean(true);
             }
         }
 
@@ -1620,6 +1657,8 @@ namespace MusicPlayer.UI
             {
                 _copyFiles.Dispose();
             }
+
+            DbContextStore.Ctrl.Dispose();
         }
 
         #endregion

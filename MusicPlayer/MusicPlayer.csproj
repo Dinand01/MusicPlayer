@@ -136,9 +136,12 @@
     <Compile Include="Controller\NetworkClient.cs" />
     <Compile Include="Controller\NetworkServer.cs" />
     <Compile Include="Controller\Resource.cs" />
+    <Compile Include="Controller\SettingController.cs" />
     <Compile Include="Controller\SongController.cs" />
     <Compile Include="DAL\DbContext.cs" />
+    <Compile Include="DAL\DbContextStore.cs" />
     <Compile Include="Extensions\DbContextExtended.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\ListViewExtended.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -146,9 +149,11 @@
     <Compile Include="Extensions\TheadExtensions.cs" />
     <Compile Include="Models\ColorPallete.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
+    <Compile Include="Models\enum\SettingType.cs" />
     <Compile Include="Models\enum\UIElements.cs" />
     <Compile Include="Models\enum\ViewType.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Song.cs" />
     <Compile Include="Controller\MusicPlayer.cs" />
     <Compile Include="Program.cs" />
@@ -232,6 +237,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Music-96.ico" />
+    <EmbeddedResource Include="Resources\Shuffle-96.png" />
     <EmbeddedResource Include="Packages\SSCERuntime_x64-ENU.exe" />
     <Content Include="Resources\Music-96.ico" />
   </ItemGroup>

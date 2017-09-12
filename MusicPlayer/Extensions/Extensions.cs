@@ -19,6 +19,11 @@ namespace MusicPlayer.Extensions
         /// <returns>The converted int.</returns>
         public static int AsInt(this string str, int def = 0)
         {
+            if(string.IsNullOrEmpty(str))
+            {
+                return def;
+            }
+            
             int.TryParse(str, out def);
             return def;
         }

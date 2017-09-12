@@ -18,18 +18,7 @@ namespace MusicPlayer.Models
         /// <summary>
         /// Creates a new empty song.
         /// </summary>
-        public Song()
-        {
-            this.Location = null;
-            this.Album = null;
-            this.Band = null;
-            this.DateAdded = null;
-            this.DateCreated = null;
-            this.Gengre = null;
-            this.SearchTerm = null;
-            this.Title = null;
-            this.SourceIsDb = false;
-        }
+        public Song() { }
 
         /// <summary>
         /// Creates a song from a file path.
@@ -37,8 +26,7 @@ namespace MusicPlayer.Models
         /// <param name="path">The file path.</param>
         public Song(string path)
         {
-            this.Location = path;
-            this.SourceIsDb = false;
+            this.Location = path;;
             var temp = path.Split('\\').Last();
             var t2 = temp.Split('-');
             if (t2.Length > 1)
@@ -75,10 +63,30 @@ namespace MusicPlayer.Models
         public string SearchTerm { get; set; }
 
         /// <summary>
-        /// Gets or sets a boolean indicating whether the source is the database.
+        /// Gets or sets the duration in seconds.
+        /// </summary>
+        public long Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current position of the song.
+        /// </summary>
+        public long Position { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image.
+        /// </summary>
+        public byte[] Image { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the song is playing.
+        /// </summary>
+        public bool IsPlaying { get; set; }
+
+        /// <summary>
+        /// Gets or sets a boolean indicating whether the song is resolved.
         /// </summary>
         [NotMapped]
-        public bool SourceIsDb { get; set; }
+        internal bool IsResolved { get; set; }
 
         public string[] ToSubItemArray()
         {

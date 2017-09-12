@@ -1,4 +1,5 @@
 ﻿using MusicPlayer.Extensions;
+using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using System;
 using System.Collections.Generic;
@@ -15,62 +16,109 @@ namespace MusicPlayer.Controller
 {
     /// <summary>
     /// New implementation to transfer data (transmit).
-    /// When finished the NetworkControllers will be removed.
     /// </summary>
-    internal class NetworkServer
+    internal class NetworkServer : MusicPlayerWrapper, IServer
     {
         #region Variables
 
+        /// <summary>
+        /// The port to listen on.
+        /// </summary>
         private int _port;
 
-        private Player _player;
-
-        private int _transmitInterval = 500;
-
+        /// <summary>
+        /// The list of server threads.
+        /// </summary>
         private List<Thread> _senders = new List<Thread>();
 
+        /// <summary>
+        /// The listener.
+        /// </summary>
         private TcpListener _listener;
 
+        /// <summary>
+        /// When this is true server threads can run.
+        /// </summary>
         private bool _run = true;
 
+        /// <summary>
+        /// A new song is being loaded.
+        /// </summary>
         private bool _loading = false;
 
+        /// <summary>
+        /// The current file data.
+        /// </summary>
         private byte[] _currentFile = null;
 
+        /// <summary>
+        /// The current song.
+        /// </summary>
         private Song _currentSong = null;
 
+        /// <summary>
+        /// A optional priority message.
+        /// </summary>
         private Message _priorityMessage;
+
+        /// <summary>
+        /// The server info.
+        /// </summary>
+        private ServerInfo _serverInfo;
+
         #endregion
 
-        public NetworkServer(int port, Player player)
+        /// <summary>
+        /// The server info changed.
+        /// </summary>
+        public event ServerInfoChanged OnInfoChanged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkServer" /> class.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="port"></param>
+        public NetworkServer(IMusicPlayer player, int port) : base(player)
         {
             this._port = port;
-            this._player = player;
+            this._player.SongChanged += SongHasChanged;
+            _serverInfo = new ServerInfo();
+            _serverInfo.IsHost = true;
+            _serverInfo.Port = port;
+            _serverInfo.Clients = new Dictionary<string, int>();
             IPEndPoint ipendpoint = new IPEndPoint(IPAddress.Any, port);
             _listener = new TcpListener(ipendpoint);
             _listener.Start();
-            _listener.BeginAcceptTcpClient(new System.AsyncCallback(OnClientConnect), new object());
+            _listener.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), new object());
         }
 
         /// <summary>
-        /// Sets a song to be hosted.
+        /// Move to the time specified in seconds.
         /// </summary>
-        /// <param name="song">The song.</param>
-        public void HostSong(Song song)
+        /// <param name="seconds">The second to move to.</param>
+        public override void MoveToTime(long seconds)
         {
-            _loading = true;
-            _currentFile = File.ReadAllBytes(song.Location);
-            _currentSong = song;
-            _loading = false;
+            _player.MoveToTime(seconds);
+            this.GotoPosition(new TimeSpan(0, 0, (int)seconds));
         }
 
         /// <summary>
-        /// Notify the client to go to a certain position in the song.
+        /// Disconnect the server.
         /// </summary>
-        /// <param name="position">The position.</param>
-        public void GotoPosition(TimeSpan position)
+        /// <returns>The music player.</returns>
+        public IMusicPlayer Disconnect()
         {
-            _priorityMessage = CreateGotoMessage(position);
+            Dispose(false);
+            return _player;
+        }
+
+        /// <summary>
+        /// Gets the server info.
+        /// </summary>
+        /// <returns>The server info.</returns>
+        public ServerInfo GetInfo()
+        {
+            return _serverInfo;
         }
 
         /// <summary>
@@ -83,14 +131,59 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// The destructor.
+        /// </summary>
+        ~NetworkServer()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
         /// Disposes of the class.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// The song has chnged, when the location changed start hosting the new song.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        internal void SongHasChanged(Song song)
+        {
+            if (song?.Location != _currentSong?.Location)
+            {
+                _loading = true;
+                _currentFile = File.ReadAllBytes(song.Location);
+                _currentSong = song;
+                _loading = false;
+            }
+
+            InvokeSongChanged(song);
+        }
+
+        /// <summary>
+        /// Notify the client to go to a certain position in the song.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        internal void GotoPosition(TimeSpan position)
+        {
+            _priorityMessage = CreateGotoMessage(position);
+        }
+
+        /// <summary>
+        /// Dispose of the resources.
+        /// </summary>
+        /// <param name="disposeMusicPlayer">Dispose of the internal music player.</param>
+        private void Dispose(bool disposeMusicPlayer)
         {
             _run = false;
-            if (_listener != null)
+            _listener?.Stop();
+            _listener = null;
+            if (disposeMusicPlayer)
             {
-                _listener.Stop();
+                _player?.Dispose();
             }
         }
 
@@ -100,19 +193,34 @@ namespace MusicPlayer.Controller
         /// <param name="asyn"></param>
         private void OnClientConnect(IAsyncResult asyn)
         {
-            try
+            if (_listener != null)
             {
-                TcpClient clientSocket = default(TcpClient);
-                clientSocket = _listener.EndAcceptTcpClient(asyn);
-                clientSocket.SendTimeout = 400;
+                try
+                {
+                    TcpClient clientSocket = default(TcpClient);
+                    clientSocket = _listener.EndAcceptTcpClient(asyn);
+                    clientSocket.SendTimeout = 400;
+                    if (clientSocket.Connected)
+                    {
+                        var remoteaddress = clientSocket.Client.RemoteEndPoint as IPEndPoint;
+                        if (!_serverInfo.Clients.ContainsKey(remoteaddress.Address.ToString()))
+                        {
+                            _serverInfo.Clients.Add(remoteaddress.Address.ToString(), remoteaddress.Port);
+                        }
 
-                var tempTread = new Thread(newt => Transmit(clientSocket));
-                tempTread.Start();
-                _senders.Add(tempTread);
-                _listener.BeginAcceptTcpClient(new System.AsyncCallback(OnClientConnect), new object());
-            }
-            catch (Exception se)
-            {
+                        OnInfoChanged?.Invoke(_serverInfo);
+                        var tempTread = new Thread(newt => Transmit(clientSocket));
+                        tempTread.Start();
+                        _senders.Add(tempTread);
+                    }
+
+                    _listener.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), new object());
+                }
+                catch 
+                {
+                    _listener?.Start();
+                    _listener?.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), new object());
+                }
             }
         }
 
@@ -127,6 +235,7 @@ namespace MusicPlayer.Controller
             socket.SendBufferSize = 262144;
             socket.ReceiveBufferSize = 262144;
             NetworkStream networkStream = socket.GetStream();
+            var remoteaddress = socket.Client.RemoteEndPoint as IPEndPoint;
             int currentIndex = 0;
             bool endofSongSent = false;
             Message previousPriorityMessage = null;
@@ -189,6 +298,8 @@ namespace MusicPlayer.Controller
                 }
             }
 
+            _serverInfo.Clients.Remove(remoteaddress.Address.ToString());
+            OnInfoChanged?.Invoke(_serverInfo);
             networkStream.Dispose();
             socket.Close();
         }
@@ -201,7 +312,7 @@ namespace MusicPlayer.Controller
         /// <param name="retryCount">The current number of retries.</param>
         private void SendSerializedData(NetworkStream stream, byte[] data, int retryCount = 0)
         {
-            if(retryCount < 10)
+            if (retryCount < 10)
             {
                 try
                 {
@@ -242,10 +353,10 @@ namespace MusicPlayer.Controller
         {
             Message result = new Message();
             result.Type = MessageType.EndOfSong;
-            var currentTime = _player.GetCurrentTime();
+            var currentTime = new TimeSpan(0, 0, (int)_currentSong.Position);
             if (currentTime != null)
             {
-                _priorityMessage = CreateGotoMessage((TimeSpan)currentTime);
+                _priorityMessage = CreateGotoMessage(currentTime);
             }
 
             return result;
@@ -310,6 +421,11 @@ namespace MusicPlayer.Controller
             };
         }
 
+        /// <summary>
+        /// Serialize an object to bytes.
+        /// </summary>
+        /// <param name="anySerializableObject">The object to serialize.</param>
+        /// <returns>The byte array.</returns>
         private byte[] Serialize(object anySerializableObject)
         {
             using (var memoryStream = new MemoryStream())

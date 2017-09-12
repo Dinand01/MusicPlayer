@@ -1,8 +1,10 @@
 ﻿using MusicPlayer.Extensions;
+using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using MusicPlayer.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,31 +16,56 @@ using System.Threading.Tasks;
 
 namespace MusicPlayer.Controller
 {
-    internal class NetworkClient
+    /// <summary>
+    /// The network client music player.
+    /// </summary>
+    internal class NetworkClient : MusicPlayerWrapper, IClient
     {
         #region Variables
 
         /// <summary>
-        /// The user interface.
+        /// The ip address of the host.
         /// </summary>
-        private IUI _gui;
-
         private IPAddress _ip;
 
+        /// <summary>
+        /// Thge port of the host.
+        /// </summary>
         private int _port;
 
-        private Player _player;
+        /// <summary>
+        /// When this is set playback will not be retried until the end of file is retrieved.
+        /// </summary>
+        private bool _waitUntilEnd;
 
+        /// <summary>
+        /// The current index in the file.
+        /// </summary>
         private int _currentFileIndex;
 
+        /// <summary>
+        /// The current song.
+        /// </summary>
         private Song _currentSong;
 
+        /// <summary>
+        /// The client socket.
+        /// </summary>
         private TcpClient _clientSocket;
 
+        /// <summary>
+        /// The receiving thread.
+        /// </summary>
         private Thread _receiver;
 
+        /// <summary>
+        /// Allows the thread to run.
+        /// </summary>
         private bool _run = true;
 
+        /// <summary>
+        /// The amount of errors encountered on transfer.
+        /// </summary>
         private int _errorCount = 0;
 
         /// <summary>
@@ -46,25 +73,17 @@ namespace MusicPlayer.Controller
         /// </summary>
         private List<Song> _receivedSongs = new List<Song>();
 
-        /// <summary>
-        /// Gets a list of received song.
-        /// </summary>
-        public List<Song> ReceivedSongs
-        {
-            get
-            {
-                return _receivedSongs;
-            }
-        }
-
         #endregion
 
-        public NetworkClient(IUI gui, IPAddress address, int port)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkClient"/> class. 
+        /// </summary>
+        /// <param name="address">The ip address.</param>
+        /// <param name="port">The port.</param>
+        public NetworkClient(IPAddress address, int port) : base(Factory.GetPlayerForReceiveMode())
         {
-            this._gui = gui;
             this._ip = address;
             this._port = port;
-
             _clientSocket = CreateTcpClient();
 
             _receiver = new Thread(newt => Receive());
@@ -72,41 +91,51 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
-        /// Gets the volume of the embedded player.
+        /// Gets a list of received song.
         /// </summary>
-        /// <returns>The volume.</returns>
-        public int GetVolume()
+        public override List<Song> GetSongs(int index = 0, string querry = null, int amount = 50)
         {
-            return Player.GetVolume();
+            return _receivedSongs;
         }
 
         /// <summary>
-        /// Sets the volume of the embedded player.
+        /// Disconnects from the server.
         /// </summary>
-        /// <param name="value">The volume.</param>
-        public void SetVolume(int value)
+        /// <returns>A disconnected music player.</returns>
+        public IMusicPlayer Disconnect()
         {
-            if(_player != null)
+            Dispose();
+            return Factory.GetPlayer();
+        }
+
+        /// <summary>
+        /// Gets the server info.
+        /// </summary>
+        /// <returns>The info.</returns>
+        public ServerInfo GetInfo()
+        {
+            if (_clientSocket?.Connected != true)
             {
-                _player.SetVolume(value);
+                return null;
             }
+
+            return new ServerInfo
+            {
+                IsHost = false,
+                Host = _ip.ToString(),
+                Clients = null,
+                Port = _port
+            };
         }
 
         /// <summary>
-        /// Disposes of this thread;
+        /// Disposes of the client.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             _run = false;
-            if (_player != null)
-            {
-                _player.Dispose();
-            }
-
-            if (_clientSocket != null)
-            {
-                _clientSocket.Close();
-            }
+            base.Dispose();
+            _clientSocket?.Close();
         }
 
         /// <summary>
@@ -178,13 +207,9 @@ namespace MusicPlayer.Controller
             switch (message.Type)
             {
                 case MessageType.NewSong:
-                    if (stream != null)
-                    {
-                        stream.Close();
-                        stream.Dispose();
-                        stream = null;
-                    }
-
+                    stream?.Close();
+                    stream?.Dispose();
+                    stream = null;
                     stream = HandleNewSongMessage(message);
                     break;
                 case MessageType.Data:
@@ -198,11 +223,9 @@ namespace MusicPlayer.Controller
                     HandleGotoMessage(message);
                     break;
                 case MessageType.Notification:
-                    _gui.SetNotification(message.Name);
                     break;
                 default:
                     throw new Exception("Unknown message type received, please update your client.");
-                    break;
             }
         }
 
@@ -214,20 +237,13 @@ namespace MusicPlayer.Controller
         private FileStream HandleNewSongMessage(Message message)
         {
             FileStream result = null;
-            if (this._player != null)
-            {
-                this._player.Dispose();
-                this._player = null;
-            }
-
-            var currentDir = Directory.GetCurrentDirectory();
-            var filePath = currentDir + "\\NetworkFiles\\" + message.Name;
+            _waitUntilEnd = false;
+            ////var currentDir = Directory.GetCurrentDirectory();
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Music player downloaded files\\" + message.Name;
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
             _currentSong = message.Song;
             _currentSong.Location = filePath;
-            _currentSong.SourceIsDb = true;
             _currentSong.DateAdded = DateTime.Now;
-            _currentSong.DateCreated = DateTime.Now;
             _currentFileIndex = 0;
 
             try
@@ -235,7 +251,6 @@ namespace MusicPlayer.Controller
                 if (File.Exists(_currentSong.Location))
                 {
                     File.Delete(_currentSong.Location);
-                    // TODO: implement a way to just read the file and not download it anymore (requires 2 way com)
                 }
 
                 result = new FileStream(_currentSong.Location, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
@@ -270,32 +285,20 @@ namespace MusicPlayer.Controller
                     {
                         openStream.Seek(message.ID, SeekOrigin.Begin);
                         openStream.Write(message.Data, 0, message.Data.Length);
-                        Console.WriteLine("Duplicate received.");
+                        Debug.WriteLine("Duplicate received.");
                     }
 
-                    if (_currentFileIndex > 1000000 && this._player == null)
+                    if (_currentFileIndex > 1000000 && !_waitUntilEnd)
                     {
-                        try
-                        {
-                            this._player = new Player(_gui, true);
-                            _receivedSongs.Add(_currentSong);
-                            _player.SetSongs(_receivedSongs);
-                            _player.Play(_currentSong);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Error on preplay, waiting till end of file.");
-                        }
+                        _receivedSongs.Add(_currentSong);
+                        _player.Play(_currentSong);
+                        _waitUntilEnd = true;
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Can't write to open stream.");
                 }
             }
             catch (Exception e)
             {
-                if(retryCount == 10)
+                if (retryCount == 10)
                 {
                     throw e;
                 }
@@ -310,16 +313,12 @@ namespace MusicPlayer.Controller
         /// <param name="message">The message.</param>
         private void HandleEndOfSongMessage(Message message, ref FileStream stream)
         {
-            if (stream != null)
+            stream?.Close();
+            stream = null;
+            _currentFileIndex = 0;
+            _waitUntilEnd = false;
+            if (_player?.GetSongPosition() == null || _player?.GetSongPosition() == 0)
             {
-                stream.Close();
-                stream = null;
-                _currentFileIndex = 0;
-            }
-
-            if (!_player.IsPlaying())
-            {
-                _player.SetSongs(_receivedSongs);
                 _player.Play(_currentSong);
             }
         }
@@ -330,14 +329,7 @@ namespace MusicPlayer.Controller
         /// <param name="message">The message.</param>
         private void HandleGotoMessage(Message message)
         {
-            if (_player != null)
-            {
-                var current = _player.GetCurrentTime();
-                if (current != null && ((TimeSpan)(current - message.Duration)).Duration() > new TimeSpan(0, 0, 0, 0, 100))
-                {
-                    _player.MoveToTime(message.Duration + new TimeSpan(0, 0, 0, 0, 100));
-                }
-            }
+            _player?.MoveToTime(Convert.ToInt64((message.Duration + new TimeSpan(0, 0, 0, 0, 100)).TotalSeconds));
         }
 
         /// <summary>

@@ -1,19 +1,22 @@
 # MusicPlayer
 A .NET musicplayer designed to load huge music libraries and stream music to other musicplayers over the internet. 
 
-Features: 
-	Play any audio file that your system supports
-	Host music over the internet (port forwarding required)
-  	Listen to music hosted by other music players
-  	Copy random songs between source and destination folders
+## Features: 
+* Play any audio file that your system supports
+* Host music over the internet (port forwarding required)
+* Listen to music hosted by other music players
+* Copy random songs between source and destination folders
   
+![alt tag](https://user-images.githubusercontent.com/5968317/30322748-cf1987ae-97ba-11e7-91c0-e5a3388b6faa.png)
 
-Install:
-	Execute setup
+![alt tag](https://user-images.githubusercontent.com/5968317/30323277-d82deacc-97bc-11e7-89c2-082497afe668.png)
+
+## Install:
+Execute setup
 	
-Created using
-	React (and other javascript libraries) 
-	Naudio
-	Cefsharp
-	.NET
-	taglib
+## Created using
+* React (and other javascript libraries) 
+* Naudio
+* Cefsharp
+* .NET
+* taglib

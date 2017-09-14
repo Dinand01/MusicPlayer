@@ -10,6 +10,7 @@ import PlayList from './PageComponents/PlayList.jsx';
 import Server from './PageComponents/Server.jsx';
 import Client from './PageComponents/Client.jsx';
 import Copy from './PageComponents/Copy.jsx';
+import Video from './PageComponents/Video.jsx';
 
 
 /**
@@ -52,6 +53,9 @@ class App extends React.Component {
                         {this.props.serverInfo && !this.props.serverInfo.IsHost && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
                             <Link to="/client"><i className="fa fa-podcast" /></Link>
                         </li>}
+                        {this.props.serverInfo && this.props.serverInfo.VideoUrl && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
+                            <Link to="/video"><i className="fa fa-podcast" /></Link>
+                        </li>}
                         {this.props.copyProgress != null && this.props.copyProgress != undefined && <li title={"Currently copying files: " + parseInt(this.props.copyProgress) + "%"}>
                             <Link to="/copy"><i className="fa fa-files-o" /></Link>
                         </li>}
@@ -63,6 +67,7 @@ class App extends React.Component {
                         <Route path="/server" component={Server}></Route>
                         <Route path="/client" component={Client}></Route>
                         <Route path="/copy" component={Copy}></Route>
+                        <Route path="/video" component={Video}></Route>
                     </div>
                 </div>
             </HashRouter>

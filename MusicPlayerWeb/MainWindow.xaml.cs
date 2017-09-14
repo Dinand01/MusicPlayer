@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using MusicPlayerWeb.CefComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace MusicPlayerWeb
 {
@@ -28,6 +30,11 @@ namespace MusicPlayerWeb
         private MusicPlayerUI _musicPlayer;
 
         /// <summary>
+        /// The dispatcher for the current thread;
+        /// </summary>
+        private Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow" /> class.
         /// </summary>
         public MainWindow()
@@ -35,6 +42,7 @@ namespace MusicPlayerWeb
             InitializeComponent();
             _musicPlayer = new MusicPlayerUI(this.Browser, this);
             this.Browser.RegisterAsyncJsObject("MusicPlayer", _musicPlayer);
+            this.Browser.DisplayHandler = new DisplayHandler(this, _dispatcher);
             this.KeyDown += MainWindow_KeyDown;
             var argumpents = Environment.GetCommandLineArgs();
             if (argumpents.Length > 0)

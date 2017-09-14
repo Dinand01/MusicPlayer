@@ -15,6 +15,9 @@ namespace MusicPlayerWeb
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// Initialize CefSharp.
+        /// </summary>
         public App()
         {
             string directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -26,6 +29,7 @@ namespace MusicPlayerWeb
                 SchemeHandlerFactory = new SchemeHandlerFactory(directory)
             });
 
+            settings.CefCommandLineArgs.Add("disable-gpu", "1");
             Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
         }
     }

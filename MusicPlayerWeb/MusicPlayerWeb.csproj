@@ -135,6 +135,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CefComponents\DisplayHandler.cs" />
     <Compile Include="MusicPlayerUI.cs" />
     <Compile Include="SchemeHandlerFactory.cs" />
     <Page Include="MainWindow.xaml">
@@ -190,6 +191,7 @@
     <None Include="Web\Scripts\App\PageComponents\Home.jsx" />
     <None Include="Web\Scripts\App\PageComponents\PlayList.jsx" />
     <None Include="Web\Scripts\App\PageComponents\Server.jsx" />
+    <None Include="Web\Scripts\App\PageComponents\Video.jsx" />
     <None Include="Web\Scripts\App\Parts\SongInfo\Song.jsx" />
     <None Include="Web\Scripts\App\Parts\SongList\SongList.jsx" />
     <None Include="Web\Scripts\App\Parts\SongList\SongListItem.jsx" />

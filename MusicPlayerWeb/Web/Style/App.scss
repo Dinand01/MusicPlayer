@@ -517,3 +517,29 @@ button.song-volume {
 .flex-2x {
     flex: 1 50%;
 }
+
+.video {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.video > header, .video > section {
+    display: table-row;
+    width: 100%;
+    padding: 5px;
+}
+
+.video > section {
+    height: 100%;
+}
+
+.video > header  input {
+    margin-left: 5px;
+    width: calc(100% - 15px);
+}
+
+.video iframe {
+    width: 100%;
+    height: calc(100% - 10px);
+}

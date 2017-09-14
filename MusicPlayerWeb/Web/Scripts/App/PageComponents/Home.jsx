@@ -51,6 +51,14 @@ class Home extends React.Component {
     }
 
     /**
+     * @desc Goto a page.
+     * @param {string} url The relative url to go to. 
+     */
+    goto(url) {
+        this.props.history.push(url);
+    }
+
+    /**
      * @description Render the component.
      */
     render() {
@@ -88,6 +96,11 @@ class Home extends React.Component {
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.gotoCopy()} title={"Copy random files"}>
                                     <i className="Menu-Icon fa fa-files-o fa-5x"></i>
+                                </div> 
+                            </div>
+                            <div className="menu-carousel-slide">
+                                <div onClick={() => this.goto("/video")} title={"Play youtube videos"}>
+                                    <i className="Menu-Icon fa fa-youtube fa-5x"></i>
                                 </div> 
                             </div>
                             <div className="menu-carousel-slide">

@@ -63,7 +63,13 @@ namespace MusicPlayer.Installer
 
         private void WriteLog(string message)
         {
-            File.AppendAllLines("C:\\Temp\\MusicPlayer_Install_Log.txt", new string[] { message });
+            string path = "C:\\Temp\\MusicPlayer_Install_Log.txt";
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+            }
+
+            File.AppendAllLines(path, new string[] { message });
         }
     }
 }

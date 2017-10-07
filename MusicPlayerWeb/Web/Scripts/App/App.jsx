@@ -20,6 +20,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         window.CSSharpDispatcher = csharpDispatcher;
+        this.router = null;
     }
 
     /**
@@ -37,12 +38,18 @@ class App extends React.Component {
         return false;
     }
 
+    componentWillReceiveProps(nextprops) {
+        if (nextprops.serverInfo && !nextprops.serverInfo.IsHost && nextprops.serverInfo.VideoUrl) {
+            this.refs.router.history.push("/video");
+        }
+    }
+
     /**
      * @description Render navigation and router.
      */
     render() {
         return (
-            <HashRouter>
+            <HashRouter ref="router">
                 <div className="appRoot">
                     <ul className="navigation">
                         <li><Link to="/"><i className="fa fa-home" /></Link></li>
@@ -53,8 +60,8 @@ class App extends React.Component {
                         {this.props.serverInfo && !this.props.serverInfo.IsHost && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
                             <Link to="/client"><i className="fa fa-podcast" /></Link>
                         </li>}
-                        {this.props.serverInfo && this.props.serverInfo.VideoUrl && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
-                            <Link to="/video"><i className="fa fa-podcast" /></Link>
+                        {this.props.serverInfo && this.props.serverInfo.VideoUrl && <li title={"Currently playing: " + this.props.serverInfo.VideoUrl}>
+                            <Link to="/video"><i className="fa fa-youtube" /></Link>
                         </li>}
                         {this.props.copyProgress != null && this.props.copyProgress != undefined && <li title={"Currently copying files: " + parseInt(this.props.copyProgress) + "%"}>
                             <Link to="/copy"><i className="fa fa-files-o" /></Link>

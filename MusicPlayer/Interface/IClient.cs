@@ -10,18 +10,7 @@ namespace MusicPlayer.Interface
     /// <summary>
     /// Describes the music player client.
     /// </summary>
-    public interface IClient : IMusicPlayer, IDisposable
+    public interface IClient : IMusicPlayer, INetwork
     {
-        /// <summary>
-        /// Disconnect the server.
-        /// </summary>
-        /// <returns>The music player.</returns>
-        IMusicPlayer Disconnect();
-
-        /// <summary>
-        /// Gets the server info.
-        /// </summary>
-        /// <returns></returns>
-        ServerInfo GetInfo();
     }
 }

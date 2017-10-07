@@ -543,3 +543,10 @@ button.song-volume {
     width: 100%;
     height: calc(100% - 10px);
 }
+
+.video > section > i {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 800%;
+}

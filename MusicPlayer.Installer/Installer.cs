@@ -64,6 +64,7 @@ namespace MusicPlayer.Installer
         private void WriteLog(string message)
         {
             string path = "C:\\Temp\\MusicPlayer_Install_Log.txt";
+            Directory.CreateDirectory("C:\\Temp\\");
             if (!File.Exists(path))
             {
                 File.Create(path);

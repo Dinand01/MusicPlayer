@@ -19,7 +19,7 @@ namespace MusicPlayer.Controller
     /// <summary>
     /// The network client music player.
     /// </summary>
-    internal class NetworkClient : MusicPlayerWrapper, IClient
+    internal class NetworkClient : MusicPlayerWrapper, IClient, INetwork
     {
         #region Variables
 
@@ -74,6 +74,11 @@ namespace MusicPlayer.Controller
         private List<Song> _receivedSongs = new List<Song>();
 
         #endregion
+
+        /// <summary>
+        /// The server info changed.
+        /// </summary>
+        public event ServerInfoChanged OnInfoChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkClient"/> class. 
@@ -212,6 +217,12 @@ namespace MusicPlayer.Controller
                     stream = null;
                     stream = HandleNewSongMessage(message);
                     break;
+                case MessageType.Pause:
+                    base.TogglePlay(true);
+                    break;
+                case MessageType.Play:
+                    base.TogglePlay(false);
+                    break;
                 case MessageType.Data:
                     HandleDataMessage(message, previous, ref stream, 0);
                     break;
@@ -223,6 +234,11 @@ namespace MusicPlayer.Controller
                     HandleGotoMessage(message);
                     break;
                 case MessageType.Notification:
+                    break;
+                case MessageType.Video:
+                    var info = GetInfo();
+                    info.VideoUrl = Deserialize<string>(message.Data);
+                    OnInfoChanged?.Invoke(info);
                     break;
                 default:
                     throw new Exception("Unknown message type received, please update your client.");
@@ -351,6 +367,20 @@ namespace MusicPlayer.Controller
             }
 
             return clientSocket;
+        }
+
+        /// <summary>
+        /// Deserializes a byte array into an object.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="data">The byte array.</param>
+        /// <returns>The object.</returns>
+        private T Deserialize<T>(byte[] data)
+        {
+            using (var memStream = new MemoryStream(data))
+            {
+                return (T)(new BinaryFormatter()).Deserialize(memStream);
+            }
         }
     }
 }

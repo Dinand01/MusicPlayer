@@ -46,6 +46,7 @@
     <Compile Include="Controller\NetworkClient.cs" />
     <Compile Include="Controller\NetworkServer.cs" />
     <Compile Include="Controller\SongInfoController.cs" />
+    <Compile Include="Controller\VideoController.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Extensions\DbContextExtended.cs" />
     <Compile Include="Extensions\Extensions.cs" />
@@ -55,9 +56,11 @@
     <Compile Include="Factory.cs" />
     <Compile Include="Interface\IClient.cs" />
     <Compile Include="Interface\ICopy.cs" />
+    <Compile Include="Interface\INetwork.cs" />
     <Compile Include="Interface\IServer.cs" />
     <Compile Include="Interface\IUI.cs" />
     <Compile Include="Interface\IMusicPlayer.cs" />
+    <Compile Include="Interface\IVideo.cs" />
     <Compile Include="Models\ColorPallete.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
     <Compile Include="Models\enum\SettingType.cs" />

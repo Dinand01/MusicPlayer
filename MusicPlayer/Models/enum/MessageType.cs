@@ -34,6 +34,21 @@ namespace MusicPlayer.Models
         /// <summary>
         /// Notification to display.
         /// </summary>
-        Notification
+        Notification,
+
+        /// <summary>
+        /// Pause the music.
+        /// </summary>
+        Pause,
+
+        /// <summary>
+        /// Play the music.
+        /// </summary>
+        Play,
+
+        /// <summary>
+        /// Send a video.
+        /// </summary>
+        Video
     }
 }

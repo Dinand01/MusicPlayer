@@ -64,6 +64,16 @@ namespace MusicPlayer
         }
 
         /// <summary>
+        /// Gets the video player.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        /// <returns>The video player.</returns>
+        public static IMusicPlayer GetVideoPlayer(IMusicPlayer player = null)
+        {
+            return new VideoController(player);
+        }
+
+        /// <summary>
         /// Gets a copy controller.
         /// </summary>
         /// <returns>The copy controller.</returns>

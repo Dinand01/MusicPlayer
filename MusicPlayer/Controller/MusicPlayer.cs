@@ -130,11 +130,13 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// Pauses or plays the music.
         /// </summary>
-        public void TogglePlay()
+        /// <returns>A boolean indicating whether the music is playing.</returns>
+        public bool TogglePlay(bool? pause = null)
         {
-            if (_waveOutDevice != null)
+            bool result = false;
+            if (_waveOutDevice != null && _currentSong != null)
             {
-                if (_waveOutDevice.PlaybackState == PlaybackState.Playing)
+                if ((_waveOutDevice.PlaybackState == PlaybackState.Playing && pause != false) || pause == true)
                 {
                     _currentSong.IsPlaying = false;
                     _waveOutDevice.Pause();
@@ -146,10 +148,13 @@ namespace MusicPlayer.Controller
                     _timetracker?.Abort();
                     _timetracker = new Thread(UpdateTime);
                     _timetracker.Start();
+                    result = true;
                 }
 
                 SongChanged?.Invoke(_currentSong);
             }
+
+            return result;
         }
 
         /// <summary>
@@ -355,6 +360,11 @@ namespace MusicPlayer.Controller
             if (percentage <= 100 && percentage > -1)
             {
                 _volume = percentage;
+                if (_waveOutDevice == null)
+                {
+                    _waveOutDevice = new WaveOut();
+                }
+
                 _waveOutDevice.Volume = percentage / (float)100;
                 DataController.SetSetting<int>(SettingType.Volume, percentage);
             }
@@ -445,7 +455,7 @@ namespace MusicPlayer.Controller
         /// <param name="e"></param>
         public void OnWaveOutStop(object sender, EventArgs e)
         {
-            if (!_isReceiveMode)
+            if (!_isReceiveMode && _currentSong.IsPlaying)
             {
                 Next();
             }

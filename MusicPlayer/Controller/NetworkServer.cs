@@ -29,7 +29,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The list of server threads.
         /// </summary>
-        private List<Thread> _senders = new List<Thread>();
+        private Dictionary<Thread, List<Message>> _senders = new Dictionary<Thread, List<Message>>();
 
         /// <summary>
         /// The listener.
@@ -55,11 +55,6 @@ namespace MusicPlayer.Controller
         /// The current song.
         /// </summary>
         private Song _currentSong = null;
-
-        /// <summary>
-        /// A optional priority message.
-        /// </summary>
-        private Message _priorityMessage;
 
         /// <summary>
         /// The server info.
@@ -103,6 +98,18 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// Intercept the play pause action and notify the client.
+        /// </summary>
+        /// <param name="pause">Play or pause the music.</param>
+        /// <returns>A boolean indicating whether the music is playing.</returns>
+        public override bool TogglePlay(bool? pause)
+        {
+            bool res = base.TogglePlay(pause);
+            this.SendMessage<string>(res ? MessageType.Play : MessageType.Pause);
+            return res;
+        }
+
+        /// <summary>
         /// Disconnect the server.
         /// </summary>
         /// <returns>The music player.</returns>
@@ -127,7 +134,7 @@ namespace MusicPlayer.Controller
         /// <param name="text">The text.</param>
         public void Notify(string text)
         {
-            _priorityMessage = CreateNotificationMessage(text);
+            AddMessageToThreads(CreateNotificationMessage(text));
         }
 
         /// <summary>
@@ -144,6 +151,20 @@ namespace MusicPlayer.Controller
         public override void Dispose()
         {
             Dispose(true);
+        }
+
+        /// <summary>
+        /// Send a specific message to the client.
+        /// </summary>
+        /// <param name="type">The message type.</param>
+        /// <param name="payload">The message content.</param>
+        public void SendMessage<T>(MessageType type, T payload = default(T))
+        {
+            AddMessageToThreads(new Message
+            {
+                Type = type,
+                Data = Serialize(payload)
+            });
         }
 
         /// <summary>
@@ -169,7 +190,7 @@ namespace MusicPlayer.Controller
         /// <param name="position">The position.</param>
         internal void GotoPosition(TimeSpan position)
         {
-            _priorityMessage = CreateGotoMessage(position);
+            AddMessageToThreads(CreateGotoMessage(position));
         }
 
         /// <summary>
@@ -211,7 +232,7 @@ namespace MusicPlayer.Controller
                         OnInfoChanged?.Invoke(_serverInfo);
                         var tempTread = new Thread(newt => Transmit(clientSocket));
                         tempTread.Start();
-                        _senders.Add(tempTread);
+                        _senders.Add(tempTread, new List<Message>());
                     }
 
                     _listener.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), new object());
@@ -238,13 +259,18 @@ namespace MusicPlayer.Controller
             var remoteaddress = socket.Client.RemoteEndPoint as IPEndPoint;
             int currentIndex = 0;
             bool endofSongSent = false;
-            Message previousPriorityMessage = null;
             Message prev = null;
 
             while (_run && sending)
             {
+                // Create the message
                 Message messageToSend = null;
-                if (_currentFile != null && _currentFile.Length > 0 && _currentSong != null && !_loading)
+                if (_senders[Thread.CurrentThread].Count > 0)
+                {
+                    messageToSend = _senders[Thread.CurrentThread].First();
+                    _senders[Thread.CurrentThread].Remove(messageToSend);
+                }
+                else if (_currentFile != null && _currentFile.Length > 0 && _currentSong != null && !_loading)
                 {
                     if (prevFile == null || prevFile.Length != _currentFile.Length)
                     {
@@ -256,6 +282,7 @@ namespace MusicPlayer.Controller
                     }
                     else
                     {
+                        // Song data
                         messageToSend = CreateDataMessage(ref currentIndex);
                         if (messageToSend == null)
                         {
@@ -264,40 +291,36 @@ namespace MusicPlayer.Controller
                                 messageToSend = CreateEndOfsongMessage();
                                 endofSongSent = true;
                             }
-                            else if(_priorityMessage != null && _priorityMessage != previousPriorityMessage)
-                            {
-                                previousPriorityMessage = _priorityMessage;
-                                messageToSend = _priorityMessage;
-                            }
                         }
                         else
                         {
                             endofSongSent = false;
                         }
                     }
+                }
 
-                    if (messageToSend != null)
+                // Send the message
+                if (messageToSend != null)
+                {
+                    byte[] serealizedData = Serialize(messageToSend);
+                    try
                     {
-                        byte[] serealizedData = Serialize(messageToSend);
-
-                        try
-                        {
-                            SendSerializedData(networkStream, serealizedData);
-                            prev = messageToSend;
-                        }
-                        catch
-                        {
-                            sending = false;
-                            socket.Close();
-                        }
+                        SendSerializedData(networkStream, serealizedData);
+                        prev = messageToSend;
                     }
-                    else
+                    catch
                     {
-                        Thread.Sleep(25);
+                        sending = false;
+                        socket.Close();
                     }
+                }
+                else
+                {
+                    Thread.Sleep(25);
                 }
             }
 
+            _senders.Remove(Thread.CurrentThread);
             _serverInfo.Clients.Remove(remoteaddress.Address.ToString());
             OnInfoChanged?.Invoke(_serverInfo);
             networkStream.Dispose();
@@ -356,7 +379,7 @@ namespace MusicPlayer.Controller
             var currentTime = new TimeSpan(0, 0, (int)_currentSong.Position);
             if (currentTime != null)
             {
-                _priorityMessage = CreateGotoMessage(currentTime);
+                AddMessageToThreads(CreateGotoMessage(currentTime));
             }
 
             return result;
@@ -422,17 +445,34 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// Adds the message to all threads.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private void AddMessageToThreads(Message message)
+        {
+            foreach (var messages in _senders.Select(kv => kv.Value))
+            {
+                messages.Add(message);
+            }
+        }
+
+        /// <summary>
         /// Serialize an object to bytes.
         /// </summary>
         /// <param name="anySerializableObject">The object to serialize.</param>
         /// <returns>The byte array.</returns>
         private byte[] Serialize(object anySerializableObject)
         {
-            using (var memoryStream = new MemoryStream())
+            if (anySerializableObject != null)
             {
-                (new BinaryFormatter()).Serialize(memoryStream, anySerializableObject);
-                return memoryStream.ToArray();
+                using (var memoryStream = new MemoryStream())
+                {
+                    (new BinaryFormatter()).Serialize(memoryStream, anySerializableObject);
+                    return memoryStream.ToArray();
+                }
             }
+
+            return new byte[0];
         }
     }
 }

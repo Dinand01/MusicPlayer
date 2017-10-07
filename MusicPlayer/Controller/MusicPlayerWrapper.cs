@@ -57,9 +57,9 @@ namespace MusicPlayer.Controller
             _player.Play(song);
         }
 
-        public virtual void TogglePlay()
+        public virtual bool TogglePlay(bool? pause)
         {
-            _player.TogglePlay();
+            return _player.TogglePlay(pause);
         }
 
         public virtual void Next()

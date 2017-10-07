@@ -15,23 +15,13 @@ namespace MusicPlayer.Interface
     /// <summary>
     /// The interface describing a music server.
     /// </summary>
-    public interface IServer : IMusicPlayer, IDisposable
+    public interface IServer : IMusicPlayer, INetwork
     {
         /// <summary>
-        /// The server info changed event.
+        /// Send a specific message to the client.
         /// </summary>
-        event ServerInfoChanged OnInfoChanged;
-
-        /// <summary>
-        /// Disconnect the server.
-        /// </summary>
-        /// <returns>The music player.</returns>
-        IMusicPlayer Disconnect();
-
-        /// <summary>
-        /// Gets the server info.
-        /// </summary>
-        /// <returns></returns>
-        ServerInfo GetInfo();
+        /// <param name="type">The message type.</param>
+        /// <param name="payload">The message content.</param>
+        void SendMessage<T>(MessageType type, T payload = default(T));
     }
 }

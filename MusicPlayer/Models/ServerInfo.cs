@@ -42,5 +42,10 @@ namespace MusicPlayer.Models
                 return count == null ? 0 : (int)count;
             }
         }
+        
+        /// <summary>
+        /// In client mode this is used to play a video.
+        /// </summary>
+        public string VideoUrl { get; set; }
     }
 }

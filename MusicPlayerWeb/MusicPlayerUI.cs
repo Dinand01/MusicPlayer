@@ -283,6 +283,7 @@ namespace MusicPlayerWeb
                 DataController.SetSetting<string>(SettingType.RemoteIP, ip);
                 NewPlayer(Factory.GetClientPlayer(address, port, _player));
                 var client = _player as IClient;
+                client.OnInfoChanged += ServerInfoChanged;
                 this.ServerInfoChanged(client?.GetInfo());
             }
         }
@@ -292,17 +293,13 @@ namespace MusicPlayerWeb
         /// </summary>
         public void DisconnectServer()
         {
-            var server = (_player as IServer);
-            if (server != null)
+            var network = (_player as INetwork);
+            if (network != null)
             {
-                server.OnInfoChanged -= ServerInfoChanged;
-                _player = server.Disconnect();
+                network.OnInfoChanged -= ServerInfoChanged;
+                _player = network.Disconnect();
                 this.ServerInfoChanged(null);
             }
-
-            var client = _player as IClient;
-            client?.Disconnect();
-            this.ServerInfoChanged(null);
         }
 
         /// <summary>
@@ -324,12 +321,35 @@ namespace MusicPlayerWeb
         }
 
         /// <summary>
+        /// Start a video.
+        /// </summary>
+        /// <param name="url">The url of the video.</param>
+        public void StartVideo(string url)
+        {
+            _player = Factory.GetVideoPlayer(_player);
+            var video = _player as IVideo;
+            video.StartVideo(url);
+        }
+
+        /// <summary>
+        /// Stop the video.
+        /// </summary>
+        public void StopVideo()
+        {
+            var video = _player as IVideo;
+            if (video != null)
+            {
+                _player = video.StopVideo();
+            }
+        }
+
+        /// <summary>
         /// The copy progress has changed.
         /// </summary>
         /// <param name="percentage">The new percentage.</param>
         private void CopyProgressChanged(double percentage)
         {
-            _browser.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCopyProgress", percentage != 100 ? (double?)percentage : null);
+            _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCopyProgress", percentage != 100 ? (double?)percentage : null);
         }
 
         /// <summary>
@@ -338,7 +358,7 @@ namespace MusicPlayerWeb
         /// <param name="song">The new song.</param>
         private void SongChanged(Song song)
         {
-            _browser.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCurrentSong", JsonConvert.SerializeObject(song).Replace("\\", "\\\\"));
+            _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCurrentSong", JsonConvert.SerializeObject(song).Replace("\\", "\\\\"));
         }
 
         /// <summary>
@@ -347,7 +367,7 @@ namespace MusicPlayerWeb
         /// <param name="serverInfo">The new server info.</param>
         private void ServerInfoChanged(ServerInfo serverInfo)
         {
-            _browser.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetServerInfo", JsonConvert.SerializeObject(serverInfo).Replace("\\", "\\\\"));
+            _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetServerInfo", JsonConvert.SerializeObject(serverInfo).Replace("\\", "\\\\"));
         }
 
         /// <summary>
@@ -375,6 +395,8 @@ namespace MusicPlayerWeb
         /// </summary>
         public void Dispose()
         {
+            _browser?.Dispose();
+            _browser = null;
             _player?.Dispose();
         }
     }

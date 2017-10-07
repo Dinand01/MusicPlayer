@@ -62,7 +62,9 @@ namespace MusicPlayer.Interface
         /// <summary>
         /// Pause the current song.
         /// </summary>
-        void TogglePlay();
+        /// <param name="pause">Explicit pause or play.</param>
+        /// <returns>A boolean indicating whether the music is playing.</returns>
+        bool TogglePlay(bool? pause = null);
 
         /// <summary>
         /// Play the next song.

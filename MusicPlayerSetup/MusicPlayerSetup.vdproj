@@ -2482,7 +2482,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C807191BADF52BF94613745EFE345D14"
@@ -3155,15 +3155,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MusicPlayer"
-        "ProductCode" = "8:{D8E353F3-6DEF-47E1-A9BC-ACDF019B48ED}"
-        "PackageCode" = "8:{D07B16A8-89C9-4B0B-88C2-7C9191A15106}"
+        "ProductCode" = "8:{2ED12334-DA17-43B0-ABE3-88ACFB4AE1DF}"
+        "PackageCode" = "8:{47151AB2-3195-444D-A300-B02AD62E2788}"
         "UpgradeCode" = "8:{B5E2C2A9-4A22-44A2-B7C0-CB8C69BE0B33}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.0.20"
+        "ProductVersion" = "8:0.0.23"
         "Manufacturer" = "8:Lybaert Dinand"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

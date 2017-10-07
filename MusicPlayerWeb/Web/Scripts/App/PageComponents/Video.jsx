@@ -39,8 +39,16 @@ class Video extends React.Component {
      * @param {object} nextprops The next properties. 
      */
     componentWillReceiveProps(nextprops) {
-        if (nextprops.serverInfo && !nextprops.serverInfo.IsHost && this.state.videoUrl !== nextprops.serverInfo.VideoUrl) {
-            this.changeUrl(nextprops.serverInfo.VideoUrl);
+        if (nextprops.serverInfo && !nextprops.serverInfo.IsHost) {
+            console.log(nextprops.serverInfo);
+            if (nextprops.serverInfo.VideoUrl !== null && this.state.videoUrl !== nextprops.serverInfo.VideoUrl) {
+                console.log("change url: " + nextprops.serverInfo.VideoUrl);
+                this.changeUrl(nextprops.serverInfo.VideoUrl);
+            }
+
+            if (this.player && !nextprops.serverInfo.VideoUrl && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition) {
+                this.player.seekTo(nextprops.serverInfo.VideoPosition, true);
+            }
         }
     }
 
@@ -48,7 +56,7 @@ class Video extends React.Component {
      * @desc The component will unmount.
      */
     componentWillUnmount() {
-        clearInterval(volumeChecker);
+        clearInterval(this.volumeChecker);
         MusicPlayer.stopVideo();
     }
 
@@ -74,7 +82,7 @@ class Video extends React.Component {
                         }
 
                         if (event.data == YT.PlayerState.BUFFERING && this.state.previousPlayerState == YT.PlayerState.PAUSED) {
-                            console.log("seek detected " + this.player.getCurrentTime());
+                            MusicPlayer.seekVideo(this.player.getCurrentTime());
                         }
 
                         if (event.data == YT.PlayerState.PLAYING || event.data == YT.PlayerState.BUFFERING || YT.PlayerState.PAUSED) {
@@ -138,6 +146,8 @@ class Video extends React.Component {
         let id = this.getVideoID();
         if (id) {
             this.addYoutubePlayer(id);
+        } else if (this.player && this.player.getPlayerState() == YT.PlayerState.PLAYING) {
+            this.player.stopVideo();
         }
     }
 
@@ -146,7 +156,10 @@ class Video extends React.Component {
      * @param {string} url The new url.
      */
     changeUrl(url) {
-        this.setState({videoUrl: url}, () => {
+        this.setState({
+            videoUrl: url,
+            isPlaying: false
+        }, () => {
             this.playVideo();
         });
     }

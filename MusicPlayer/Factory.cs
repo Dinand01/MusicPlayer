@@ -70,7 +70,8 @@ namespace MusicPlayer
         /// <returns>The video player.</returns>
         public static IMusicPlayer GetVideoPlayer(IMusicPlayer player = null)
         {
-            return new VideoController(player);
+            var p = player as IVideo;
+            return p != null ? p : new VideoController(player);
         }
 
         /// <summary>

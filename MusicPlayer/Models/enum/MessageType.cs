@@ -49,6 +49,11 @@ namespace MusicPlayer.Models
         /// <summary>
         /// Send a video.
         /// </summary>
-        Video
+        Video, 
+
+        /// <summary>
+        /// Seek to a certain position in the video.
+        /// </summary>
+        VideoSeek
     }
 }

@@ -18,6 +18,12 @@ namespace MusicPlayer.Interface
         void StartVideo(string url);
 
         /// <summary>
+        /// Seek to a specific position.
+        /// </summary>
+        /// <param name="position">The position to seek to.</param>
+        void Seek(double position);
+
+        /// <summary>
         /// Stop the video and return the music player.
         /// </summary>
         /// <returns>The musicplayer.</returns>

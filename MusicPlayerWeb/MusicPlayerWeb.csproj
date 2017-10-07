@@ -196,6 +196,10 @@
     <None Include="Web\Scripts\App\Parts\SongList\SongList.jsx" />
     <None Include="Web\Scripts\App\Parts\SongList\SongListItem.jsx" />
     <None Include="Web\Scripts\App\ReduxApp.jsx" />
+    <None Include="Web\Scripts\Build\fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot" />
+    <None Include="Web\Scripts\Build\fontawesome-webfont-af7ae505a9eed503f8b8e6982036873e.woff2" />
+    <Resource Include="Web\Scripts\Build\fontawesome-webfont-b06871f281fee6b241d60582ae9369b9.ttf" />
+    <None Include="Web\Scripts\Build\fontawesome-webfont-fee66e712a8a08eef5805a46892932ad.woff" />
     <None Include="Web\Style\App.scss" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +214,7 @@
     <Content Include="Web\Scripts\Build\bundle.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Web\Scripts\Build\fontawesome-webfont-912ec66d7572ff821749319396470bde.svg" />
     <Content Include="Web\Scripts\Build\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -213,6 +213,16 @@ namespace MusicPlayerWeb
         }
 
         /// <summary>
+        /// Seek to a video position.
+        /// </summary>
+        /// <param name="position">The position to seek to.</param>
+        public void SeekVideo(double position)
+        {
+            var ctrl = _player as IVideo;
+            ctrl?.Seek(position);
+        }
+
+        /// <summary>
         /// Stop playing music.
         /// </summary>
         public void Stop()

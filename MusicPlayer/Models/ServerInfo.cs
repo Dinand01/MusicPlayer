@@ -47,5 +47,10 @@ namespace MusicPlayer.Models
         /// In client mode this is used to play a video.
         /// </summary>
         public string VideoUrl { get; set; }
+
+        /// <summary>
+        /// The position of the video.
+        /// </summary>
+        public double VideoPosition { get; set; }
     }
 }

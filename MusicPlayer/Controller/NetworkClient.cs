@@ -209,6 +209,7 @@ namespace MusicPlayer.Controller
         /// <param name="previous">The previous message that was received.</param>
         private void HandleMessages(Message message, Message previous, ref FileStream stream)
         {
+            var info = GetInfo();
             switch (message.Type)
             {
                 case MessageType.NewSong:
@@ -236,8 +237,11 @@ namespace MusicPlayer.Controller
                 case MessageType.Notification:
                     break;
                 case MessageType.Video:
-                    var info = GetInfo();
                     info.VideoUrl = Deserialize<string>(message.Data);
+                    OnInfoChanged?.Invoke(info);
+                    break;
+                case MessageType.VideoSeek:
+                    info.VideoPosition = Deserialize<double>(message.Data);
                     OnInfoChanged?.Invoke(info);
                     break;
                 default:

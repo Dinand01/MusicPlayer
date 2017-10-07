@@ -44,6 +44,19 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// Seek to a specific position.
+        /// </summary>
+        /// <param name="position">The position to seek to.</param>
+        public void Seek(double position)
+        {
+            IServer server = _player as IServer;
+            if (server != null)
+            {
+                server.SendMessage<double>(MessageType.VideoSeek, position);
+            }
+        }
+
+        /// <summary>
         /// Stop the video.
         /// </summary>
         /// <returns>The music player.</returns>
@@ -54,7 +67,6 @@ namespace MusicPlayer.Controller
             {
                 server.GetInfo().VideoUrl = null;
                 server.SendMessage<string>(MessageType.Video, string.Empty);
-                server.SendMessage<string>(MessageType.Play, null);
             }
 
             return _player;

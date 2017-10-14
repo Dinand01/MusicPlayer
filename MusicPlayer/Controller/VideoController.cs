@@ -1,9 +1,11 @@
-﻿using MusicPlayer.Interface;
+﻿using MusicPlayer.Extensions;
+using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MusicPlayer.Controller
@@ -17,6 +19,21 @@ namespace MusicPlayer.Controller
         /// The music player.
         /// </summary>
         private new IMusicPlayer _player;
+
+        /// <summary>
+        /// The thread that will send ocasional messages.
+        /// </summary>
+        private Thread _refreshClientInfo;
+
+        /// <summary>
+        /// The current video url.
+        /// </summary>
+        private string _videoUrl;
+
+        /// <summary>
+        /// The reference of the video.
+        /// </summary>
+        private DateTime _started;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VideoController" /> class. 
@@ -35,6 +52,10 @@ namespace MusicPlayer.Controller
         {
             _player?.TogglePlay(true);
             IServer server = _player as IServer;
+            _videoUrl = url;
+            _refreshClientInfo?.Abort();
+            _refreshClientInfo = new Thread(() => CheckTime());
+            _refreshClientInfo.Start();
             if (server != null)
             {
                 server.GetInfo().VideoUrl = url;
@@ -50,6 +71,7 @@ namespace MusicPlayer.Controller
         public void Seek(double position)
         {
             IServer server = _player as IServer;
+            _started = DateTime.Now - TimeSpan.FromSeconds(position);
             if (server != null)
             {
                 server.SendMessage<double>(MessageType.VideoSeek, position);
@@ -63,6 +85,7 @@ namespace MusicPlayer.Controller
         public IMusicPlayer StopVideo()
         {
             IServer server = _player as IServer;
+            _videoUrl = null;
             if (server != null)
             {
                 server.GetInfo().VideoUrl = null;
@@ -70,6 +93,36 @@ namespace MusicPlayer.Controller
             }
 
             return _player;
+        }
+
+        /// <summary>
+        /// Dispose of the controller.
+        /// </summary>
+        public override void Dispose()
+        {
+            _videoUrl = null;
+            _refreshClientInfo?.Abort();
+            base.Dispose();
+        }
+
+        /// <summary>
+        /// This thread will Send the Vidoe and tim to the clients every 5 seconds.
+        /// </summary>
+        private void CheckTime()
+        {
+            _started = DateTime.Now;
+            while (!string.IsNullOrEmpty(_videoUrl))
+            {
+                IServer server = _player as IServer;
+                if (server != null)
+                {
+                    server.SendMessage<string>(MessageType.Video, _videoUrl);
+                    TimeSpan elapsed = DateTime.Now - _started;
+                    server.SendMessage<double>(MessageType.VideoSeek, elapsed.TotalSeconds);
+                }
+
+                ThreadExtensions.SaveSleep(5000);
+            }
         }
     }
 }

@@ -64,11 +64,6 @@ namespace MusicPlayer.Controller
         private bool _run = true;
 
         /// <summary>
-        /// The amount of errors encountered on transfer.
-        /// </summary>
-        private int _errorCount = 0;
-
-        /// <summary>
         /// The song that were received song this object exists.
         /// </summary>
         private List<Song> _receivedSongs = new List<Song>();
@@ -150,6 +145,7 @@ namespace MusicPlayer.Controller
         {
             if (_clientSocket != null)
             {
+                int errorCount = 0;
                 _clientSocket.ReceiveBufferSize = 262144;
                 _clientSocket.SendBufferSize = 262144;
                 NetworkStream stream = _clientSocket.GetStream();
@@ -167,15 +163,14 @@ namespace MusicPlayer.Controller
                             Message message = (Message)formatter.Deserialize(stream);
                             HandleMessages(message, previousMessage, ref filestream);
                             previousMessage = message;
-                            error = false;
-                            _errorCount = 0;
+                            errorCount = 0;
                         }
                         catch (Exception e)
                         {
                             ThreadExtensions.SaveSleep(10);
-                            _errorCount++;
+                            errorCount++;
 
-                            if (_errorCount > 10)
+                            if (errorCount > 5)
                             {
                                 error = true;
                                 ThreadExtensions.SaveSleep(2000);
@@ -229,7 +224,6 @@ namespace MusicPlayer.Controller
                     break;
                 case MessageType.EndOfSong:
                     HandleEndOfSongMessage(message, ref stream);
-                    _errorCount = 0;
                     break;
                 case MessageType.Goto:
                     HandleGotoMessage(message);

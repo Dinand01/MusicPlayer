@@ -40,13 +40,16 @@ class Video extends React.Component {
      */
     componentWillReceiveProps(nextprops) {
         if (nextprops.serverInfo && !nextprops.serverInfo.IsHost) {
-            console.log(nextprops.serverInfo);
             if (nextprops.serverInfo.VideoUrl !== null && this.state.videoUrl !== nextprops.serverInfo.VideoUrl) {
-                console.log("change url: " + nextprops.serverInfo.VideoUrl);
+                console.log("change url: ");
+                console.log(nextprops.serverInfo);
                 this.changeUrl(nextprops.serverInfo.VideoUrl);
             }
 
-            if (this.player && !nextprops.serverInfo.VideoUrl && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition) {
+            if (this.player && !nextprops.serverInfo.VideoUrl && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition &&
+                Math.abs(this.player.getCurrentTime() - nextprops.serverInfo.VideoPosition) > 5) {
+                console.log("Seek to ");
+                console.log(nextprops.serverInfo);
                 this.player.seekTo(nextprops.serverInfo.VideoPosition, true);
             }
         }
@@ -67,8 +70,8 @@ class Video extends React.Component {
     addYoutubePlayer(id) {
         if (this.player == null) {
             this.player = new YT.Player('youtube-player', {
-                height: '390',
-                width: '640',
+                // height: '390',
+                // width: '640',
                 videoId: id,
                 suggestedQuality: "hd1080",
                 events: {
@@ -77,10 +80,6 @@ class Video extends React.Component {
                         event.target.playVideo();
                     },
                     'onStateChange': (event) => {
-                        if (event.data == YT.PlayerState.PLAYING) {
-                            MusicPlayer.startVideo(this.state.videoUrl);
-                        }
-
                         if (event.data == YT.PlayerState.BUFFERING && this.state.previousPlayerState == YT.PlayerState.PAUSED) {
                             MusicPlayer.seekVideo(this.player.getCurrentTime());
                         }
@@ -146,6 +145,7 @@ class Video extends React.Component {
         let id = this.getVideoID();
         if (id) {
             this.addYoutubePlayer(id);
+            MusicPlayer.startVideo(this.state.videoUrl);
         } else if (this.player && this.player.getPlayerState() == YT.PlayerState.PLAYING) {
             this.player.stopVideo();
         }
@@ -158,7 +158,8 @@ class Video extends React.Component {
     changeUrl(url) {
         this.setState({
             videoUrl: url,
-            isPlaying: false
+            isPlaying: false,
+            previousPlayerState: -1
         }, () => {
             this.playVideo();
         });

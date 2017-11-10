@@ -233,12 +233,14 @@ namespace MusicPlayer.Controller
                         var tempTread = new Thread(newt => Transmit(clientSocket));
                         tempTread.Start();
                         _senders.Add(tempTread, new List<Message>());
+                        Logger.LogInfo("SERVER: client connected " + remoteaddress?.ToString());
                     }
 
                     _listener.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), new object());
                 }
-                catch 
+                catch (Exception e)
                 {
+                    Logger.LogError(e, "SERVER: Client connect failed");
                     _listener?.Start();
                     _listener?.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), new object());
                 }
@@ -265,7 +267,7 @@ namespace MusicPlayer.Controller
             {
                 // Create the message
                 Message messageToSend = null;
-                if (_senders[Thread.CurrentThread].Count > 0)
+                if (_senders.Keys.Contains(Thread.CurrentThread) && _senders[Thread.CurrentThread].Count > 0)
                 {
                     messageToSend = _senders[Thread.CurrentThread].First();
                     _senders[Thread.CurrentThread].Remove(messageToSend);
@@ -308,8 +310,9 @@ namespace MusicPlayer.Controller
                         SendSerializedData(networkStream, serealizedData);
                         prev = messageToSend;
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Logger.LogError(e, "SERVER: sending data failed in send thread -> aborting connection to " + remoteaddress?.ToString());
                         sending = false;
                         socket.Close();
                     }
@@ -343,6 +346,7 @@ namespace MusicPlayer.Controller
                 }
                 catch (Exception e)
                 {
+                    Logger.LogError(e, "SERVER: writing to stream failed");
                     ThreadExtensions.SaveSleep(20);
                     retryCount++;
                     SendSerializedData(stream, data, retryCount);

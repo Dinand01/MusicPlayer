@@ -155,44 +155,47 @@ namespace MusicPlayer.Controller
 
                 while (_run && !error)
                 {
-                    if (stream != null && stream.CanRead)
+                    if (_clientSocket.Connected) 
                     {
-                        try
+                        if (stream != null && stream.CanRead)
                         {
-                            var formatter = new BinaryFormatter();
-                            Message message = (Message)formatter.Deserialize(stream);
-                            HandleMessages(message, previousMessage, ref filestream);
-                            previousMessage = message;
-                            errorCount = 0;
-                        }
-                        catch (Exception e)
-                        {
-                            ThreadExtensions.SaveSleep(10);
-                            errorCount++;
-
-                            if (errorCount > 5)
+                            try
                             {
-                                error = true;
-                                ThreadExtensions.SaveSleep(2000);
-                                _clientSocket = CreateTcpClient();
-                                if (_clientSocket != null)
+                                var formatter = new BinaryFormatter();
+                                Message message = (Message)formatter.Deserialize(stream);
+                                HandleMessages(message, previousMessage, ref filestream);
+                                previousMessage = message;
+                                errorCount = 0;
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.LogError(e, "CLIENT: Connection error");
+                                ThreadExtensions.SaveSleep(10);
+                                errorCount++;
+
+                                if (errorCount > 5)
                                 {
-                                    _receiver = new Thread(newt => Receive());
-                                    _receiver.Start();
+                                    error = true;
+                                    Reconnect();
                                 }
                             }
+                        }
+                        else
+                        {
+                            ThreadExtensions.SaveSleep(10);
                         }
                     }
                     else
                     {
-                        ThreadExtensions.SaveSleep(10);
+                        error = true;
+                        Reconnect();
                     }
                 }
 
                 if (!error)
                 {
+                    filestream?.Dispose();
                     stream.Dispose();
-                    _clientSocket.Close();
                 }
             }
         }
@@ -272,6 +275,7 @@ namespace MusicPlayer.Controller
             }
             catch (Exception e)
             {
+                Logger.LogError(e, "CLIENT: File access failed");
                 throw new Exception("Access was denied, you do not have the apropriate permissions in the directory wher this excecutable is.");
             }
 
@@ -365,6 +369,26 @@ namespace MusicPlayer.Controller
             }
 
             return clientSocket;
+        }
+
+        /// <summary>
+        /// Performs a reconnect.
+        /// </summary>
+        private void Reconnect()
+        {
+            ThreadExtensions.SaveSleep(2000);
+            _clientSocket?.Close();
+            _clientSocket = CreateTcpClient();
+            if (_clientSocket != null)
+            {
+                _receiver = new Thread(newt => Receive());
+                _receiver.Start();
+                Logger.LogInfo("CLIENT: Reconnect succeeded");
+            }
+            else
+            {
+                this.OnInfoChanged?.Invoke(null);
+            }
         }
 
         /// <summary>

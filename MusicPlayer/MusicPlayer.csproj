@@ -61,6 +61,7 @@
     <Compile Include="Interface\IUI.cs" />
     <Compile Include="Interface\IMusicPlayer.cs" />
     <Compile Include="Interface\IVideo.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Models\ColorPallete.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
     <Compile Include="Models\enum\SettingType.cs" />
@@ -91,6 +92,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="policy.2.0.taglib-sharp">

@@ -8,6 +8,16 @@ import SongList from '../Parts/SongList/SongList.jsx';
  * @class Contains the playist and current song.
  */
 class PlayList extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    /**
+     * @desc This component is static.
+     */
+    shouldComponentUpdate(nextprops, nextstate)  {
+        return false;
+    }
 
     render() {
         return (
@@ -16,9 +26,11 @@ class PlayList extends React.Component {
                     <div className="playlist-pages">
                         <Slider 
                             arrows={true} 
-                            slidesToShow={1}> 
-                                <div><Song serverInfo={this.props.serverInfo} currentSong={this.props.currentSong} /></div>
-                                <div><SongList receiveMode={this.props.serverInfo && !this.props.serverInfo.IsHost} currentSong={this.props.currentSong} /></div>
+                            slidesToShow={1}
+                            infinite={false}
+                            initialSlide={1}> 
+                                <div><SongList /></div>
+                                <div><Song /></div>
                         </Slider>
                     </div>
                 </div>
@@ -34,4 +46,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(PlayList);
+export default PlayList;

@@ -166,4 +166,12 @@ class Song extends React.Component {
     }
 }
 
-export default withRouter(Song);
+function mapStateToProps(state) {
+    return { 
+        serverInfo: state.serverInfo,
+        currentSong: state.currentSong
+      };
+  }
+  
+export default withRouter(connect(mapStateToProps)(Song));
+

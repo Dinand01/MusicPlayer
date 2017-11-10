@@ -1,10 +1,11 @@
 ﻿import React from 'react';
+import { connect } from 'react-redux';
 import Loader from "react-loader";
 import Waypoint from 'react-waypoint';
 import SongListItem from './SongListItem.jsx';
 import { parseJSON } from '../../Helpers/Methods.jsx';
 
-export default class SongList extends React.Component {
+class SongList extends React.Component {
     constructor(props) {
         super(props);
 
@@ -99,7 +100,10 @@ export default class SongList extends React.Component {
         return (
             <div className="songlist">
                 <div className="songlist-head">
-                    <input type="text" value={this.state.querry} onChange={(e) => this.changeQuerry(e.target.value)} disabled={this.props.receiveMode} />
+                    <input type="text" 
+                        value={this.state.querry} 
+                        onMouseMove={(e) => e.stopPropagation()}
+                        onChange={(e) => this.changeQuerry(e.target.value)} disabled={this.props.receiveMode} />
                 </div>
                 <div className="songlist-body">
                     <div>
@@ -114,7 +118,7 @@ export default class SongList extends React.Component {
                         <div className="songlist-songs">
                             <div>
                                 <div>
-                                    {this.state.songs.map((s, i) => <SongListItem key={i} song={s} />)}
+                                    {this.state.songs.map((s, i) => <SongListItem key={i} song={s} receiveMode={this.props.receiveMode} />)}
                                     <Waypoint onEnter={() => this.state.songs.length > 0 && this.getSongs()} bottomOffset="-100px" />
                                 </div>
                             </div>
@@ -126,3 +130,12 @@ export default class SongList extends React.Component {
         )
     }
 }
+
+function mapStateToProps(state) {
+    return { 
+        receiveMode: state.serverInfo && !state.serverInfo.IsHost,
+        currentSong: state.currentSong
+    };
+}
+  
+export default connect(mapStateToProps)(SongList);

@@ -9,7 +9,9 @@ export default class SongListItem extends React.Component {
      * @description Play the song.
      */
     play() {
-        MusicPlayer.play(JSON.stringify(this.props.song));
+        if(!this.props.receiveMode) {
+            MusicPlayer.play(JSON.stringify(this.props.song));
+        }
     }
 
     /**

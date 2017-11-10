@@ -88,6 +88,10 @@ button:disabled {
      opacity: 0.5;
 }
 
+input[Type=Text]:disabled {
+    background-color: lightgray;
+}
+
 input {
     display: inline-block;
     margin: 5px;
@@ -149,6 +153,10 @@ input {
     top: 25%;
     left: 0;
     right: 0;
+}
+
+.slick-prev.slick-disabled:before, .slick-next.slick-disabled:before {
+    display: none;
 }
 
 .menu-carousel .slick-list, .menu-carousel .slick-track,

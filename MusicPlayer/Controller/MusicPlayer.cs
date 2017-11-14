@@ -96,6 +96,15 @@ namespace MusicPlayer.Controller
 
         #region PlayerInformation
 
+        // <summary>
+        /// Gets the current song.
+        /// </summary>
+        /// <returns>The current song.</returns>
+        public Song GetCurrentSong()
+        {
+            return _currentSong;
+        }
+
         /// Gets the position of the current playing song.
         /// </summary>
         /// <returns>The position in seconds.</returns>
@@ -186,8 +195,9 @@ namespace MusicPlayer.Controller
                     TogglePlay();
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Logger.LogError(e, "MusicPlayer: Could not load song " + path);
                 _playstream = null;
                 if (!_isReceiveMode)
                 {

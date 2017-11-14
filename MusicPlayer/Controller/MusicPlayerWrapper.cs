@@ -47,6 +47,11 @@ namespace MusicPlayer.Controller
             return _player.LoadFolder(folder);
         }
 
+        public virtual Song GetCurrentSong()
+        {
+            return _player.GetCurrentSong();
+        }
+
         public virtual List<Song> GetSongs(int index = 0, string querry = null, int amount = 50)
         {
             return _player.GetSongs(index, querry, amount);

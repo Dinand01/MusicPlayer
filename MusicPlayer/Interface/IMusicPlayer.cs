@@ -25,6 +25,12 @@ namespace MusicPlayer.Interface
         event SongChanged SongChanged;
 
         /// <summary>
+        /// Gets the current song.
+        /// </summary>
+        /// <returns>The current song.</returns>
+        Song GetCurrentSong();
+
+        /// <summary>
         /// Loads all the files in the folder.
         /// </summary>
         /// <param name="folder">The folder.</param>

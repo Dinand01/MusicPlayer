@@ -295,7 +295,7 @@ input {
     float: left;
 }
 
-.song-position {
+.song-position, .song-position > div {
     color: $color-secondary-2-1;
     height: 5px;
     float: left;
@@ -303,6 +303,10 @@ input {
     margin: 5px;
     margin-top: 3px;
     background-color: inherit;
+}
+
+.song-position > div {
+    margin: 0;
 }
 
 .song-position .rc-slider-handle {

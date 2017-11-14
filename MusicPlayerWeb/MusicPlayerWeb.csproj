@@ -193,6 +193,7 @@
     <None Include="Web\Scripts\App\PageComponents\Server.jsx" />
     <None Include="Web\Scripts\App\PageComponents\Video.jsx" />
     <None Include="Web\Scripts\App\Parts\SongInfo\Song.jsx" />
+    <None Include="Web\Scripts\App\Parts\SongInfo\SongPosition.jsx" />
     <None Include="Web\Scripts\App\Parts\SongList\SongList.jsx" />
     <None Include="Web\Scripts\App\Parts\SongList\SongListItem.jsx" />
     <None Include="Web\Scripts\App\ReduxApp.jsx" />

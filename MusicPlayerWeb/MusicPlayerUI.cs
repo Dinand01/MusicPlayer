@@ -166,6 +166,16 @@ namespace MusicPlayerWeb
         }
 
         /// <summary>
+        /// Gets the current song.
+        /// </summary>
+        /// <returns>The current song.</returns>
+        public string GetCurrentSong()
+        {
+            var currentSong = _player?.GetCurrentSong();
+            return JsonConvert.SerializeObject(currentSong);
+        }
+
+        /// <summary>
         /// Go to the next song when possible.
         /// </summary>
         public void NextSong()

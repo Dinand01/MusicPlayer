@@ -1,7 +1,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { store } from '../../DataStore/Store.jsx';
+import { SongActions } from '../../DataStore/StoreActions.jsx';
 import Slider from 'rc-slider';
+import SongPosition from './SongPosition.jsx';
 
 /**
  * @class The component for rendering the current song and controls.
@@ -19,15 +22,36 @@ class Song extends React.Component {
     }
 
     /**
+     * @desc Prevent render when songposition changes.
+     * @param {object} nextprops The next properties. 
+     * @param {*} nextstate The next state.
+     */
+    shouldComponentUpdate(nextprops, nextstate) {
+        if(JSON.stringify(nextstate) !== JSON.stringify(this.state)
+            || (nextprops.currentSong && !this.props.currentSong)
+            || (nextprops.currentSong && this.props.currentSong && (
+                nextprops.currentSong.Location !== this.props.currentSong.Location
+                || nextprops.currentSong.Title !== this.props.currentSong.Title
+                || nextprops.currentSong.IsPlaying !== this.props.currentSong.IsPlaying))
+            || JSON.stringify(this.props.serverInfo) !== JSON.stringify(nextprops.serverInfo)) {
+                return true;
+            }
+
+        return false;
+    }
+
+    /**
      * @description The componnet will mount.
      */
     componentWillMount() {
-        Promise.all([MusicPlayer.getShuffle(), MusicPlayer.getVolume()]).then((arr) => {
+        Promise.all([MusicPlayer.getShuffle(), MusicPlayer.getVolume(), MusicPlayer.getCurrentSong()]).then((arr) => {
             this.setState({
                 shuffle: arr[0],
                 volume: arr[1],
                 prevVolume: arr[1]
             });
+
+            store.dispatch(SongActions.setCurrentSong(JSON.parse(arr[2])));
         });
     }
 
@@ -114,13 +138,16 @@ class Song extends React.Component {
                                     <i className={"fa " + (this.props.currentSong.IsPlaying ? "fa-pause" : "fa-play")} />
                                 </button>}
                                  {this.props.currentSong &&
-                                <Slider 
+                                 <SongPosition 
+                                    moveToTime={(val) => this.moveToTime(val)}
+                                    disabled={controlsDisbled} />}
+                                {/* <Slider 
                                     className="song-position" 
                                     disabled={controlsDisbled}
                                     value={this.props.currentSong.Position} 
                                     max={this.props.currentSong.Duration}
                                     onChange={(val) => this.moveToTime(val)}
-                                    title={"Change song position"} />} 
+                                    title={"Change song position"} />}  */}
                                 <button onClick={() => this.nextSong()} disabled={controlsDisbled} title={"Next song"}>
                                     <i className="fa fa-step-forward" />
                                     </button>

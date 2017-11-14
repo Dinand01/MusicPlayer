@@ -16,7 +16,6 @@ class CSharpDispatcher {
      * @param {string} jsonInfo 
      */
     dispatchSetServerInfo(jsonInfo) {
-        console.log("New server info " + jsonInfo);
         store.dispatch(SongActions.setServerinfo(JSON.parse(jsonInfo)));
     }
 

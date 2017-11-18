@@ -157,6 +157,31 @@ namespace MusicPlayerWeb
         }
 
         /// <summary>
+        /// Gets video info from a youtube playlist id.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>The serialized video info.</returns>
+        public string GetVideoInfoFromPlaylist(string id)
+        {
+            var videoCtrl = Factory.GetVideoPlayer(_player) as IVideo;
+            var task = videoCtrl.GetYoutubePlayList(id);
+            task.Wait();
+            return JsonConvert.SerializeObject(task.Result);
+        }
+
+        /// <summary>
+        /// Gets youtube videos.
+        /// </summary>
+        /// <returns>The serialized video info.</returns>
+        public string GetChannelVideos()
+        {
+            var videoCtrl = Factory.GetVideoPlayer(_player) as IVideo;
+            var task = videoCtrl.GetYoutubeChannel();
+            task.Wait();
+            return JsonConvert.SerializeObject(task.Result);
+        }
+
+        /// <summary>
         /// Gets the default ip address.
         /// </summary>
         /// <returns>The default ip address.</returns>

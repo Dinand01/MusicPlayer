@@ -562,3 +562,47 @@ button.song-volume {
     vertical-align: middle;
     font-size: 800%;
 }
+
+.video-thumb-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    align-items: center;
+    height: 100%;
+    justify-content: space-between;
+    overflow-y: scroll;
+}
+
+.video-thumb-container::-webkit-scrollbar { 
+    display: none; 
+}
+
+.video-thumb {
+    width: 200px;
+    height: 100px;
+    text-align: center;
+    background-color: black;
+    float: left;
+    margin: 5px;
+    position: relative;
+    cursor: pointer;
+}
+
+.video-thumb > img {
+    display: inline-block;
+    height: 100%;
+}
+
+.video-thumb > p {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: small;
+}
+
+.video-thumb > p:hover {
+    font-weight: bold;
+    font-size: inherit;
+}

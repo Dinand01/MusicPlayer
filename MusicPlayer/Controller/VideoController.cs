@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode;
 
 namespace MusicPlayer.Controller
 {
@@ -76,6 +77,30 @@ namespace MusicPlayer.Controller
             {
                 server.SendMessage<double>(MessageType.VideoSeek, position);
             }
+        }
+
+        /// <summary>
+        /// Gets the youtube channels video's.
+        /// </summary>
+        /// <param name="id">The id of the youtube channel.</param>
+        /// <returns>A list of video info.</returns>
+        public async Task<List<VideoInfo>> GetYoutubeChannel(string id)
+        {
+            var client = new YoutubeClient();
+            var videos = await client.GetChannelUploadsAsync(id);
+            return videos.Select(v => new VideoInfo(v)).ToList();
+        }
+
+        /// <summary>
+        /// Gets the playlists videos.
+        /// </summary>
+        /// <param name="id">The id of the playlist.</param>
+        /// <returns>The video info.</returns>
+        public async Task<List<VideoInfo>> GetYoutubePlayList(string id)
+        {
+            var client = new YoutubeClient();
+            var playlist = await client.GetPlaylistAsync(id);
+            return playlist.Videos.Select(v => new VideoInfo(v)).ToList();
         }
 
         /// <summary>

@@ -10,6 +10,8 @@ class Video extends React.Component {
 
         this.state = {
             videoUrl: "",
+            videoInfo: [],
+            currentVideoIndex: 0,
             modifiedUrl: null,
             currentVolume: 0,
             isPlaying: false,
@@ -18,11 +20,15 @@ class Video extends React.Component {
     }
 
     /**
-     * @desc The componnet did mount.
+     * @desc The component did mount.
      */
     componentDidMount() {
         if (this.props.serverInfo && this.props.serverInfo.VideoUrl) {
             this.changeUrl(this.props.serverInfo.VideoUrl);
+        }
+
+        if (!this.props.serverInfo || this.props.serverInfo.IsHost) {
+            this.loadVideoInfo();
         }
 
         MusicPlayer.getVolume().then((v) => {
@@ -41,15 +47,11 @@ class Video extends React.Component {
     componentWillReceiveProps(nextprops) {
         if (nextprops.serverInfo && !nextprops.serverInfo.IsHost) {
             if (nextprops.serverInfo.VideoUrl !== null && this.state.videoUrl !== nextprops.serverInfo.VideoUrl) {
-                console.log("change url: ");
-                console.log(nextprops.serverInfo);
                 this.changeUrl(nextprops.serverInfo.VideoUrl);
             }
 
-            if (this.player && !nextprops.serverInfo.VideoUrl && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition &&
+            if (this.player && !nextprops.serverInfo.VideoUrl && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition && this.player.getCurrentTime &&
                 Math.abs(this.player.getCurrentTime() - nextprops.serverInfo.VideoPosition) > 5) {
-                console.log("Seek to ");
-                console.log(nextprops.serverInfo);
                 this.player.seekTo(nextprops.serverInfo.VideoPosition, true);
             }
         }
@@ -70,13 +72,14 @@ class Video extends React.Component {
     addYoutubePlayer(id) {
         if (this.player == null) {
             this.player = new YT.Player('youtube-player', {
-                // height: '390',
-                // width: '640',
                 videoId: id,
                 suggestedQuality: "hd1080",
                 events: {
                     'onReady': (event) => {
-                        this.player.setVolume(this.state.currentVolume);
+                        if(!isNaN(this.state.currentVolume)) {
+                            this.player.setVolume(parseInt(this.state.currentVolume));
+                        }
+
                         event.target.playVideo();
                     },
                     'onStateChange': (event) => {
@@ -84,9 +87,18 @@ class Video extends React.Component {
                             MusicPlayer.seekVideo(this.player.getCurrentTime());
                         }
 
-                        if (event.data == YT.PlayerState.PLAYING || event.data == YT.PlayerState.BUFFERING || YT.PlayerState.PAUSED) {
+                        if (event.data == YT.PlayerState.PLAYING || event.data == YT.PlayerState.BUFFERING || event.data == YT.PlayerState.PAUSED) {
                             this.setState({isPlaying: true});
-                        } else {
+                        } else if (event.data == YT.PlayerState.ENDED && this.state.videoInfo.length 
+                                    && this.state.currentVideoIndex < (this.state.videoInfo.length - 1)
+                                    && !(this.props.serverInfo && !this.props.serverInfo.IsHost)) {
+                            let newindex = this.state.currentVideoIndex + 1;
+                            this.setState({
+                                currentVideoIndex: newindex 
+                            }, () => {
+                                this.changeUrl(this.state.videoInfo[newindex].Url);
+                            });
+                        } else  if (event.data != YT.PlayerState.UNSTARTED) {
                             this.setState({isPlaying: false});
                             MusicPlayer.stopVideo();
                         }
@@ -121,17 +133,17 @@ class Video extends React.Component {
     }
 
     /**
-     * @desc Gets the youtube video id from the url.
+     * @desc Gets the youtube video id from the url when posible.
      */
-    getVideoID() {
+    resolveVideoUrl() {
         if (this.state.videoUrl) {
-            let parts = this.state.videoUrl.split("?v=");
-            if (parts.length < 2) {
-                parts = this.state.videoUrl.split("/_");
-            }
-
-            if (parts.length >= 2) {
-                return parts[1];
+            if (this.state.videoUrl.indexOf("list=") > -1) {
+                let parts = this.state.videoUrl.split("list=");
+                let playlistID = parts[parts.length - 1];
+                this.loadVideoInfo(playlistID);
+            } else if (this.state.videoUrl.indexOf("?v=") > -1) {
+                let parts = this.state.videoUrl.split("?v=");
+                return parts[parts.length - 1].length === 11 ? parts[parts.length - 1] : null;
             }
         }
 
@@ -142,13 +154,26 @@ class Video extends React.Component {
      * @desc Generates an youtube player url from the video url.
      */
     playVideo() {
-        let id = this.getVideoID();
+        let id = this.resolveVideoUrl();
         if (id) {
             this.addYoutubePlayer(id);
             MusicPlayer.startVideo(this.state.videoUrl);
         } else if (this.player && this.player.getPlayerState() == YT.PlayerState.PLAYING) {
             this.player.stopVideo();
         }
+    }
+
+    /**
+     * @desc Click on a video thumb.
+     * @param {string} id The id of the video. 
+     */
+    clickVid(id) {
+        var index = this.state.videoInfo.map(v => v.ID).indexOf(id);
+        this.setState({
+            currentVideoIndex: index
+        }, () => {
+            this.changeUrl(this.state.videoInfo[index].Url);
+        })
     }
 
     /**
@@ -163,6 +188,29 @@ class Video extends React.Component {
         }, () => {
             this.playVideo();
         });
+    }
+
+    /**
+     * @desc Loads video info.
+     * @param {string} playlistID The youtube playlist id. 
+     */
+    loadVideoInfo(playlistID) {
+        if (!this.props.serverinfo || this.props.serverinfo.IsHost) {
+            let func = info => {
+                this.setState({
+                    videoInfo: JSON.parse(info)
+                });
+            };
+
+            if (playlistID) {
+                MusicPlayer.getVideoInfoFromPlaylist(playlistID).then(func);
+                return;
+            }
+
+            MusicPlayer.getChannelVideos().then(func);
+        }
+
+        return;
     }
 
     /**
@@ -185,13 +233,25 @@ class Video extends React.Component {
                         readOnly={this.props.serverInfo && !this.props.serverInfo.IsHost} 
                         onChange={(e) => this.changeUrl(e.target.value)}
                         onClick={(e) => this.selectAll(e)}
-                        placeholder="Enter video url" />
+                        placeholder="Enter video or playlist url" />
                 </header>
                 <section style={this.state.isPlaying ? {} : {display: "none"}} onBlur={() => this.changeVolume()}>
                     <div id="youtube-player"></div>
                 </section>
                 <section style={!this.state.isPlaying ? {} : {display: "none"}}>
-                    <i className="fa fa-youtube-square"></i>
+                    {this.state.videoInfo.length == 0 && <i className="fa fa-youtube-square"></i>}
+                    <div className="video-thumb-container">
+                    {(() =>  { 
+                        return this.state.videoInfo.map(info => {
+                            return (
+                                <div className="video-thumb" title={info.Description} key={info.ID} onClick={() => this.clickVid(info.ID)}>
+                                    <p>{info.Title}</p>
+                                    <img src={info.ThumbnailUrl} alt={info.Title} /> 
+                                </div>
+                            );
+                        });
+                    })()}
+                    </div>
                 </section>
             </div>
         );

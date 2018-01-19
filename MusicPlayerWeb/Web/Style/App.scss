@@ -243,7 +243,7 @@ input {
 
 .song-info > div:last-of-type > div > div:first-of-type {
     display: table-row;
-    height: 50px;
+    height: 25px;
 }
 
 .song-info > div:last-of-type > div > div:last-of-type {
@@ -260,6 +260,7 @@ input {
     height: 100%;
     width: 100%;
     overflow-y: auto;
+    padding-top: 25px;
 }
 
 .song-details > div > div {
@@ -280,14 +281,17 @@ input {
 }
 
 .song-controls > div:first-of-type {
-    float: left;
-    width: 267px;
+    display: table-cell;
 }
 
 .song-controls > div:last-of-type {
-    float: right;
+    display: table-cell;
+    padding-right: 1em;
+}
+
+.song-controls > div:last-of-type > div {
+    width: 105px;
     border: 1px groove $color-white;
-    margin-right: 1em;
     cursor: pointer;
 }
 
@@ -317,7 +321,6 @@ input {
 }
 
 div.song-volume {
-    float: right;
     width: 75px;
     margin-top: 0;
     margin-right: 2px;

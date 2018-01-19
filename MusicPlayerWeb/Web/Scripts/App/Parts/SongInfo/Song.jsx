@@ -156,13 +156,15 @@ class Song extends React.Component {
                                 </button>
                             </div>
                             <div title="Volume">
-                                <button onClick={() => this.setVolume(this.state.volume, true)} className="song-volume">
-                                    <i className={"fa " + (this.state.volume > 0 ? "fa-volume-up" : "fa-volume-off")} />
-                                </button>
-                                 <Slider 
-                                    className="song-volume"
-                                    value={this.state.volume}
-                                    onChange={val => this.setVolume(val)} /> 
+                                <div>
+                                    <button onClick={() => this.setVolume(this.state.volume, true)} className="song-volume">
+                                        <i className={"fa " + (this.state.volume > 0 ? "fa-volume-up" : "fa-volume-off")} />
+                                    </button>
+                                    <Slider 
+                                        className="song-volume"
+                                        value={this.state.volume}
+                                        onChange={val => this.setVolume(val)} /> 
+                                </div>
                             </div>
                         </div>
                          <div className="song-details">

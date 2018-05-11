@@ -263,7 +263,9 @@ namespace MusicPlayerWeb
         public void Stop()
         {
             _player?.Dispose();
+            _player = null;
             SongChanged(null);
+            ServerInfoChanged(null);
         }
 
         /// <summary>
@@ -309,7 +311,7 @@ namespace MusicPlayerWeb
         public void HostServer(int port)
         {
             _player = Factory.GetServerPlayer(port, _player);
-            _player.SongChanged += SongChanged;
+            ////_player.SongChanged += SongChanged;
             var server = (_player as IServer);
             server.OnInfoChanged += ServerInfoChanged;
             ServerInfoChanged(server.GetInfo());
@@ -421,15 +423,11 @@ namespace MusicPlayerWeb
         /// <param name="player">The new player.</param>
         private void NewPlayer(IMusicPlayer player = null)
         {
-            var serverInfo = (_player as IServer)?.GetInfo();
-            _player?.Dispose();
-            _player = null;
-            if (serverInfo != null)
+            var server = (_player as IServer);
+            if (server == null)
             {
-                HostServer(serverInfo.Port);
-            }
-            else
-            {
+                _player?.Dispose();
+                _player = null;
                 _player = player == null ? Factory.GetPlayer() : player;
                 _player.SongChanged += SongChanged;
             }

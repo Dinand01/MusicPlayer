@@ -17,11 +17,5 @@ namespace MusicPlayer.Interface
     /// </summary>
     public interface IServer : IMusicPlayer, INetwork
     {
-        /// <summary>
-        /// Send a specific message to the client.
-        /// </summary>
-        /// <param name="type">The message type.</param>
-        /// <param name="payload">The message content.</param>
-        void SendMessage<T>(MessageType type, T payload = default(T));
     }
 }

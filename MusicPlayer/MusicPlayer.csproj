@@ -39,14 +39,16 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controller\ClientConnection.cs" />
     <Compile Include="Controller\CopyController.cs" />
     <Compile Include="Controller\DataController.cs" />
     <Compile Include="Controller\MusicPlayer.cs" />
     <Compile Include="Controller\MusicPlayerWrapper.cs" />
-    <Compile Include="Controller\NetworkClient.cs" />
-    <Compile Include="Controller\NetworkServer.cs" />
+    <Compile Include="Controller\ServerHost.cs" />
     <Compile Include="Controller\SongInfoController.cs" />
     <Compile Include="Controller\VideoController.cs" />
+    <Compile Include="Controller\WCFServerClient.cs" />
+    <Compile Include="Controller\WCFServerService.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Extensions\DbContextExtended.cs" />
     <Compile Include="Extensions\Extensions.cs" />
@@ -55,13 +57,16 @@
     <Compile Include="Extensions\TheadExtensions.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="Interface\IClient.cs" />
+    <Compile Include="Interface\IClientContract.cs" />
     <Compile Include="Interface\ICopy.cs" />
     <Compile Include="Interface\INetwork.cs" />
     <Compile Include="Interface\IServer.cs" />
+    <Compile Include="Interface\IServerContract.cs" />
     <Compile Include="Interface\IUI.cs" />
     <Compile Include="Interface\IMusicPlayer.cs" />
     <Compile Include="Interface\IVideo.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Models\Client.cs" />
     <Compile Include="Models\ColorPallete.cs" />
     <Compile Include="Models\enum\MessageType.cs" />
     <Compile Include="Models\enum\SettingType.cs" />
@@ -133,6 +138,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.XML">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.XML.dll</HintPath>

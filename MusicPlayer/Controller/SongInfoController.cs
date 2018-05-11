@@ -56,7 +56,7 @@ namespace MusicPlayer.Controller
                     {
                     }
                     
-                    song.Gengre = string.Join(", ", file.Tag.Genres);
+                    song.Genre = string.Join(", ", file.Tag.Genres);
                     song.Album = file.Tag.Album;
                     song.Band = string.Join(", ", file.Tag.Composers.Union(file.Tag.Artists));
                     song.DateAdded = new FileInfo(song.Location).CreationTime;

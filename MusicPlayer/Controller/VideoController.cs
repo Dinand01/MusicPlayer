@@ -60,8 +60,8 @@ namespace MusicPlayer.Controller
             if (server != null)
             {
                 server.GetInfo().VideoUrl = url;
-                server.SendMessage<string>(MessageType.Pause);
-                server.SendMessage<string>(MessageType.Video, url);
+                server.TogglePlay(true);
+                server.SetVideo(url);
             }
         }
 
@@ -75,7 +75,7 @@ namespace MusicPlayer.Controller
             _started = DateTime.Now - TimeSpan.FromSeconds(position);
             if (server != null)
             {
-                server.SendMessage<double>(MessageType.VideoSeek, position);
+                server.SeekVideo(position);
             }
         }
 
@@ -114,7 +114,7 @@ namespace MusicPlayer.Controller
             if (server != null)
             {
                 server.GetInfo().VideoUrl = null;
-                server.SendMessage<string>(MessageType.Video, string.Empty);
+                server.SetVideo(string.Empty);
             }
 
             return _player;
@@ -141,9 +141,9 @@ namespace MusicPlayer.Controller
                 IServer server = _player as IServer;
                 if (server != null)
                 {
-                    server.SendMessage<string>(MessageType.Video, _videoUrl);
+                    server.SetVideo(_videoUrl);
                     TimeSpan elapsed = DateTime.Now - _started;
-                    server.SendMessage<double>(MessageType.VideoSeek, elapsed.TotalSeconds);
+                    server.SeekVideo(elapsed.TotalSeconds);
                 }
 
                 ThreadExtensions.SaveSleep(5000);

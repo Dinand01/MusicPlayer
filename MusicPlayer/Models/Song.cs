@@ -1,9 +1,13 @@
 ﻿using MusicPlayer.Controller;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +17,8 @@ namespace MusicPlayer.Models
     /// Describes a song.
     /// </summary> 
     [Serializable]
+    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public class Song
     {
         /// <summary>
@@ -42,61 +48,78 @@ namespace MusicPlayer.Models
 
         [Key]
         [StringLength(255)]
+        [JsonProperty]
         public string Location { get; set; }
 
+        [JsonProperty]
         public DateTime? DateAdded { get; set; }
 
         [StringLength(512)]
+        [DataMember]
+        [JsonProperty]
         public string Title { get; set; }
 
         [StringLength(512)]
+        [DataMember]
+        public string FileName { get; set; }
+
+        [StringLength(512)]
+        [DataMember]
+        [JsonProperty]
         public string Band { get; set; }
 
         [StringLength(512)]
+        [DataMember]
+        [JsonProperty]
         public string Album { get; set; }
 
         [StringLength(512)]
-        public string Gengre { get; set; }
+        [DataMember]
+        [JsonProperty]
+        public string Genre { get; set; }
 
+        [DataMember]
+        [JsonProperty]
         public DateTime? DateCreated { get; set; }
 
+        [JsonProperty]
         public string SearchTerm { get; set; }
 
         /// <summary>
         /// Gets or sets the duration in seconds.
         /// </summary>
+        [DataMember]
+        [JsonProperty]
         public long Duration { get; set; }
 
         /// <summary>
         /// Gets or sets the current position of the song.
         /// </summary>
+        [JsonProperty]
         public long Position { get; set; }
 
         /// <summary>
         /// Gets or sets the image.
         /// </summary>
+        [DataMember]
+        [JsonProperty]
         public byte[] Image { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the song is playing.
         /// </summary>
+        [JsonProperty]
         public bool IsPlaying { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file stream.
+        /// </summary>
+        public byte[] File { get; set; }
 
         /// <summary>
         /// Gets or sets a boolean indicating whether the song is resolved.
         /// </summary>
         [NotMapped]
         internal bool IsResolved { get; set; }
-
-        public string[] ToSubItemArray()
-        {
-            var result = new string[4];
-            result[0] = this.Band != null ? this.Band : string.Empty; 
-            result[1] = this.Gengre != null ? this.Gengre : string.Empty; 
-            result[2] = this.DateCreated != null ? this.DateCreated.ToString() : string.Empty; 
-            result[3] = this.DateAdded != null ? this.DateAdded.ToString() : string.Empty; 
-
-            return result;
-        }
     }
 }

@@ -137,17 +137,10 @@ class Song extends React.Component {
                                 <button onClick={() => this.togglePlaySong()} title={this.props.currentSong.IsPlaying ? "Pause" : "Play"}>
                                     <i className={"fa " + (this.props.currentSong.IsPlaying ? "fa-pause" : "fa-play")} />
                                 </button>}
-                                 {this.props.currentSong &&
+                                {this.props.currentSong &&
                                  <SongPosition 
                                     moveToTime={(val) => this.moveToTime(val)}
                                     disabled={controlsDisbled} />}
-                                {/* <Slider 
-                                    className="song-position" 
-                                    disabled={controlsDisbled}
-                                    value={this.props.currentSong.Position} 
-                                    max={this.props.currentSong.Duration}
-                                    onChange={(val) => this.moveToTime(val)}
-                                    title={"Change song position"} />}  */}
                                 <button onClick={() => this.nextSong()} disabled={controlsDisbled} title={"Next song"}>
                                     <i className="fa fa-step-forward" />
                                     </button>

@@ -46,7 +46,7 @@ namespace MusicPlayer
                 player = new Player();
             }
 
-            return new NetworkServer(player, port);
+            return (player as IServer) == null ? new ServerHost(player, port) : player;
         }
 
         /// <summary>
@@ -59,8 +59,7 @@ namespace MusicPlayer
         public static IMusicPlayer GetClientPlayer(IPAddress ip, int port, IMusicPlayer player = null)
         {
             player?.Dispose();
-            var newplayer = new NetworkClient(ip, port);
-            return newplayer;
+            return new ClientConnection(GetPlayer(), ip, port);
         }
 
         /// <summary>

@@ -2635,7 +2635,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.0.0.10, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C807191BADF52BF94613745EFE345D14"
@@ -3308,15 +3308,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MusicPlayer"
-        "ProductCode" = "8:{9B843D87-5285-431D-84B8-65DE968B7F4B}"
-        "PackageCode" = "8:{3FDE313A-4C72-43C5-855A-C20CBE40CBF2}"
+        "ProductCode" = "8:{6F691044-6F95-4D45-A5FC-BE213895ABF2}"
+        "PackageCode" = "8:{D567BBE3-502A-485C-A61E-FBA971BDD66E}"
         "UpgradeCode" = "8:{B5E2C2A9-4A22-44A2-B7C0-CB8C69BE0B33}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.0.29"
+        "ProductVersion" = "8:1.2.1"
         "Manufacturer" = "8:Lybaert Dinand"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -3844,7 +3844,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_000C615EC8DA4192B137C2F4727520CF"
             {
-            "SourcePath" = "8:..\\MusicPlayer.Installer\\obj\\Debug\\MusicPlayer.Installer.dll"
+            "SourcePath" = "8:..\\MusicPlayer.Installer\\obj\\Release\\MusicPlayer.Installer.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
@@ -3872,7 +3872,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4D53E860D25F4CF3ABE360FC1EA47242"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\obj\\x64\\Debug\\MusicPlayerWeb.exe"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\obj\\x64\\Release\\MusicPlayerWeb.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"

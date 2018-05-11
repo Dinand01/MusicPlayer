@@ -10,6 +10,7 @@ namespace MusicPlayer.Models
     /// <summary>
     /// Class describing video info.
     /// </summary>
+    [Serializable]
     public class VideoInfo
     {
         public VideoInfo()

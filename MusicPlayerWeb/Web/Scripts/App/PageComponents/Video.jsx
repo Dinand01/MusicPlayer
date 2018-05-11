@@ -50,9 +50,9 @@ class Video extends React.Component {
                 this.changeUrl(nextprops.serverInfo.VideoUrl);
             }
 
-            if (this.player && !nextprops.serverInfo.VideoUrl && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition && this.player.getCurrentTime &&
+            if (this.player && this.props.serverInfo.VideoPosition !== nextprops.serverInfo.VideoPosition && this.player.getCurrentTime &&
                 Math.abs(this.player.getCurrentTime() - nextprops.serverInfo.VideoPosition) > 5) {
-                this.player.seekTo(nextprops.serverInfo.VideoPosition, true);
+                    this.player.seekTo(nextprops.serverInfo.VideoPosition, true);
             }
         }
     }

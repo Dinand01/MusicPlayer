@@ -28,5 +28,17 @@ namespace MusicPlayer.Interface
         /// </summary>
         /// <returns></returns>
         ServerInfo GetInfo();
+
+        /// <summary>
+        /// Sets the video.
+        /// </summary>
+        /// <param name="url">The url of the video to set.</param>
+        void SetVideo(string url);
+
+        /// <summary>
+        /// Seek to a position in  the video.
+        /// </summary>
+        /// <param name="position">The position to seek to.</param>
+        void SeekVideo(double position);
     }
 }

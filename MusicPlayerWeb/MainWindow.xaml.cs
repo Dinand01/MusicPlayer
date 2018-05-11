@@ -41,6 +41,9 @@ namespace MusicPlayerWeb
         {
             InitializeComponent();
             _musicPlayer = new MusicPlayerUI(this.Browser, this);
+
+            // TODO: new method for cefsharp.
+            CefSharpSettings.LegacyJavascriptBindingEnabled = true;
             this.Browser.RegisterAsyncJsObject("MusicPlayer", _musicPlayer);
             this.Browser.DisplayHandler = new DisplayHandler(this, _dispatcher);
             this.KeyDown += MainWindow_KeyDown;

@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.Structs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -50,6 +51,11 @@ namespace MusicPlayerWeb.CefComponents
         {
         }
 
+        public bool OnAutoResize(IWebBrowser browserControl, IBrowser browser, CefSharp.Structs.Size newSize)
+        {
+            return true;
+        }
+
         public bool OnConsoleMessage(IWebBrowser browserControl, ConsoleMessageEventArgs consoleMessageArgs)
         {
             return true;
@@ -95,6 +101,11 @@ namespace MusicPlayerWeb.CefComponents
         }
 
         public bool OnTooltipChanged(IWebBrowser browserControl, string text)
+        {
+            return true;
+        }
+
+        public bool OnTooltipChanged(IWebBrowser browserControl, ref string text)
         {
             return true;
         }

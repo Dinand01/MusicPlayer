@@ -21,7 +21,7 @@ namespace MusicPlayer.Models
         /// Initializes a new instance of the video from a YoutubeExplode model.
         /// </summary>
         /// <param name="video">The YoutubeExplode model.</param>
-        public VideoInfo(PlaylistVideo video)
+        public VideoInfo(Video video)
         {
             this.ID = video.Id;
             this.Title = video.Title;

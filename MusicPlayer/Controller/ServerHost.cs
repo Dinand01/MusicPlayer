@@ -290,16 +290,19 @@ namespace MusicPlayer.Controller
         /// <param name="client">The client.</param>
         private void Play(Song song, Client client)
         {
-            try
+            Task.Run(() =>
             {
-                song.FileName = Path.GetFileName(song.Location);
-                client.ClientContract.SetSong(song);
-                client.ClientContract.SendFile(new MemoryStream(File.ReadAllBytes(song.Location)));
-            }
-            catch (Exception e)
-            {
-                HandleClientError(client, e);
-            }
+                try
+                {
+                    song.FileName = Path.GetFileName(song.Location);
+                    client.ClientContract.SetSong(song);
+                    client.ClientContract.SendFile(new MemoryStream(File.ReadAllBytes(song.Location)));
+                }
+                catch (Exception e)
+                {
+                    HandleClientError(client, e);
+                }
+            });
         }
 
         /// <summary>
@@ -312,9 +315,12 @@ namespace MusicPlayer.Controller
             var cl = _clients.FirstOrDefault(c => c.IpAddress == client.IpAddress && c.Port == client.Port);
             if (cl != null)
             {
-                _clients.Remove(cl);
-                _serverInfo.Clients = _clients.GroupBy(c => c.IpAddress).Select(g => g.First()).ToDictionary(c => c.IpAddress, c => c.Port);
-                OnInfoChanged?.Invoke(_serverInfo);
+                lock (_clients)
+                { 
+                    _clients.Remove(cl);
+                    _serverInfo.Clients = _clients.GroupBy(c => c.IpAddress).Select(g => g.First()).ToDictionary(c => c.IpAddress, c => c.Port);
+                    OnInfoChanged?.Invoke(_serverInfo);
+                }
             }
         }
     }

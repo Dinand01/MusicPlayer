@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using MusicPlayer.Models;
 using System.IO;
+using System.ServiceModel;
 
 namespace MusicPlayer.Controller
 {
     /// <summary>
     /// The implementation for the client contract.
     /// </summary>
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
     internal class WCFServerClient : IClientContract
     {
         /// <summary>

@@ -1,12 +1,7 @@
-﻿using CefSharp;
-using MusicPlayer;
+﻿using MusicPlayer;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 
 namespace MusicPlayerWeb
@@ -22,24 +17,16 @@ namespace MusicPlayerWeb
         public App()
         {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
-            string directory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            directory = directory.EndsWith("\\") ? directory : directory + "\\";
             try
             {
-                CefSettings settings = new CefSettings();
-                settings.RegisterScheme(new CefCustomScheme
-                {
-                    SchemeName = "custom",
-                    SchemeHandlerFactory = new SchemeHandlerFactory(directory)
-                });
-
-                settings.CefCommandLineArgs.Add("disable-gpu", "1");
-                Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
+                MusicPlayerWeb.Startup.Start();
             }
             catch (Exception e)
             {
                 Logger.LogError(e, "Application startup failure");
-                throw e;
+                RunResource("vcredist_x64_(1).exe");
+                RunResource("vcredist_x64_(2).exe");
+                MusicPlayerWeb.Startup.Start();
             }
         }
 
@@ -51,6 +38,37 @@ namespace MusicPlayerWeb
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Logger.LogError(e.Exception, "Application failure");
+        }
+
+        /// <summary>
+        /// Runs a resource.
+        /// </summary>
+        /// <param name="filename">The embedded file.</param>
+        private void RunResource(string filename)
+        {
+            var assembly = typeof(App).Assembly;
+            var resourceName = "MusicPlayerWeb.redist." + filename;
+            string dir = Path.GetTempPath();
+            dir = dir.EndsWith("\\") ? dir : dir + "\\";
+
+            try
+            {
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (FileStream fs = new FileStream(dir + filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                {
+                    stream.CopyTo(fs);
+                }
+
+                using (var pr = Process.Start(dir + filename, "/install /quiet /norestart"))
+                {
+                    pr.WaitForExit();
+                    File.Delete(dir + filename);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Installation of resource failed");
+            }
         }
     }
 }

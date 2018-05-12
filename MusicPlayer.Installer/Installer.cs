@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MusicPlayer.Installer
@@ -61,16 +64,24 @@ namespace MusicPlayer.Installer
             base.Commit(savedState);
         }
 
+        /// <summary>
+        /// Write a log message.
+        /// </summary>
+        /// <param name="message"></param>
         private void WriteLog(string message)
         {
-            string path = "C:\\Temp\\MusicPlayer_Install_Log.txt";
-            Directory.CreateDirectory("C:\\Temp\\");
-            if (!File.Exists(path))
+            try
             {
-                File.Create(path);
-            }
+                string path = "C:\\Temp\\MusicPlayer_Install_Log.txt";
+                Directory.CreateDirectory("C:\\Temp\\");
+                if (!File.Exists(path))
+                {
+                    File.Create(path);
+                }
 
-            File.AppendAllLines(path, new string[] { message });
+                File.AppendAllLines(path, new string[] { message });
+            }
+            catch { }
         }
     }
 }

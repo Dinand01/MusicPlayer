@@ -125,16 +125,26 @@ namespace MusicPlayer.Controller
             
             song.Location = filePath;
             song.DateAdded = DateTime.Now;
-            Task.Run(() =>
+
+            try
             {
-                File.WriteAllBytes(filePath, song.File);
-                base.Play(song);
-                double? position = _server.GetCurrentPosition();
-                if (position > 0)
+                using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
-                    base.MoveToTime(Convert.ToInt64(position));
+                    fileStream.Write(song.File, 0, song.File.Length);
                 }
-            });
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Could not write file");
+            }
+
+            song.File = null;
+            base.Play(song);
+            double? position = _server.GetCurrentPosition();
+            if (position > 0)
+            {
+                base.MoveToTime(Convert.ToInt64(position));
+            }
         }
 
         /// <summary>

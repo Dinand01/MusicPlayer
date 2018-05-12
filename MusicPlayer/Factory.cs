@@ -59,7 +59,7 @@ namespace MusicPlayer
         public static IMusicPlayer GetClientPlayer(IPAddress ip, int port, IMusicPlayer player = null)
         {
             player?.Dispose();
-            return new ClientConnection(GetPlayer(), ip, port);
+            return new ClientConnection(GetPlayerForReceiveMode(), ip, port);
         }
 
         /// <summary>

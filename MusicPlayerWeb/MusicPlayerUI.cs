@@ -66,7 +66,6 @@ namespace MusicPlayerWeb
         /// <returns>A boolean indicating whether anything was opened.</returns>
         public bool OpenFolder()
         {
-            NewPlayer();
             return _owner.Dispatcher.Invoke(() =>
             {
                 using (var dialog = new FolderBrowserDialog())
@@ -75,8 +74,7 @@ namespace MusicPlayerWeb
                     DialogResult result = dialog.ShowDialog();
                     if (result == DialogResult.OK && !string.IsNullOrEmpty(dialog.SelectedPath))
                     {
-                        _player.LoadFolder(dialog.SelectedPath);
-                        _dispatcher.Invoke(() => _player.Next());
+                        LoadFolder(dialog.SelectedPath);
                         return true;
                     }
 
@@ -388,6 +386,17 @@ namespace MusicPlayerWeb
             {
                 _player = video.StopVideo();
             }
+        }
+
+        /// <summary>
+        /// Loads the folder by it's path.
+        /// </summary>
+        /// <param name="path">The folder path.</param>
+        internal void LoadFolder(string path)
+        {
+            NewPlayer();
+            _player.LoadFolder(path);
+            _dispatcher.Invoke(() => _player.Next());
         }
 
         /// <summary>

@@ -49,6 +49,7 @@
       <DependentUpon>Installer.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistryHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Installer.resx">

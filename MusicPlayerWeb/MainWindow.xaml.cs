@@ -2,6 +2,7 @@
 using MusicPlayerWeb.CefComponents;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -47,11 +48,23 @@ namespace MusicPlayerWeb
             this.Browser.RegisterAsyncJsObject("MusicPlayer", _musicPlayer);
             this.Browser.DisplayHandler = new DisplayHandler(this, _dispatcher);
             this.KeyDown += MainWindow_KeyDown;
-            var argumpents = Environment.GetCommandLineArgs();
-            if (argumpents.Length > 0)
+
+            this.Browser.Loaded += (sender, e) =>
             {
-                _musicPlayer.OpenFiles(argumpents);
-            }
+                string[] args = Environment.GetCommandLineArgs();
+                if (args?.Length > 1)
+                {
+                    FileAttributes attr = File.GetAttributes(args[1]);
+                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        _musicPlayer.LoadFolder(args[1]);
+                    }
+                    else
+                    {
+                        _musicPlayer.OpenFiles(args.Skip(1).Take(args.Length - 1).ToArray());
+                    }
+                }
+            };
         }
 
         /// <summary>

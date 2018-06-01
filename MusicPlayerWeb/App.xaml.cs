@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 
 namespace MusicPlayerWeb
@@ -19,10 +20,12 @@ namespace MusicPlayerWeb
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             try
             {
+                EnsureExecutingDirectoryIsExecutableDirectory();
                 MusicPlayerWeb.Startup.Start();
             }
             catch (Exception e)
             {
+                Logger.LogInfo("Execution dir: " + Directory.GetCurrentDirectory());
                 Logger.LogError(e, "Application startup failure");
                 RunResource("vcredist_x64_(1).exe");
                 RunResource("vcredist_x64_(2).exe");
@@ -38,6 +41,16 @@ namespace MusicPlayerWeb
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Logger.LogError(e.Exception, "Application failure");
+        }
+
+        /// <summary>
+        /// Ensures the executing directory is correct.
+        /// </summary>
+        private static void EnsureExecutingDirectoryIsExecutableDirectory()
+        {
+            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+            string directory = new FileInfo(location.LocalPath).Directory.FullName;
+            Directory.SetCurrentDirectory(directory);
         }
 
         /// <summary>

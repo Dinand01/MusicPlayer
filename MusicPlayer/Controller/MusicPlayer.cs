@@ -228,7 +228,7 @@ namespace MusicPlayer.Controller
         {
             querry = querry.ToLower();
             var matches = _sourceList?.Where(s => (s.Title != null && s.Title.ToLower().Contains(querry)) || (s.Band != null && s.Band.ToLower().Contains(querry)) || (s.Location != null  && s.Location.ToLower().Contains(querry)))
-                            ?.OrderBy(s => s.Title)
+                            ?.OrderBy(s => string.IsNullOrEmpty(querry) || !_shuffle ? s.FileName : s.Title)
                             ?.Skip(index)
                             ?.Take(amount)
                             ?.ToList();
@@ -267,16 +267,13 @@ namespace MusicPlayer.Controller
                 _waveOutDevice.Stop();
             }
 
-            _sourceList = new List<Song>();
-            foreach (string st in files)
-            {
-                string ex = Path.GetExtension(st).ToLower();
-                if ((ex == ".mp3" || ex == ".flac" || ex == ".wma") && st.IndexOfAny(Path.GetInvalidPathChars()) < 0)
-                {
-                    Song newSong = new Song(st);
-                    _sourceList.Add(newSong);
-                }
-            }
+            string[] extensions = new string[] { ".mp3", ".flac", ".wma", ".aac", ".ogg", ".m4a", ".opus", ".wav" };
+            _sourceList = files.Where(path =>
+                                        extensions.Contains(Path.GetExtension(path).ToLower())
+                                        && path.IndexOfAny(Path.GetInvalidPathChars()) < 0)
+                                .Select(path => new Song(path))
+                                .OrderBy(s => s.FileName)
+                                .ToList();
 
             return _sourceList;
         }
@@ -407,7 +404,15 @@ namespace MusicPlayer.Controller
         {
             if (_sourceList != null && _sourceList.Count > 0)
             {
-                _currentIdx = _shuffle ? _random.Next(0, _sourceList.Count) : ++_currentIdx;
+                if (_shuffle)
+                {
+                    _currentIdx = _random.Next(0, _sourceList.Count);
+                }
+                else if (_waveOutDevice != null)
+                {
+                    _currentIdx++;
+                }
+
                 if (_currentIdx >= _sourceList.Count)
                 {
                     _currentIdx = 0;
@@ -417,8 +422,6 @@ namespace MusicPlayer.Controller
                 Play(song);
             }
         }
-
-
 
         /// <summary>
         /// Sets the Song position to a certain time.

@@ -75,8 +75,8 @@ namespace MusicPlayerWeb
                     DialogResult result = dialog.ShowDialog();
                     if (result == DialogResult.OK && !string.IsNullOrEmpty(dialog.SelectedPath))
                     {
-                        var song = _player.LoadFolder(dialog.SelectedPath).FirstOrDefault();
-                        _dispatcher.Invoke(() => _player.Play(song));
+                        _player.LoadFolder(dialog.SelectedPath);
+                        _dispatcher.Invoke(() => _player.Next());
                         return true;
                     }
 

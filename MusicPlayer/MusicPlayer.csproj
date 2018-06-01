@@ -50,10 +50,7 @@
     <Compile Include="Controller\WCFServerClient.cs" />
     <Compile Include="Controller\WCFServerService.cs" />
     <Compile Include="Db.cs" />
-    <Compile Include="Extensions\DbContextExtended.cs" />
     <Compile Include="Extensions\Extensions.cs" />
-    <Compile Include="Extensions\ListViewExtended.cs" />
-    <Compile Include="Extensions\ReadFullyStream.cs" />
     <Compile Include="Extensions\TheadExtensions.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="Interface\IClient.cs" />
@@ -67,12 +64,7 @@
     <Compile Include="Interface\IVideo.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Models\Client.cs" />
-    <Compile Include="Models\ColorPallete.cs" />
-    <Compile Include="Models\enum\MessageType.cs" />
     <Compile Include="Models\enum\SettingType.cs" />
-    <Compile Include="Models\enum\UIElements.cs" />
-    <Compile Include="Models\enum\ViewType.cs" />
-    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\ServerInfo.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Song.cs" />

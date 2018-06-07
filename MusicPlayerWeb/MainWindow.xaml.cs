@@ -1,7 +1,9 @@
 ﻿using CefSharp;
+using MusicPlayer;
 using MusicPlayerWeb.CefComponents;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -42,10 +44,12 @@ namespace MusicPlayerWeb
         {
             InitializeComponent();
             _musicPlayer = new MusicPlayerUI(this.Browser, this);
+            this.Browser.JavascriptObjectRepository.Register("MusicPlayer", _musicPlayer, isAsync: true);
+            this.Browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
+            {
+                Logger.LogInfo($"C# object was registered in javascript variable: {e.ObjectName}");
+            };
 
-            // TODO: new method for cefsharp.
-            CefSharpSettings.LegacyJavascriptBindingEnabled = true;
-            this.Browser.RegisterAsyncJsObject("MusicPlayer", _musicPlayer);
             this.Browser.DisplayHandler = new DisplayHandler(this, _dispatcher);
             this.KeyDown += MainWindow_KeyDown;
 
@@ -120,6 +124,26 @@ namespace MusicPlayerWeb
             {
                 Cef.Initialize();
             }
+        }
+
+        /// <summary>
+        /// Play or Pause the music.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayPause_Click(object sender, EventArgs e)
+        {
+            _musicPlayer.TogglePlay();
+        }
+
+        /// <summary>
+        /// Skip to the next song.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Next_Click(object sender, EventArgs e)
+        {
+            _musicPlayer.NextSong();
         }
     }
 }

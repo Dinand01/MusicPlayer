@@ -93,6 +93,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1A727338C8B0192E2C174B438D4D262C"
+        "OwnerKey" = "8:_C34658AD7E41F7545CF38C51EB1245F3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1A727338C8B0192E2C174B438D4D262C"
+        "OwnerKey" = "8:_4D53E860D25F4CF3ABE360FC1EA47242"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1A727338C8B0192E2C174B438D4D262C"
+        "OwnerKey" = "8:_C807191BADF52BF94613745EFE345D14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1E3F028F196B412EA1BCDFB5C09FA63F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -603,24 +621,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DE106161F6C387590F2A5D06974E5CB2"
-        "OwnerKey" = "8:_C34658AD7E41F7545CF38C51EB1245F3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DE106161F6C387590F2A5D06974E5CB2"
-        "OwnerKey" = "8:_4D53E860D25F4CF3ABE360FC1EA47242"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DE106161F6C387590F2A5D06974E5CB2"
-        "OwnerKey" = "8:_C807191BADF52BF94613745EFE345D14"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_DE8E276F186F4D6F7EC8CE5E48E0909F"
         "OwnerKey" = "8:_4D53E860D25F4CF3ABE360FC1EA47242"
         "MsmSig" = "8:_UNDEFINED"
@@ -832,7 +832,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DE106161F6C387590F2A5D06974E5CB2"
+        "OwnerKey" = "8:_1A727338C8B0192E2C174B438D4D262C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1202,6 +1202,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1A727338C8B0192E2C174B438D4D262C"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_1A727338C8B0192E2C174B438D4D262C"
+                    {
+                    "Name" = "8:Newtonsoft.Json.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Newtonsoft.Json.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E3F028F196B412EA1BCDFB5C09FA63F"
@@ -2638,7 +2669,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.0.1.5, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C807191BADF52BF94613745EFE345D14"
@@ -2830,37 +2861,6 @@
                     }
                 }
             "SourcePath" = "8:System.Data.SQLite.Linq.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DE106161F6C387590F2A5D06974E5CB2"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_DE106161F6C387590F2A5D06974E5CB2"
-                    {
-                    "Name" = "8:Newtonsoft.Json.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Newtonsoft.Json.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
@@ -3373,15 +3373,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MusicPlayer"
-        "ProductCode" = "8:{E4D3461C-CE5F-4522-98D3-00B9AB3A4EC2}"
-        "PackageCode" = "8:{F1B1575F-9B6A-426E-B295-06D802F3F166}"
+        "ProductCode" = "8:{263F87C8-7FA8-49A3-B2D2-DB24E6BE0362}"
+        "PackageCode" = "8:{4EBD11AF-0CEF-4974-B86E-61FC03241A20}"
         "UpgradeCode" = "8:{B5E2C2A9-4A22-44A2-B7C0-CB8C69BE0B33}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.3.6"
+        "ProductVersion" = "8:1.4.1"
         "Manufacturer" = "8:Lybaert Dinand"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

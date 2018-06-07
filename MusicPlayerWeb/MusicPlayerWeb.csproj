@@ -98,7 +98,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
@@ -221,6 +221,8 @@
     <None Include="Web\Scripts\App\ReduxApp.jsx" />
     <EmbeddedResource Include="redist\vcredist_x64_%281%29.exe" />
     <EmbeddedResource Include="redist\vcredist_x64_%282%29.exe" />
+    <Resource Include="Resources\play.png" />
+    <Resource Include="Resources\skip.png" />
     <Content Include="Web\Scripts\Build\fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

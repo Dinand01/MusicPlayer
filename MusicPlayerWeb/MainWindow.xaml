@@ -24,4 +24,24 @@
             </wpf:ChromiumWebBrowser>
         </Border>
     </Grid>
+    
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskBarItemInfo" 
+                         ThumbnailClipMargin="0,0,1,1">
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfoCollection>
+                    <ThumbButtonInfo
+                        DismissWhenClicked="False"
+                        Click="PlayPause_Click"
+                        ImageSource="{StaticResource PlayPause}"
+                        Description="Play / Pause" />
+                    <ThumbButtonInfo
+                        DismissWhenClicked="False"
+                        Click="Next_Click"
+                        ImageSource="{StaticResource Skip}"
+                        Description="Next" />
+                </ThumbButtonInfoCollection>
+            </TaskbarItemInfo.ThumbButtonInfos>
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
 </Window>

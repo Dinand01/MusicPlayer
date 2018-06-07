@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:MusicPlayerWeb"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <BitmapImage x:Key="PlayPause" UriSource="./Resources/play.png" />
+        <BitmapImage x:Key="Skip" UriSource="./Resources/skip.png" />
     </Application.Resources>
 </Application>

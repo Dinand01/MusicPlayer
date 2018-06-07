@@ -125,7 +125,7 @@ class SongList extends React.Component {
                         </div>
                     </div>
                 </div>
-                <Loader loaded={this.state.isLoaded} />
+                <Loader loaded={this.state.isLoaded} options={{color: "#FFF"}} />
             </div>
         )
     }

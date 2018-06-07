@@ -98,6 +98,18 @@ class Song extends React.Component {
     }
 
     /**
+     * @desc Sets the volum when the user scrolls over the volume slider.
+     * @param {object} opt The scroll event. 
+     */
+    scrollVolume(opt) {
+        if (opt.deltaY > 0) {
+            this.setVolume(this.state.volume - 2);
+        } else {
+            this.setVolume(this.state.volume + 2);
+        }
+    }
+
+    /**
      * @description Stop playing music.
      */
     stop(history) {
@@ -148,7 +160,7 @@ class Song extends React.Component {
                                     <i className={"fa " + (this.state.shuffle ? "fa-random" : "fa-exchange")} />
                                 </button>
                             </div>
-                            <div title="Volume">
+                            <div title="Volume" onWheel={opt => this.scrollVolume(opt)}>
                                 <div>
                                     <button onClick={() => this.setVolume(this.state.volume, true)} className="song-volume">
                                         <i className={"fa " + (this.state.volume > 0 ? "fa-volume-up" : "fa-volume-off")} />

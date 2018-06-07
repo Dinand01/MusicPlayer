@@ -1,20 +1,35 @@
 ﻿import React from 'react';
 import Slider from 'react-slick';
+import Loader from 'react-loader';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 /**
  * @class The home page component containing the main menu.
  */
 class Home extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isLoaded: true
+        };
+    }
 
     /**
      * @description Show a folder browser to open music.
      */
     openFolder() {
-        MusicPlayer.openFolder().then((res) => {
-            if (res) {
-                this.props.history.push("/playlist");
-            }
+        this.setState({ isLoaded: false }, () => {
+            setTimeout(() => {
+                MusicPlayer.openFolder().then((res) => {
+                    this.setState({ isLoaded: true }, () => {
+                        if (res) {
+                            this.props.history.push("/playlist");
+                        }
+                    });
+                 });
+            }, 50);
         });
     }
 
@@ -22,11 +37,7 @@ class Home extends React.Component {
      * @description Show a file browser to open music.
      */
     openFiles() {
-        MusicPlayer.openFiles().then((res) => {
-            if (res) {
-                this.props.history.push("/playlist");
-            }
-        });
+        MusicPlayer.openFiles().then((res) => { });
     }
 
     /**
@@ -69,7 +80,8 @@ class Home extends React.Component {
         return (
         <div className="menu">
             <div>
-                <div className="menu-carousel">
+                {!this.state.isLoaded && <Loader loaded={this.state.isLoaded} options={{color: "#FFF"}} />}
+                {this.state.isLoaded && <div className="menu-carousel">
                     <Slider 
                         centerMode={true} 
                         arrows={true} 
@@ -109,7 +121,7 @@ class Home extends React.Component {
                                 </div>
                             </div>
                     </Slider>
-                </div>
+                </div>}
             </div>
         </div>);
     }

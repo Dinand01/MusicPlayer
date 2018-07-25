@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "start": "webpack --watch --progress --colors"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -28,6 +29,7 @@
     "rc-slider": "^8.2.0",
     "react-loader": "^2.4.2",
     "react-progress-circle": "^0.2.3",
-    "react-waypoint": "^7.0.4"
+    "react-waypoint": "^7.0.4",
+    "react-slick": "^0.23.1"
   }
 }

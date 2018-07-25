@@ -37,27 +37,27 @@ namespace MusicPlayer.Controller
         /// Invoke the songChanged event.
         /// </summary>
         /// <param name="song">The song.</param>
-        public void InvokeSongChanged(Song song)
+        public void InvokeSongChanged(SongInformation song)
         {
             SongChanged?.Invoke(song);
         }
 
-        public virtual List<Song> LoadFolder(string folder)
+        public virtual List<SongInformation> LoadFolder(string folder)
         {
             return _player.LoadFolder(folder);
         }
 
-        public virtual Song GetCurrentSong()
+        public virtual SongInformation GetCurrentSong()
         {
             return _player.GetCurrentSong();
         }
 
-        public virtual List<Song> GetSongs(int index = 0, string querry = null, int amount = 50)
+        public virtual List<SongInformation> GetSongs(int index = 0, string querry = null, int amount = 50)
         {
             return _player.GetSongs(index, querry, amount);
         }
 
-        public virtual void Play(Song song)
+        public virtual void Play(SongInformation song)
         {
             _player.Play(song);
         }
@@ -97,7 +97,7 @@ namespace MusicPlayer.Controller
             _player.SetVolume(percentage);
         }
 
-        public virtual List<Song> LoadFiles(string[] files)
+        public virtual List<SongInformation> LoadFiles(string[] files)
         {
             return _player.LoadFiles(files);
         }
@@ -110,6 +110,11 @@ namespace MusicPlayer.Controller
         public virtual int? GetSongPosition()
         {
             return _player.GetSongPosition();
+        }
+
+        public virtual void Play(string url)
+        {
+            _player.Play(url);
         }
     }
 }

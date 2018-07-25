@@ -78,18 +78,19 @@ class Home extends React.Component {
         } 
 
         return (
-        <div className="menu">
-            <div>
+        <div className="row h-100 align-items-center">
+            <div className="col">
                 {!this.state.isLoaded && <Loader loaded={this.state.isLoaded} options={{color: "#FFF"}} />}
                 {this.state.isLoaded && <div className="menu-carousel">
                     <Slider 
                         centerMode={true} 
-                        arrows={true} 
-                        focusOnSelect={true}
-                        autoPlay={true}
-                        responsive={[{ breakpoint: 768, settings: { slidesToShow: 3 } },
-                                    { breakpoint: 1024, settings: { slidesToShow: 3 }},
-                                    { breakpoint: 10000, settings: { slidesToShow: 3 }}]} > 
+                        dots={true}
+                        slidesToShow={3}
+                        rows={2}
+                        responsive={[{ breakpoint: 400, settings: { slidesToShow: 1, rows: 2 } },
+                                    { breakpoint: 550, settings: { slidesToShow: 2, rows: 2 } },
+                                    { breakpoint: 768, settings: { slidesToShow: 3, rows: 2 } },
+                                    { breakpoint: 1024, settings: { slidesToShow: 3, rows: 2}}]} > 
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.openFolder()} title="Open a folder (Loads all the audio in the folder)">
                                     <i className="Menu-Icon fa fa-folder-open fa-5x"></i>

@@ -1,4 +1,5 @@
-﻿using MusicPlayer.Interface;
+﻿using MusicPlayer.EmbeddedData;
+using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using Newtonsoft.Json;
 using System;
@@ -78,6 +79,24 @@ namespace MusicPlayer.Controller
 
                     db.SaveChanges();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the radio stations.
+        /// </summary>
+        /// <returns>The radio stations.</returns>
+        public static List<RadioStation> GetStations()
+        {
+            using (var db = new Db())
+            {
+                if (!db.RadioStations.Any())
+                {
+                    db.RadioStations.AddRange(RadioStations.Get());
+                    db.SaveChanges();
+                }
+
+                return db.RadioStations.OrderByDescending(r => r.Priority).ToList();
             }
         }
     }

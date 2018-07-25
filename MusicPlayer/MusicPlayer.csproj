@@ -50,6 +50,7 @@
     <Compile Include="Controller\WCFServerClient.cs" />
     <Compile Include="Controller\WCFServerService.cs" />
     <Compile Include="Db.cs" />
+    <Compile Include="EmbeddedData\RadioStations.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\TheadExtensions.cs" />
     <Compile Include="Factory.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\enum\SettingType.cs" />
+    <Compile Include="Models\RadioStation.cs" />
     <Compile Include="Models\ServerInfo.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Song.cs" />

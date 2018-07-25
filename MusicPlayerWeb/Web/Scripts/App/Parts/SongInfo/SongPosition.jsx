@@ -8,7 +8,7 @@ import Slider from 'rc-slider';
 class SongPosition extends React.Component {
     render() {
         return (
-            <div className="song-position" >
+            <div className="song-position col" >
                 <Slider 
                     disabled={this.props.disabled}
                     value={this.props.currentSong.Position} 

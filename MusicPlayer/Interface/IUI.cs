@@ -14,9 +14,9 @@ namespace MusicPlayer.UI
     {
         void SetSongDuration(TimeSpan duration);
 
-        void SetSongs(List<Song> songs);
+        void SetSongs(List<SongInformation> songs);
 
-        void SetSong(Song song);
+        void SetSong(SongInformation song);
 
         void SetSongPosition(TimeSpan currentTime);
 

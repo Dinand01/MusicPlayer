@@ -217,8 +217,20 @@ namespace MusicPlayerWeb
         {
             _owner.Dispatcher.Invoke(() =>
             {
-                Song song = JsonConvert.DeserializeObject<Song>(jsonSong);
+                SongInformation song = JsonConvert.DeserializeObject<SongInformation>(jsonSong);
                 _player?.Play(song);
+            });
+        }
+
+        /// <summary>
+        /// Plays a song from it's url.
+        /// </summary>
+        /// <param name="url">The url.</param>
+        public void PlayFromURL(string url)
+        {
+            _owner.Dispatcher.Invoke(() =>
+            {
+                _player?.Play(url);
             });
         }
 
@@ -309,7 +321,6 @@ namespace MusicPlayerWeb
         public void HostServer(int port)
         {
             _player = Factory.GetServerPlayer(port, _player);
-            ////_player.SongChanged += SongChanged;
             var server = (_player as IServer);
             server.OnInfoChanged += ServerInfoChanged;
             ServerInfoChanged(server.GetInfo());
@@ -412,7 +423,7 @@ namespace MusicPlayerWeb
         /// The song has changed.
         /// </summary>
         /// <param name="song">The new song.</param>
-        private void SongChanged(Song song)
+        private void SongChanged(SongInformation song)
         {
             _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCurrentSong", JsonConvert.SerializeObject(song).Replace("\\", "\\\\"));
         }

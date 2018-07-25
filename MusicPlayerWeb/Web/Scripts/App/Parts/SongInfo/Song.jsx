@@ -134,66 +134,72 @@ class Song extends React.Component {
     render() {
         let controlsDisbled = this.props.serverInfo && !this.props.serverInfo.IsHost;
         return (
-            <div className="song-info">
-                 <div>
+            <div className="row">
+                 <div className="col-5 songImage">
                     {!(this.props.currentSong && this.props.currentSong.Image) && <i className="fa fa-9x fa-picture-o" />}
                     {this.props.currentSong && this.props.currentSong.Image && <img src={"data:image/png;base64," + this.props.currentSong.Image}/>}
                 </div>
-                <div>
-                   <div>
-                        <div className="song-controls"> 
-                            <div>
-                                {this.props.currentSong &&
-                                <button onClick={() => this.stop(history)} title="Stop music"><i className={"fa fa-stop"} /></button>}
-                                {this.props.currentSong &&
-                                <button onClick={() => this.togglePlaySong()} title={this.props.currentSong.IsPlaying ? "Pause" : "Play"}>
-                                    <i className={"fa " + (this.props.currentSong.IsPlaying ? "fa-pause" : "fa-play")} />
-                                </button>}
-                                {this.props.currentSong &&
-                                 <SongPosition 
-                                    moveToTime={(val) => this.moveToTime(val)}
-                                    disabled={controlsDisbled} />}
-                                <button onClick={() => this.nextSong()} disabled={controlsDisbled} title={"Next song"}>
-                                    <i className="fa fa-step-forward" />
+                <div className="col-7">
+
+                        <div className="row"> 
+                            <div className="col-8">
+                                <div className="row align-items-center">
+                                    {this.props.currentSong &&
+                                    <button onClick={() => this.stop(history)} title="Stop music" className="col-1 iconButton">
+                                        <i className={"fa fa-stop"} />
+                                    </button>}
+                                    {this.props.currentSong &&
+                                    <button onClick={() => this.togglePlaySong()} title={this.props.currentSong.IsPlaying ? "Pause" : "Play"} className="col-1 iconButton">
+                                        <i className={"fa " + (this.props.currentSong.IsPlaying ? "fa-pause" : "fa-play")} />
+                                    </button>}
+                                    {this.props.currentSong &&
+                                    <SongPosition 
+                                        moveToTime={(val) => this.moveToTime(val)}
+                                        disabled={controlsDisbled} />}
+                                    <button onClick={() => this.nextSong()} disabled={controlsDisbled} title={"Next song"} className="col-1 iconButton">
+                                        <i className="fa fa-step-forward" />
+                                        </button>
+                                    <button onClick={() => this.shuffle()} disabled={controlsDisbled} title="Toggle shuffle" className="col-1 iconButton">
+                                        <i className={"fa " + (this.state.shuffle ? "fa-random" : "fa-exchange")} />
                                     </button>
-                                <button onClick={() => this.shuffle()} disabled={controlsDisbled} title="Toggle shuffle">
-                                    <i className={"fa " + (this.state.shuffle ? "fa-random" : "fa-exchange")} />
-                                </button>
+                                </div>
                             </div>
-                            <div title="Volume" onWheel={opt => this.scrollVolume(opt)}>
-                                <div>
-                                    <button onClick={() => this.setVolume(this.state.volume, true)} className="song-volume">
-                                        <i className={"fa " + (this.state.volume > 0 ? "fa-volume-up" : "fa-volume-off")} />
-                                    </button>
+                            <div className="col-4" title="Volume" onWheel={opt => this.scrollVolume(opt)}>
+                                <div className="volumeSlider">
                                     <Slider 
-                                        className="song-volume"
+                                        className=""
                                         value={this.state.volume}
                                         onChange={val => this.setVolume(val)} /> 
+                                    <button onClick={() => this.setVolume(this.state.volume, true)} className="iconButton">
+                                        <i className={"fa " + (this.state.volume > 0 ? "fa-volume-up" : "fa-volume-off")} />
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                         <div className="song-details">
+                         <div className="row">
                             {this.props.currentSong && 
-                            <div>
-                                <div>
-                                    <h2>{this.props.currentSong.Title}</h2>
-                                    <h3>{this.props.currentSong.Band}</h3>
+                            <div className="col">
+                                <div className="row">
+                                    <div className="col">
+                                        <h2>{this.props.currentSong.Title}</h2>
+                                        <h4>{this.props.currentSong.Band}</h4>
+                                    </div>
                                 </div>
-                                {this.props.currentSong.Album && <div className="info-pair">
-                                    <p>Album: </p>
-                                    <p>{this.props.currentSong.Album}</p>
+                                {this.props.currentSong.Album && <div className="row">
+                                    <p className="col-4">Album: </p>
+                                    <p className="col-8">{this.props.currentSong.Album}</p>
                                 </div>}
-                                {this.props.currentSong.Gengre && <div className="info-pair">
-                                    <p>Gengre: </p>
-                                    <p>{this.props.currentSong.Gengre}</p>
+                                {this.props.currentSong.Gengre && <div className="row">
+                                    <p className="col-4">Gengre: </p>
+                                    <p className="col-8">{this.props.currentSong.Gengre}</p>
                                 </div>}
-                                {this.props.currentSong.DateCreated && <div className="info-pair">
-                                    <p>Created: </p>
-                                    <p>{(new Date(this.props.currentSong.DateCreated)).getFullYear()}</p>
+                                {this.props.currentSong.DateCreated && <div className="row">
+                                    <p className="col-4">Created: </p>
+                                    <p className="col-8">{(new Date(this.props.currentSong.DateCreated)).getFullYear()}</p>
                                 </div>}
                             </div>}
                         </div> 
-                    </div>
+
                 </div> 
             </div>
         )

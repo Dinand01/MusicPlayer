@@ -1,4 +1,5 @@
-﻿@import "~slick-carousel/slick/slick.css";
+﻿@import "~bootstrap/scss/bootstrap";
+@import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome.scss";
@@ -36,17 +37,14 @@ $color-white: #FFFFFF;
     width: 100%;
     height: 100%; 
     background-color: $color-primary-4;
-    display: table;
 }
 
-.appContent {
-    display: table-row;
-    vertical-align: middle;
-}
-
-.appContent > div {
-    height: 100%;
-    width: 100%;
+.mainContainer {
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 h1, h2, h3, p, div, span {
@@ -97,11 +95,21 @@ input {
     margin: 5px;
 }
 
+.iconButton {
+    background-color: transparent;
+    color: white;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    margin: 2px;
+}
+
+    .iconButton > i {
+        color: inherit;
+    }
+
 .navigation {
-    display: table-row;
-    margin: 0;
     height: 30px;
-    width: 100%;
     list-style: none;
     padding: 5px;
     padding-left: 0;
@@ -127,18 +135,25 @@ input {
     outline: 2px solid $color-primary-2;
 }
 
-// .navigation > li:hover > a > i {
-//     color: $color-primary-2;;
-// }
-
 .navigation > li > a {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
 }
 
+.sliderHeightMax .slick-slider, .sliderHeightMax .slick-list, .sliderHeightMax .slick-track, .sliderHeightMax .slick-slide > div, .sliderHeightMax .slick-slide > div > div {
+    height: 100%;
+}
+
 .menu, .playlist {
     display: table;
+}
+
+.menu {
+    height: 100%;
+    width: calc(100% - 50px);
+    padding: 25px;
+    position: relative;
 }
 
 .menu > div, .playlist > div {
@@ -147,46 +162,9 @@ input {
     position: relative;
 }
 
-.menu-carousel {
-    height:50%;
-    position: absolute;
-    top: 25%;
-    left: 0;
-    right: 0;
-}
-
-.slick-prev.slick-disabled:before, .slick-next.slick-disabled:before {
-    display: none;
-}
-
-.menu-carousel .slick-list, .menu-carousel .slick-track,
-.playlist-pages .slick-list, .playlist-pages .slick-track {
-    height: 100%;
-}
-
-.menu-carousel .menu-carousel-slide, .slick-slider {
-    height: 100%;
-
-}
-
-.menu-carousel .slick-center i {
-    font-size: 7em;
-}
-
 .menu-carousel-slide > div {
-    display: table;
-    width: calc(100% - 20px);
-    margin: 0 10px 0 10px;
-    background-color: $color-primary-4;
-    height: 100%;
-    cursor: pointer;
-    color: $color-secondary-2-1;
-}
-
-.menu-carousel-slide i {
-    display: table-cell;
-    vertical-align: middle;
     text-align: center;
+    padding: 10px 0;
 }
 
 .slick-prev {
@@ -206,106 +184,17 @@ input {
     right: 0;
 }
 
-.song-info {
-    display: table;
+.songImage > i{
+    font-size: 30vw;
+    padding-left: 20px;
+}
+
+.songImage > img {
     width: 100%;
-    height: 100%;
-    padding: 5px;
-}
-
-.song-info > div:first-of-type {
-    display: table-cell;
-    width: 40%;
-    padding: 5px;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.song-info > div:first-of-type > img {
-    width: 100%;
-}
-
-.song-info > div:first-of-type > i {
-    font-size: 9em;
-}
-
-.song-info > div:last-of-type {
-    display: table-cell;
-    width: 60%;
-    padding-left: 5px;
-}
-
-.song-info > div:last-of-type > div {
-    display: table;
-    height: 100%;
-    width: 100%;
-}
-
-.song-info > div:last-of-type > div > div:first-of-type {
-    display: table-row;
-    height: 25px;
-}
-
-.song-info > div:last-of-type > div > div:last-of-type {
-    display: table-row;
-    height: 100%;
-}
-
-.song-details > div > h2, .song-details > div > h3 {
-    float:left;
-}
-
-.song-details > div {
-    display: inline-block;
-    height: 100%;
-    width: 100%;
-    overflow-y: auto;
-    padding-top: 25px;
-}
-
-.song-details > div > div {
-    display: inline-block;
-    width: 100%;
-}
-
-.info-pair {
-    margin: 5px 0 5px 0;
-}
-
-.info-pair > p {
-    float:left;
-}
-
-.info-pair > p:nth-child(2n) {
-    margin-left: 5px;
-}
-
-.song-controls > div:first-of-type {
-    display: table-cell;
-}
-
-.song-controls > div:last-of-type {
-    display: table-cell;
-    padding-right: 1em;
-}
-
-.song-controls > div:last-of-type > div {
-    width: 105px;
-    border: 1px groove $color-white;
-    cursor: pointer;
-}
-
-.song-controls > div > button {
-    float: left;
 }
 
 .song-position, .song-position > div {
     color: $color-secondary-2-1;
-    height: 5px;
-    float: left;
-    width: 150px;
-    margin: 5px;
-    margin-top: 3px;
     background-color: inherit;
 }
 
@@ -320,21 +209,29 @@ input {
     border-radius: none;
 }
 
-div.song-volume {
+.volumeSlider {
+    height: 24px;
+    width:100px;
+    position: relative;
+}
+
+.volumeSlider > div {
     width: 75px;
     margin-top: 0;
     margin-right: 2px;
-    height: 20px;
+    height: 24px;
 }
 
-button.song-volume {
-    float: right !important;
+.volumeSlider > button {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
-.song-volume .rc-slider-rail{
+.volumeSlider .rc-slider-rail{
     height: 0;
     width: 0;
-    border-bottom: 20px solid transparent;
+    border-bottom: 24px solid transparent;
     border-left: 75px solid $color-primary-4;
     background-color: transparent;
     margin-top: 0;
@@ -343,21 +240,21 @@ button.song-volume {
     top: 0;
 }
 
-.song-volume .rc-slider-track {
+.volumeSlider .rc-slider-track {
     visibility: visible;
     left: 0%;
     bottom: 0;
     top: 0;
     background-color: $color-secondary-1-2;
     border-radius: 0;
-    height: 20px;
+    height: 100%;
 }
 
-.song-volume .rc-slider-handle {
+.volumeSlider .rc-slider-handle {
     z-index: 3;
     width: 4px;
     background-color: transparent;
-    height: 20px;
+    height: 100%;
     border: 0px;
     border-radius: 0px;
     margin-left: 0;

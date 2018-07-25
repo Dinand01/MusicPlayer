@@ -118,7 +118,7 @@ namespace MusicPlayer.Controller
         /// Play the song.
         /// </summary>
         /// <param name="song">The song.</param>
-        public override void Play(Song song)
+        public override void Play(SongInformation song)
         {
             var filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Music player downloaded files\\" + song.FileName;
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));

@@ -18,18 +18,18 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The songs that are currently in the database.
         /// </summary>
-        private static SynchronizedCollection<Song> _resolvedSongs = new SynchronizedCollection<Song>();
+        private static SynchronizedCollection<SongInformation> _resolvedSongs = new SynchronizedCollection<SongInformation>();
 
         /// <summary>
         /// Resoloves the song info.
         /// </summary>
         /// <param name="song">The song to resolve.</param>
         /// <returns>The resolved song.</returns>
-        public static Song Resolve(Song song)
+        public static SongInformation Resolve(SongInformation song)
         {
             if (song != null && !string.IsNullOrEmpty(song.Location))
             {
-                Song found = null;
+                SongInformation found = null;
                 lock(_resolvedSongs)
                 {
                     found = _resolvedSongs.ToList().FirstOrDefault(s => s.Location.ToLower() == song.Location.ToLower());

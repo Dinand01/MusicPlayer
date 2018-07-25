@@ -50,25 +50,26 @@ class App extends React.Component {
     render() {
         return (
             <HashRouter ref="router">
-                <div className="appRoot">
-                    <ul className="navigation">
-                        <li><Link to="/"><i className="fa fa-home" /></Link></li>
-                        {this.props.currentSong && <li><Link to="/playlist"><i className="fa fa-music" /></Link></li>}
-                        {this.props.serverInfo && this.props.serverInfo.IsHost && <li title={"Currently connected clients: " + this.props.serverInfo.Count}>
-                            <Link to="/server"><i className="fa fa-rss" /></Link>
-                        </li>}
-                        {this.props.serverInfo && !this.props.serverInfo.IsHost && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
-                            <Link to="/client"><i className="fa fa-podcast" /></Link>
-                        </li>}
-                        {this.props.serverInfo && this.props.serverInfo.VideoUrl && <li title={"Currently playing: " + this.props.serverInfo.VideoUrl}>
-                            <Link to="/video"><i className="fa fa-youtube" /></Link>
-                        </li>}
-                        {this.props.copyProgress != null && this.props.copyProgress != undefined && <li title={"Currently copying files: " + parseInt(this.props.copyProgress) + "%"}>
-                            <Link to="/copy"><i className="fa fa-files-o" /></Link>
-                        </li>}
-                    </ul>
-                    
-                    <div className="appContent">
+                <div className="h-100">
+                    <div className="navbar p-0">
+                        <ul className="navigation">
+                            <li><Link to="/"><i className="fa fa-home" /></Link></li>
+                            {this.props.currentSong && <li><Link to="/playlist"><i className="fa fa-music" /></Link></li>}
+                            {this.props.serverInfo && this.props.serverInfo.IsHost && <li title={"Currently connected clients: " + this.props.serverInfo.Count}>
+                                <Link to="/server"><i className="fa fa-rss" /></Link>
+                            </li>}
+                            {this.props.serverInfo && !this.props.serverInfo.IsHost && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
+                                <Link to="/client"><i className="fa fa-podcast" /></Link>
+                            </li>}
+                            {this.props.serverInfo && this.props.serverInfo.VideoUrl && <li title={"Currently playing: " + this.props.serverInfo.VideoUrl}>
+                                <Link to="/video"><i className="fa fa-youtube" /></Link>
+                            </li>}
+                            {this.props.copyProgress != null && this.props.copyProgress != undefined && <li title={"Currently copying files: " + parseInt(this.props.copyProgress) + "%"}>
+                                <Link to="/copy"><i className="fa fa-files-o" /></Link>
+                            </li>}
+                        </ul>
+                    </div>
+                    <div className="container-fluid mainContainer">
                         <Route path="/" component={Home}></Route>
                         <Route path="/playlist" component={PlayList}></Route>
                         <Route path="/server" component={Server}></Route>

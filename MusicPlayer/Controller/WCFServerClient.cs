@@ -24,7 +24,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The current song.
         /// </summary>
-        private Song _currentSong;
+        private SongInformation _currentSong;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WCFServerClient" /> class.
@@ -57,6 +57,15 @@ namespace MusicPlayer.Controller
         public void Play()
         {
             _musicClient.TogglePlay(false);
+        }
+
+        /// <summary>
+        /// Play from an online location.
+        /// </summary>
+        /// <param name="url">The url.</param>
+        public void Play(string url)
+        {
+            _musicClient.Play(url);
         }
 
         /// <summary>
@@ -96,7 +105,7 @@ namespace MusicPlayer.Controller
         /// Sets the song information.
         /// </summary>
         /// <param name="song">The song.</param>
-        public void SetSong(Song song)
+        public void SetSong(SongInformation song)
         {
             _currentSong = song;
         }

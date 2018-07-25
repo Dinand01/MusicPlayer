@@ -39,12 +39,12 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The current song.
         /// </summary>
-        private Song _currentSong;
+        private SongInformation _currentSong;
 
         /// <summary>
         /// The muisicplayer.
         /// </summary>
-        private IMusicPlayer _player;
+        private new IMusicPlayer _player;
 
         /// <summary>
         /// The event that must be called when the serverinfo changes.
@@ -72,24 +72,17 @@ namespace MusicPlayer.Controller
         public override bool TogglePlay(bool? pause)
         {
             bool isPlaying = base.TogglePlay(pause);
-            foreach (var client in _clients.ToList())
+            SendToClients(c =>
             {
-                try
+                if (!isPlaying)
                 {
-                    if (!isPlaying)
-                    {
-                        client.ClientContract.Pause();
-                    }
-                    else
-                    {
-                        client.ClientContract.Play();
-                    }
+                    c.Pause();
                 }
-                catch (Exception e)
+                else
                 {
-                    HandleClientError(client, e);
+                    c.Play();
                 }
-            }
+            });
 
             return isPlaying;
         }
@@ -101,17 +94,7 @@ namespace MusicPlayer.Controller
         public override void MoveToTime(long seconds)
         {
             base.MoveToTime(seconds);
-            foreach (var client in _clients.ToList())
-            {
-                try
-                {
-                    client.ClientContract.SetSongPosition(seconds);
-                }
-                catch (Exception e)
-                {
-                    HandleClientError(client, e);
-                }
-            }
+            SendToClients(c => c.SetSongPosition(seconds));
         }
 
         /// <summary>
@@ -148,17 +131,7 @@ namespace MusicPlayer.Controller
         /// <param name="url">The video url.</param>
         public void SetVideo(string url)
         {
-            foreach (var client in _clients.ToList())
-            {
-                try
-                {
-                    client.ClientContract.PlayVideo(url);
-                }
-                catch (Exception e)
-                {
-                    HandleClientError(client, e);
-                }
-            }
+            SendToClients(c => c.PlayVideo(url));
         }
 
         /// <summary>
@@ -167,17 +140,17 @@ namespace MusicPlayer.Controller
         /// <param name="position">The position in seconds.</param>
         public void SeekVideo(double position)
         {
-            foreach (var client in _clients.ToList())
-            {
-                try
-                {
-                    client.ClientContract.SeekVideo(position);
-                }
-                catch (Exception e)
-                {
-                    HandleClientError(client, e);
-                }
-            }
+            SendToClients(c => c.SeekVideo(position));
+        }
+
+        /// <summary>
+        /// Play an online resource.
+        /// </summary>
+        /// <param name="url">The url.</param>
+        public override void Play(string url)
+        {
+            base.Play(url);
+            SendToClients(c => c.Play(url));
         }
 
         /// <summary>
@@ -200,6 +173,25 @@ namespace MusicPlayer.Controller
             }
 
             _service = null;
+        }
+
+        /// <summary>
+        /// Runs a certain action on all clients.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        private void SendToClients(Action<IClientContract> action)
+        {
+            foreach (var client in _clients.ToList())
+            {
+                try
+                {
+                    action(client.ClientContract);
+                }
+                catch (Exception e)
+                {
+                    HandleClientError(client, e);
+                }
+            }
         }
 
         /// <summary>
@@ -271,7 +263,7 @@ namespace MusicPlayer.Controller
         /// The current song has changed.
         /// </summary>
         /// <param name="song">The song.</param>
-        private void Player_SongChanged(Song song)
+        private void Player_SongChanged(SongInformation song)
         {
             if (song.Location != _currentSong?.Location)
             {
@@ -288,7 +280,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="song">The song.</param>
         /// <param name="client">The client.</param>
-        private void Play(Song song, Client client)
+        private void Play(SongInformation song, Client client)
         {
             Task.Run(() =>
             {

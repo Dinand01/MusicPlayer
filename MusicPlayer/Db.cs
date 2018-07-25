@@ -28,6 +28,11 @@ namespace MusicPlayer
         public DbSet<Setting> Settings { get; set; }
 
         /// <summary>
+        /// Gets or sets the radio stations.
+        /// </summary>
+        public DbSet<RadioStation> RadioStations { get; set; }
+
+        /// <summary>
         /// Create the database.
         /// </summary>
         /// <param name="modelBuilder">The model builder.</param>

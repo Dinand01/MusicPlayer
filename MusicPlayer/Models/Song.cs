@@ -16,21 +16,25 @@ namespace MusicPlayer.Models
     /// <summary>
     /// Describes a song.
     /// </summary> 
+    /// <remarks>
+    /// Properties with the datamember attribute are send over the WCF service.
+    /// Properties with the jsonproperty atttribute are available in the UI.
+    /// </remarks>
     [Serializable]
     [DataContract]
     [JsonObject(MemberSerialization.OptIn)]
-    public class Song
+    public class SongInformation
     {
         /// <summary>
         /// Creates a new empty song.
         /// </summary>
-        public Song() { }
+        public SongInformation() { }
 
         /// <summary>
         /// Creates a song from a file path.
         /// </summary>
         /// <param name="path">The file path.</param>
-        public Song(string path)
+        public SongInformation(string path)
         {
             this.Location = path;;
             var temp = path.Split('\\').Last();

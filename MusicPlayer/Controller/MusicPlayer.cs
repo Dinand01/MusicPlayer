@@ -23,7 +23,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// Contains the list of songs (absolute paths).
         /// </summary>
-        private List<Song> _sourceList;
+        private List<SongInformation> _sourceList;
 
         /// <summary>
         /// Used for providing random songs.
@@ -63,7 +63,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The current song.
         /// </summary>
-        private Song _currentSong;
+        private SongInformation _currentSong;
 
         /// <summary>
         /// The thread for updating the time via the event.
@@ -89,18 +89,16 @@ namespace MusicPlayer.Controller
         {
             _volume = DataController.GetSetting<int>(SettingType.Volume, 50);
             _shuffle = DataController.GetSetting<bool>(SettingType.Shuffle, false);
-            _sourceList = new List<Song>();
+            _sourceList = new List<SongInformation>();
             _random = new Random();
             this._isReceiveMode = isReceiveMode;
         }
-
-        #region PlayerInformation
 
         // <summary>
         /// Gets the current song.
         /// </summary>
         /// <returns>The current song.</returns>
-        public Song GetCurrentSong()
+        public SongInformation GetCurrentSong()
         {
             return _currentSong;
         }
@@ -131,10 +129,6 @@ namespace MusicPlayer.Controller
 
             return null;
         }
-
-        #endregion
-
-        #region PlayerControls
 
         /// <summary>
         /// Pauses or plays the music.
@@ -170,7 +164,7 @@ namespace MusicPlayer.Controller
         /// Loads a song
         /// </summary>
         /// <param name="song">The song object.</param>
-        private void Load(Song song)
+        private void Load(SongInformation song)
         {
             _currentSong = song;
             this.Load(song.Location);
@@ -211,7 +205,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="folder">The folder.</param>
         /// <returns>The loaded songs.</returns>
-        public List<Song> LoadFolder(string folder)
+        public List<SongInformation> LoadFolder(string folder)
         {
             var files = Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories);
             return this.LoadFiles(files.ToArray());
@@ -224,7 +218,7 @@ namespace MusicPlayer.Controller
         /// <param name="querry">The querry string.</param>
         /// <param name="amount">The maximum amount of songs to return.</param>
         /// <returns>The songs.</returns>
-        public List<Song> GetSongs(int index = 0, string querry = null, int amount = 50)
+        public List<SongInformation> GetSongs(int index = 0, string querry = null, int amount = 50)
         {
             querry = querry.ToLower();
             var matches = _sourceList?.Where(s => (s.Title != null && s.Title.ToLower().Contains(querry)) || (s.Band != null && s.Band.ToLower().Contains(querry)) || (s.Location != null  && s.Location.ToLower().Contains(querry)))
@@ -259,7 +253,7 @@ namespace MusicPlayer.Controller
         /// <param name="files">The file locations.</param>
         /// <param name="number">The number of files to load.</param>
         /// <returns>A List of songs.</returns>
-        public List<Song> LoadFiles(string[] files)
+        public List<SongInformation> LoadFiles(string[] files)
         {
             if (_waveOutDevice != null && _waveOutDevice.PlaybackState != PlaybackState.Stopped)
             {
@@ -271,7 +265,7 @@ namespace MusicPlayer.Controller
             _sourceList = files.Where(path =>
                                         extensions.Contains(Path.GetExtension(path).ToLower())
                                         && path.IndexOfAny(Path.GetInvalidPathChars()) < 0)
-                                .Select(path => new Song(path))
+                                .Select(path => new SongInformation(path))
                                 .OrderBy(s => s.FileName)
                                 .ToList();
 
@@ -282,7 +276,7 @@ namespace MusicPlayer.Controller
         /// Sets the available songs for the player.
         /// </summary>
         /// <param name="songs">The songs to set.</param>
-        public void SetSongs(List<Song> songs)
+        public void SetSongs(List<SongInformation> songs)
         {
             _sourceList = songs;
         }
@@ -310,7 +304,7 @@ namespace MusicPlayer.Controller
         /// Play a song object.
         /// </summary>
         /// <param name="song">The song.</param>
-        public void Play(Song song)
+        public void Play(SongInformation song)
         {
             if (song != null)
             {
@@ -319,42 +313,36 @@ namespace MusicPlayer.Controller
                     _sourceList.Add(song);
                 }
 
-                this.Play(song.Location);
+                this.PlayFromLocation(song.Location);
             }
         }
 
         /// <summary>
-        /// Play from key (path).
+        /// Play a song from an online location.
         /// </summary>
-        /// <param name="key"></param>
-        public void Play(string key = null)
+        /// <param name="url">The url.</param>
+        public void Play(string url)
         {
-            Song song;
-            if (key == null)
+            DisposeWaveOut(true);
+            _playstream?.Dispose();
+            try
             {
-                if(_currentIdx == -1)
+                _playstream = new MediaFoundationReader(url);
+                _waveOutDevice.Init(_playstream);
+                TogglePlay(pause: false);
+                _currentSong = new SongInformation
                 {
-                    Next();
-                    return;
-                }
-                else
-                {
-                    song = _sourceList[_currentIdx];
-                }
-            }
-            else
-            {
-                song = _sourceList.FirstOrDefault(ct => ct.Location == key);
-            }
+                    Title = url,
+                    Location = url,
+                    Duration = -1,
+                    IsResolved = true
+                };
 
-            if (song != null)
+                this.SongChanged?.Invoke(_currentSong);
+            }
+            catch (Exception e)
             {
-                if (!song.IsResolved)
-                {
-                    SongInfoController.Resolve(song);
-                }
-
-                Load(song);
+                Logger.LogError(e, "Could not connect to url: " + url);
             }
         }
 
@@ -435,7 +423,26 @@ namespace MusicPlayer.Controller
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Disposes this class properly
+        /// </summary>
+        public void Dispose()
+        {
+            try
+            {
+                _disposing = true;
+                DisposeWaveOut();
+
+                if (_playstream != null)
+                {
+                    _playstream.Dispose();
+                }
+            }
+            catch
+            {
+                // TODO: fix other thread exception
+            }
+        }
 
         /// <summary>
         /// Updates the position of the song.
@@ -466,7 +473,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void OnWaveOutStop(object sender, EventArgs e)
+        private void OnWaveOutStop(object sender, EventArgs e)
         {
             if (!_isReceiveMode && _currentSong.IsPlaying)
             {
@@ -502,29 +509,47 @@ namespace MusicPlayer.Controller
             }
         }
 
+        /// <summary>
+        /// The destructor.
+        /// </summary>
+        /// <remarks>This should not be called, the player should be disposed via the dispose method.</remarks>
         ~Player()
         {
             this.Dispose();
         }
 
         /// <summary>
-        /// Disposes this class properly
+        /// Play from key (path).
         /// </summary>
-        public void Dispose()
+        /// <param name="key"></param>
+        private void PlayFromLocation(string key = null)
         {
-            try
+            SongInformation song;
+            if (key == null)
             {
-                _disposing = true;
-                DisposeWaveOut();
-
-                if (_playstream != null)
+                if (_currentIdx == -1)
                 {
-                    _playstream.Dispose();
+                    Next();
+                    return;
+                }
+                else
+                {
+                    song = _sourceList[_currentIdx];
                 }
             }
-            catch 
+            else
             {
-                // TODO: fix other thread exception
+                song = _sourceList.FirstOrDefault(ct => ct.Location == key);
+            }
+
+            if (song != null)
+            {
+                if (!song.IsResolved)
+                {
+                    SongInfoController.Resolve(song);
+                }
+
+                Load(song);
             }
         }
     }

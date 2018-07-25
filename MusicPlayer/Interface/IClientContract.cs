@@ -40,7 +40,7 @@ namespace MusicPlayer.Interface
         /// </summary>
         /// <param name="song">The song.</param>
         [OperationContract(IsOneWay = true)]
-        void SetSong(Song song);
+        void SetSong(SongInformation song);
 
         /// <summary>
         /// Sends the file.
@@ -54,6 +54,13 @@ namespace MusicPlayer.Interface
         /// </summary>
         [OperationContract(IsOneWay = true)]
         void Play();
+
+        /// <summary>
+        /// Play from an online location.
+        /// </summary>
+        /// <param name="url">The url.</param>
+        [OperationContract(IsOneWay = true)]
+        void Play(string url);
 
         /// <summary>
         /// Pause the song.

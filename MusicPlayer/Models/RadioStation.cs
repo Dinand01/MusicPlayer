@@ -12,6 +12,25 @@ namespace MusicPlayer.Models
     public class RadioStation
     {
         /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public RadioStation()
+        {
+        }
+
+        /// <summary>
+        /// Initializes the radio station with dirble data.
+        /// </summary>
+        /// <param name="station">The dirble station.</param>
+        internal RadioStation(Dirble.RadioStation station)
+        {
+            this.Name = station.Name;
+            this.Genre = station.Categories?.Aggregate(string.Empty, (res, cat) => res = string.IsNullOrEmpty(res) ? cat.Title : " ," + cat.Title) ?? string.Empty;
+            this.Priority = 999;
+            this.Url = station.Streams?.FirstOrDefault()?.Stream ?? string.Empty;
+        }
+
+        /// <summary>
         /// Gets or sets the id.
         /// </summary>
         public int ID { get; set; }

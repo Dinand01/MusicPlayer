@@ -44,6 +44,7 @@
     <Compile Include="Controller\DataController.cs" />
     <Compile Include="Controller\MusicPlayer.cs" />
     <Compile Include="Controller\MusicPlayerWrapper.cs" />
+    <Compile Include="Controller\RadioStationController.cs" />
     <Compile Include="Controller\ServerHost.cs" />
     <Compile Include="Controller\SongInfoController.cs" />
     <Compile Include="Controller\VideoController.cs" />
@@ -54,6 +55,9 @@
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\TheadExtensions.cs" />
     <Compile Include="Factory.cs" />
+    <Compile Include="Helpers\DirbleClient.cs" />
+    <Compile Include="Helpers\IOHelper.cs" />
+    <Compile Include="Helpers\RestClient.cs" />
     <Compile Include="Interface\IClient.cs" />
     <Compile Include="Interface\IClientContract.cs" />
     <Compile Include="Interface\ICopy.cs" />
@@ -65,6 +69,11 @@
     <Compile Include="Interface\IVideo.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Dirble\Category.cs" />
+    <Compile Include="Models\Dirble\Image.cs" />
+    <Compile Include="Models\Dirble\ImageThumb.cs" />
+    <Compile Include="Models\Dirble\RadioStation.cs" />
+    <Compile Include="Models\Dirble\AudioStream.cs" />
     <Compile Include="Models\enum\SettingType.cs" />
     <Compile Include="Models\RadioStation.cs" />
     <Compile Include="Models\ServerInfo.cs" />
@@ -152,6 +161,9 @@
     <Reference Include="YoutubeExplode, Version=4.2.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YoutubeExplode.4.2.4\lib\net45\YoutubeExplode.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DirbleApiKey.dirbleapikey" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.108.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net451\System.Data.SQLite.Core.targets')" />

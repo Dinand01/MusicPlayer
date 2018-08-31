@@ -11,6 +11,7 @@ import Server from './PageComponents/Server.jsx';
 import Client from './PageComponents/Client.jsx';
 import Copy from './PageComponents/Copy.jsx';
 import Video from './PageComponents/Video.jsx';
+import Radio from './PageComponents/Radio.jsx';
 
 
 /**
@@ -76,6 +77,7 @@ class App extends React.Component {
                         <Route path="/client" component={Client}></Route>
                         <Route path="/copy" component={Copy}></Route>
                         <Route path="/video" component={Video}></Route>
+                        <Route path="/radio" component={Radio}></Route>
                     </div>
                 </div>
             </HashRouter>

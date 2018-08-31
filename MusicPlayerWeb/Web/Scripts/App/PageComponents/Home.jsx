@@ -86,6 +86,7 @@ class Home extends React.Component {
                         centerMode={true} 
                         dots={true}
                         slidesToShow={3}
+                        slidesPerRow={1}
                         rows={2}
                         responsive={[{ breakpoint: 400, settings: { slidesToShow: 1, rows: 2 } },
                                     { breakpoint: 550, settings: { slidesToShow: 2, rows: 2 } },
@@ -93,33 +94,43 @@ class Home extends React.Component {
                                     { breakpoint: 1024, settings: { slidesToShow: 3, rows: 2}}]} > 
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.openFolder()} title="Open a folder (Loads all the audio in the folder)">
-                                    <i className="Menu-Icon fa fa-folder-open fa-5x"></i>
-                                </div>
-                            </div>
-                            <div className="menu-carousel-slide">
-                                <div onClick={() => this.gotoServer()} title="Host a audio server">
-                                    <i className="Menu-Icon fa fa-rss fa-5x"></i>
+                                    <i className="Menu-Icon fas fa-folder-open fa-5x"></i>
                                 </div>
                             </div>
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.openFiles()} title="Open multiple files">
-                                    <i className="Menu-Icon fa fa-file-audio-o fa-5x"></i>
+                                    <i className="Menu-Icon far fa-file-audio fa-5x"></i>
+                                </div>
+                            </div>
+                            <div className="menu-carousel-slide">
+                                <div onClick={() => this.gotoServer()} title="Host a audio server">
+                                    <i className="Menu-Icon fas fa-broadcast-tower fa-5x"></i>
+                                </div>
+                            </div>
+                            <div className="menu-carousel-slide">
+                                <div onClick={() => this.goto('/radio')} title="Connect to internet radio">
+                                    <i className="Menu-Icon fab fa-soundcloud fa-5x"></i>
                                 </div>
                             </div>
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.gotoCopy()} title={"Copy random files"}>
-                                    <i className="Menu-Icon fa fa-files-o fa-5x"></i>
+                                    <i className="Menu-Icon far fa-copy fa-5x"></i>
                                 </div> 
                             </div>
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.goto("/video")} title={"Play youtube videos"}>
-                                    <i className="Menu-Icon fa fa-youtube fa-5x"></i>
+                                    <i className="Menu-Icon fab fa-youtube fa-5x"></i>
                                 </div> 
                             </div>
                             <div className="menu-carousel-slide">
                                 <div onClick={() => this.gotoClient()} title="Connect to a server">
-                                    <i className="Menu-Icon fa fa-podcast fa-5x"></i>
+                                    <i className="Menu-Icon fas fa-signal fa-5x"></i>
                                 </div>
+                            </div>
+                            <div className="menu-carousel-slide">
+                                <div onClick={() => this.goto("/video")} title={"Play youtube videos"}>
+                                    <i className="Menu-Icon fab fa-youtube fa-5x"></i>
+                                </div> 
                             </div>
                     </Slider>
                 </div>}

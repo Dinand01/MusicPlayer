@@ -13,9 +13,9 @@ namespace MusicPlayer.Helpers
     internal class DirbleClient : RestClient
     {
         /// <summary>
-        /// The number of results per page.
+        /// The number of results per page (limited by 30). 
         /// </summary>
-        private readonly int _pageSize = 250;
+        private readonly int _pageSize = 30;
 
         /// <summary>
         /// Gets the query string (api token).

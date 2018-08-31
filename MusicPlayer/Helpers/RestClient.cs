@@ -70,7 +70,7 @@ namespace MusicPlayer.Helpers
 
             if (!string.IsNullOrWhiteSpace(additionalQuerystring))
             {
-                result += result.EndsWith("&") && !result.EndsWith("?") ? string.Empty : "&";
+                result += result.EndsWith("&") || result.EndsWith("?") ? string.Empty : "&";
                 result += additionalQuerystring.Replace("?", string.Empty);
             }
 

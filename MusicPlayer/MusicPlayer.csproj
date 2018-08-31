@@ -62,6 +62,7 @@
     <Compile Include="Interface\IClientContract.cs" />
     <Compile Include="Interface\ICopy.cs" />
     <Compile Include="Interface\INetwork.cs" />
+    <Compile Include="Interface\IRadioStation.cs" />
     <Compile Include="Interface\IServer.cs" />
     <Compile Include="Interface\IServerContract.cs" />
     <Compile Include="Interface\IUI.cs" />
@@ -163,7 +164,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\DirbleApiKey.dirbleapikey" />
+    <EmbeddedResource Include="Resources\DirbleApiKey.dirbleapikey" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.108.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net451\System.Data.SQLite.Core.targets')" />

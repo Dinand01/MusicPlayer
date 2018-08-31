@@ -1,8 +1,11 @@
 ﻿@import "~bootstrap/scss/bootstrap";
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
-$fa-font-path: "~font-awesome/fonts";
-@import "~font-awesome/scss/font-awesome.scss";
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts/";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+@import "~@fortawesome/fontawesome-free/scss/regular.scss";
 @import '~rc-slider/assets/index.css';
 
 html, body {

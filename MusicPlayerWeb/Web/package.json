@@ -4,6 +4,7 @@
     "start": "webpack --watch --progress --colors"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.3.1",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-polyfill": "^6.23.0",

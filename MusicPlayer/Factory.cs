@@ -69,8 +69,7 @@ namespace MusicPlayer
         /// <returns>The video player.</returns>
         public static IMusicPlayer GetVideoPlayer(IMusicPlayer player = null)
         {
-            var p = player as IVideo;
-            return p != null ? p : new VideoController(player);
+            return player is IVideo p ? p : new VideoController(player);
         }
 
         /// <summary>
@@ -80,6 +79,15 @@ namespace MusicPlayer
         public static ICopy GetCopy()
         {
             return new CopyController();
+        }
+
+        /// <summary>
+        /// Gets the controller for handling radio station information.
+        /// </summary>
+        /// <returns>The controller.</returns>
+        public static IRadioStation GetRadioInfo()
+        {
+            return new RadioStationController();
         }
     }
 }

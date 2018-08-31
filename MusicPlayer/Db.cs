@@ -38,7 +38,7 @@ namespace MusicPlayer
         /// <param name="modelBuilder">The model builder.</param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            Database.SetInitializer<Db>(new SqliteCreateDatabaseIfNotExists<Db>(modelBuilder, true));
+            Database.SetInitializer<Db>(new SqliteDropCreateDatabaseWhenModelChanges<Db>(modelBuilder));
             base.OnModelCreating(modelBuilder);
         }
     }

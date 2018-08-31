@@ -400,6 +400,17 @@ namespace MusicPlayerWeb
         }
 
         /// <summary>
+        /// Gets the radio stations.
+        /// </summary>
+        /// <param name="searchText">The search text.</param>
+        /// <returns>The stations.</returns>
+        public string GetRadioStations(string searchText)
+        {
+            var stations = Task.Run(async() => await Factory.GetRadioInfo().GetStations(searchText)).Result;
+            return JsonConvert.SerializeObject(stations);
+        } 
+
+        /// <summary>
         /// Loads the folder by it's path.
         /// </summary>
         /// <param name="path">The folder path.</param>

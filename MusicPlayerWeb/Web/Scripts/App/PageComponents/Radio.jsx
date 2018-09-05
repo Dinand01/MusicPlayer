@@ -41,13 +41,13 @@ export default class Radio extends React.Component {
             <div className="row h-100">
                 <div className="col">
                     <div className="h-100 d-flex flex-column">
-                        <div className="row justify-content-center">
+                        <div className="row justify-content-center h-30-px">
                             <div className="col">
-                                <input type="text" value={this.state.searchText} onChange={e => this.changeSearchText(e.target.value)} />
+                                <input type="text" className="w-100 ml-0" placeholder="Search" value={this.state.searchText} onChange={e => this.changeSearchText(e.target.value)} />
                             </div>
                             <div className="col-1">
-                                <button className="">
-                                    <i className="fas fa-add"></i>
+                                <button className="iconButton h-100">
+                                    <i className="fas fa-plus-square fa-2x"></i>
                                 </button>
                             </div>
                         </div>

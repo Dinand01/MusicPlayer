@@ -212,6 +212,27 @@ input {
     border-radius: none;
 }
 
+.scroll {
+    overflow-y: auto;
+}
+
+    .scroll::-webkit-scrollbar { 
+        display: none;  // Safari and Chrome
+    }
+
+.highlight:hover {
+    color: $color-secondary-1-1 !important;
+    cursor: pointer;
+}
+
+    .highlight:hover div {
+        color: inherit !important;
+    }
+
+.h-30-px {
+    min-height: 30px;
+}
+
 .volumeSlider {
     height: 24px;
     width:100px;

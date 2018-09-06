@@ -16,6 +16,20 @@ namespace MusicPlayer.Controller
     internal class RadioStationController : IRadioStation
     {
         /// <summary>
+        /// Gets a station by it's url.
+        /// </summary>
+        /// <param name="url">The url.</param>
+        /// <returns>The station.</returns>
+        public async Task<RadioStation> GetStation(string url)
+        {
+            using (var db = new Db())
+            {
+                url = url.ToLower();
+                return await db.RadioStations.SingleOrDefaultAsync(s => s.Url.ToLower() == url);
+            }
+        }
+
+        /// <summary>
         /// Gets the radio stations for the provided searchtext.
         /// </summary>
         /// <param name="searchText">The searchtext.</param>
@@ -111,9 +125,9 @@ namespace MusicPlayer.Controller
                 using (var client = new DirbleClient())
                 {
                     List<RadioStation> stations = new List<RadioStation>();
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 1; i <= 5; i++)
                     {
-                        stations.AddRange((await client.GetPopularStations())?.Select(s => new RadioStation(s)));
+                        stations.AddRange((await client.GetPopularStations(i))?.Select(s => new RadioStation(s)));
                     }
 
                     return stations;

@@ -50,6 +50,19 @@ namespace MusicPlayer.Models
             }
         }
 
+        /// <summary>
+        /// Initializes the song information from a radio station.
+        /// </summary>
+        /// <param name="radio">The internet radio station.</param>
+        public SongInformation(RadioStation radio)
+        {
+            this.Location = radio.Url;
+            this.Title = radio.Name;
+            this.Genre = radio.Genre;
+            this.IsInternetRadio = true;
+            this.IsResolved = true;
+        }
+
         [Key]
         [StringLength(255)]
         [JsonProperty]
@@ -119,6 +132,11 @@ namespace MusicPlayer.Models
         /// Gets or sets the file stream.
         /// </summary>
         public byte[] File { get; set; }
+    
+        /// <summary>
+        /// Gets or sets a value indicating whether this is an internet radio.
+        /// </summary>
+        public bool IsInternetRadio { get; set; }
 
         /// <summary>
         /// Gets or sets a boolean indicating whether the song is resolved.

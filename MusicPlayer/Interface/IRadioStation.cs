@@ -13,6 +13,13 @@ namespace MusicPlayer.Interface
     public interface IRadioStation
     {
         /// <summary>
+        /// Gets a station by it's url.
+        /// </summary>
+        /// <param name="url">The url.</param>
+        /// <returns>The station.</returns>
+        Task<RadioStation> GetStation(string url);
+
+        /// <summary>
         /// Gets the radio stations for the provided searchtext.
         /// </summary>
         /// <param name="searchText">The searchtext.</param>

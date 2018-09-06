@@ -25,9 +25,13 @@ namespace MusicPlayer.Models
         internal RadioStation(Dirble.RadioStation station)
         {
             this.Name = station.Name;
-            this.Genre = station.Categories?.Aggregate(string.Empty, (res, cat) => res = string.IsNullOrEmpty(res) ? cat.Title : " ," + cat.Title) ?? string.Empty;
+            this.Genre = station.Categories?.Aggregate(string.Empty, (res, cat) => res += string.IsNullOrEmpty(res) ? cat.Title : $", { cat.Title }") ?? string.Empty;
             this.Priority = 999;
             this.Url = station.Streams?.FirstOrDefault()?.Stream ?? string.Empty;
+            this.ImageUrl = station.Image?.Url ?? station.Image?.Thumb?.Url;
+            this.Facebook = station.Facebook;
+            this.Twitter = station.Twitter;
+            this.Website = station.Website;
         }
 
         /// <summary>
@@ -49,6 +53,26 @@ namespace MusicPlayer.Models
         /// Gets or sets the url.
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// Gets or sets the url of the image.
+        /// </summary>
+        public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the facebook url.
+        /// </summary>
+        public string Facebook { get; set; }
+
+        /// <summary>
+        /// Gets or sets the url of the twitter.
+        /// </summary>
+        public string Twitter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the website.
+        /// </summary>
+        public string Website { get; set; }
 
         /// <summary>
         /// The priority of the station, higher will appear first.

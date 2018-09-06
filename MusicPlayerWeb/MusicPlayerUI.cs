@@ -228,6 +228,7 @@ namespace MusicPlayerWeb
         /// <param name="url">The url.</param>
         public void PlayFromURL(string url)
         {
+            NewPlayer();
             _owner.Dispatcher.Invoke(() =>
             {
                 _player?.Play(url);

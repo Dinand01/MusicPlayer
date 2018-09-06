@@ -1,35 +1,29 @@
 import React from 'react';
+import Waypoint from 'react-waypoint';
 
+/**
+ * @class Displays the radio station list.
+ */
 export class RadioList extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            radioStations: []
-        };
     }
 
-    componentWillReceiveProps(nextprops) {
-        if (nextprops.radioStations 
-            && nextprops.radioStations.length != this.props.radioStations.length
-            && JSON.stringify(nextprops.radioStations) != JSON.stringify(this.props.radioStations)) {
-                this.setState({
-                    radioStations: nextprops.radioStations.slice(0, nextprops.radioStations.length > 25 ? 25 : nextprops.radioStations.length)
-                });
-        }
-    }
-
+    /**
+     * @desc Requests audio playback from the station. 
+     * @param {object} station The radio station object.
+     */
     selectRadio(station) {
-        console.log(station);
         MusicPlayer.playFromURL(station.Url);
-        // TODO
     }
 
+    /**
+     * @desc Renders the list.
+     */
     render() {
         return (
-
             <div className="col scroll">
-                {this.state.radioStations.map(s => 
+                {this.props.radioStations.map(s => 
                     <div className="row highlight" key={s.ID} onClick={() => this.selectRadio(s)}>
                         <div className="col">
                             {s.Name}
@@ -39,8 +33,8 @@ export class RadioList extends React.Component {
                         </div>
                     </div>
                 )}
+                <Waypoint onEnter={() => this.props.radioStations.length > 0 && this.props.requestSongs(this.props.radioStations.length, 25)} bottomOffset="-100px" />
             </div>
-
         );
     }
 }

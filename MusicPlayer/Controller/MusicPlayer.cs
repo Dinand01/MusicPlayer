@@ -327,18 +327,19 @@ namespace MusicPlayer.Controller
             _playstream?.Dispose();
             try
             {
-                _playstream = new MediaFoundationReader(url);
-                _waveOutDevice.Init(_playstream);
-                TogglePlay(pause: false);
-                _currentSong = new SongInformation
+                var radio = Factory.GetRadioInfo().GetStation(url).Result;
+                _currentSong = new SongInformation(radio);
+                if (_currentSong == null)
                 {
-                    Title = url,
-                    Location = url,
-                    Duration = -1,
-                    IsResolved = true
-                };
+                    throw new ArgumentException("The url must be known");
+                } 
 
-                this.SongChanged?.Invoke(_currentSong);
+                Task.Run(() =>
+                {
+                    _playstream = new MediaFoundationReader(url);
+                    _waveOutDevice.Init(_playstream);
+                }).Wait(1000);
+                TogglePlay(pause: false);
             }
             catch (Exception e)
             {

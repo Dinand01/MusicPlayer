@@ -30,7 +30,7 @@ namespace MusicPlayerWeb
         /// <summary>
         /// The instance of the musicplayer interface.
         /// </summary>
-        private MusicPlayerUI _musicPlayer;
+        private MusicPlayerGate _musicPlayer;
 
         /// <summary>
         /// The dispatcher for the current thread;
@@ -43,7 +43,7 @@ namespace MusicPlayerWeb
         public MainWindow()
         {
             InitializeComponent();
-            _musicPlayer = new MusicPlayerUI(this.Browser, this);
+            _musicPlayer = new MusicPlayerGate(this.Browser, this);
             this.Browser.JavascriptObjectRepository.Register("MusicPlayer", _musicPlayer, isAsync: true);
             this.Browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
             {

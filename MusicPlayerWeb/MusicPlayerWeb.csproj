@@ -157,7 +157,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CefComponents\DisplayHandler.cs" />
-    <Compile Include="MusicPlayerUI.cs" />
+    <Compile Include="MusicPlayerGate.Actions.cs" />
+    <Compile Include="MusicPlayerGate.cs" />
+    <Compile Include="MusicPlayerGate.Data.cs" />
     <Compile Include="SchemeHandlerFactory.cs" />
     <Compile Include="Startup.cs" />
     <Page Include="MainWindow.xaml">
@@ -223,8 +225,9 @@
     <EmbeddedResource Include="redist\vcredist_x64_%282%29.exe" />
     <Resource Include="Resources\play.png" />
     <Resource Include="Resources\skip.png" />
+    <Content Include="Web\Scripts\App\PageComponents\EditRadio.jsx" />
     <Content Include="Web\Scripts\App\PageComponents\Radio.jsx" />
-    <Content Include="Web\Scripts\App\Parts\Radio\ChangeRadio.jsx" />
+    <Content Include="Web\Scripts\App\Parts\Form\TextField.jsx" />
     <Content Include="Web\Scripts\App\Parts\Radio\RadioList.jsx" />
     <Content Include="Web\Scripts\Build\fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

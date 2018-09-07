@@ -69,6 +69,10 @@ export default class Radio extends React.Component {
      * @desc Renders the page.
      */
     render() {
+        if (!this.props.match.isExact) {
+            return null;
+        }
+
         return(
             <div className="row h-100">
                 <div className="col">
@@ -78,7 +82,7 @@ export default class Radio extends React.Component {
                                 <input type="text" className="w-100 ml-0" placeholder="Search" value={this.state.searchText} onChange={e => this.changeSearchText(e.target.value)} />
                             </div>
                             <div className="col-1">
-                                <button className="iconButton h-100">
+                                <button className="iconButton h-100" onClick={() => this.props.history.push("/radio/0")}>
                                     <i className="fas fa-plus-square fa-2x"></i>
                                 </button>
                             </div>
@@ -88,7 +92,7 @@ export default class Radio extends React.Component {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
         )
     }
 }

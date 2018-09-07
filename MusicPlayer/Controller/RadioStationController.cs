@@ -16,6 +16,19 @@ namespace MusicPlayer.Controller
     internal class RadioStationController : IRadioStation
     {
         /// <summary>
+        /// Gets a station by it's id.
+        /// </summary>
+        /// <param name="id">The station id.</param>
+        /// <returns>The station.</returns>
+        public async Task<RadioStation> GetStation(int id)
+        {
+            using (var db = new Db())
+            {
+                return await db.RadioStations.SingleOrDefaultAsync(s => s.ID == id);
+            }
+        }
+
+        /// <summary>
         /// Gets a station by it's url.
         /// </summary>
         /// <param name="url">The url.</param>
@@ -111,6 +124,20 @@ namespace MusicPlayer.Controller
                     db.RadioStations.AddRange(stations);
                     await db.SaveChangesAsync();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Updates an existing radio station.
+        /// </summary>
+        /// <param name="station">The radio station with the desired values.</param>
+        /// <returns>A task.</returns>
+        public async Task UpdateStation(RadioStation station)
+        {
+            using (var db = new Db())
+            {
+                db.Entry(station).State = EntityState.Modified;
+                await db.SaveChangesAsync();
             }
         }
 

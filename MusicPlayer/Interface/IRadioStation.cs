@@ -13,6 +13,13 @@ namespace MusicPlayer.Interface
     public interface IRadioStation
     {
         /// <summary>
+        /// Gets a station by it's id.
+        /// </summary>
+        /// <param name="id">The station id.</param>
+        /// <returns>The station.</returns>
+        Task<RadioStation> GetStation(int id);
+
+        /// <summary>
         /// Gets a station by it's url.
         /// </summary>
         /// <param name="url">The url.</param>
@@ -39,5 +46,12 @@ namespace MusicPlayer.Interface
         /// <param name="stations">Multiple radio stations.</param>
         /// <returns>A task.</returns>
         Task AddStations(RadioStation station = null, IEnumerable<RadioStation> stations = null);
+
+        /// <summary>
+        /// Updates an existing radio station.
+        /// </summary>
+        /// <param name="station">The radio station with the desired values.</param>
+        /// <returns>A task.</returns>
+        Task UpdateStation(RadioStation station);
     }
 }

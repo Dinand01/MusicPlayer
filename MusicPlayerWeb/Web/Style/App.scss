@@ -233,6 +233,19 @@ input {
     min-height: 35px;
 }
 
+form input[type=text] {
+    padding: 5px;
+    height: 25px;
+}
+
+.valid {
+    border-color: $color-secondary-1-1;
+}
+
+.invalid {
+    border-color: $color-secondary-2-1;
+}
+
 .volumeSlider {
     height: 24px;
     width:100px;

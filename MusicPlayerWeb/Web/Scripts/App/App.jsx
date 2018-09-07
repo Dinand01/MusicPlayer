@@ -12,6 +12,7 @@ import Client from './PageComponents/Client.jsx';
 import Copy from './PageComponents/Copy.jsx';
 import Video from './PageComponents/Video.jsx';
 import Radio from './PageComponents/Radio.jsx';
+import EditRadio from './PageComponents/EditRadio.jsx';
 
 
 /**
@@ -78,6 +79,7 @@ class App extends React.Component {
                         <Route path="/copy" component={Copy}></Route>
                         <Route path="/video" component={Video}></Route>
                         <Route path="/radio" component={Radio}></Route>
+                        <Route path="/radio/:id" component={EditRadio}></Route>
                     </div>
                 </div>
             </HashRouter>

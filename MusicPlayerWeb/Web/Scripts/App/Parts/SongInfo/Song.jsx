@@ -132,16 +132,17 @@ class Song extends React.Component {
      * @description Render the component.
      */
     render() {
-        let controlsDisbled = this.props.serverInfo && !this.props.serverInfo.IsHost;
+        let controlsDisbled = (this.props.serverInfo && !this.props.serverInfo.IsHost) || (this.props.currentSong && this.props.currentSong.IsInternetRadio);
         return (
             <div className="row">
                  <div className="col-5 songImage">
-                    {!(this.props.currentSong && this.props.currentSong.Image) && <i className="fa fa-9x fa-picture-o" />}
-                    {this.props.currentSong && this.props.currentSong.Image && <img src={"data:image/png;base64," + this.props.currentSong.Image}/>}
+                    {!(this.props.currentSong && (this.props.currentSong.Image || this.props.currentSong.ImageUrl)) 
+                        && <i className="far fa-9x fa-image" />}
+                    {this.props.currentSong && (this.props.currentSong.Image || this.props.currentSong.ImageUrl) 
+                        && <img src={this.props.currentSong.Image ? "data:image/png;base64," + this.props.currentSong.Image : this.props.currentSong.ImageUrl} alt="Song image" />}
                 </div>
                 <div className="col-7">
-
-                        <div className="row"> 
+                        <div className="row pb-3"> 
                             <div className="col-8">
                                 <div className="row align-items-center">
                                     {this.props.currentSong &&
@@ -160,7 +161,7 @@ class Song extends React.Component {
                                         <i className="fa fa-step-forward" />
                                         </button>
                                     <button onClick={() => this.shuffle()} disabled={controlsDisbled} title="Toggle shuffle" className="col-1 iconButton">
-                                        <i className={"fa " + (this.state.shuffle ? "fa-random" : "fa-exchange")} />
+                                        <i className={"fas " + (this.state.shuffle ? "fa-random" : "fa-exchange-alt")} />
                                     </button>
                                 </div>
                             </div>

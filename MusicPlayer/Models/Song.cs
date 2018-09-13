@@ -59,6 +59,7 @@ namespace MusicPlayer.Models
             this.Location = radio.Url;
             this.Title = radio.Name;
             this.Genre = radio.Genre;
+            this.ImageUrl = radio.ImageUrl;
             this.IsInternetRadio = true;
             this.IsResolved = true;
         }
@@ -123,6 +124,13 @@ namespace MusicPlayer.Models
         public byte[] Image { get; set; }
 
         /// <summary>
+        /// Gets or sets the image url.
+        /// </summary>
+        [DataMember]
+        [JsonProperty]
+        public string ImageUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the song is playing.
         /// </summary>
         [JsonProperty]
@@ -136,6 +144,7 @@ namespace MusicPlayer.Models
         /// <summary>
         /// Gets or sets a value indicating whether this is an internet radio.
         /// </summary>
+        [JsonProperty]
         public bool IsInternetRadio { get; set; }
 
         /// <summary>

@@ -89,6 +89,10 @@ button:disabled {
      opacity: 0.5;
 }
 
+button:focus {
+    outline: none !important;
+}
+
 input[Type=Text]:disabled {
     background-color: lightgray;
 }
@@ -111,6 +115,10 @@ input {
         color: inherit;
     }
 
+    .iconButton:hover > i {
+        color: $color-secondary-1-1;
+    }
+
 .navigation {
     height: 30px;
     list-style: none;
@@ -124,7 +132,6 @@ input {
     background-color: $color-primary-0;
     display: table;
     height: calc(100% - 7px);
-    color: $color-secondary-1-0;
     cursor: pointer;
     float: left;
     margin-bottom: 2px;
@@ -135,7 +142,12 @@ input {
 }
 
 .navigation > li:hover {
-    outline: 2px solid $color-primary-2;
+    outline: 2px solid $color-secondary-1-2;
+    background-color: $color-secondary-1-1;
+}
+
+.navigation > li:hover i {
+    color: $color-primary-4;
 }
 
 .navigation > li > a {
@@ -170,6 +182,11 @@ input {
     padding: 10px 0;
 }
 
+    .menu-carousel-slide:hover i {
+        color: $color-secondary-1-2;
+        cursor: pointer;
+    }
+
 .slick-prev {
     z-index: 1;
     left: 5px;
@@ -196,21 +213,48 @@ input {
     width: 100%;
 }
 
-.song-position, .song-position > div {
-    color: $color-secondary-2-1;
-    background-color: inherit;
+.song-position {
+    cursor: pointer;
 }
 
-.song-position > div {
-    margin: 0;
-}
+    .song-position, .song-position > div {
+        color: $color-secondary-2-1;
+        background-color: inherit;
+    }
 
-.song-position .rc-slider-handle {
-    margin-left: 0;
-    border: none;
-    width: 5px;
-    border-radius: none;
-}
+    .song-position > div {
+        margin: 0;
+    }
+
+    .song-position .rc-slider-handle {
+        margin-left: 0;
+        border: none;
+        width: 0.5rem;
+        height: 1rem;
+        margin-top: -0.33rem;
+    }
+
+    .song-position:hover .rc-slider-handle {
+        background-color: $color-secondary-1-1;
+    }
+
+    .song-position .rc-slider-step {
+        background-color: $color-secondary-1-2;
+    }
+
+    .song-position .rc-slider-rail, .song-position .rc-slider-step{
+        height: 0.1rem;
+        top: 0.4rem;
+    }
+
+    .song-position .rc-slider-disabled {
+        cursor: not-allowed !important;
+    }
+
+    .song-position .rc-slider-disabled .rc-slider-step, .rc-slider-disabled .rc-slider-handle {
+        background-color: lightgray !important;
+        color: lightgray !important;
+    }
 
 .scroll {
     overflow-y: auto;

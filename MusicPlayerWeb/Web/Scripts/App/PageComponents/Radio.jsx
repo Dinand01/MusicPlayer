@@ -1,5 +1,5 @@
 import React from 'react';
-import { RadioList } from '../Parts/Radio/RadioList.jsx';
+import RadioList from '../Parts/Radio/RadioList.jsx';
 import { parseJSON } from '../Helpers/Methods.jsx';
 
 /**

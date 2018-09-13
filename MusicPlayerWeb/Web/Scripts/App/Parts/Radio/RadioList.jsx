@@ -1,10 +1,11 @@
 import React from 'react';
 import Waypoint from 'react-waypoint';
+import { withRouter } from 'react-router-dom';
 
 /**
  * @class Displays the radio station list.
  */
-export class RadioList extends React.Component {
+class RadioList extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -15,6 +16,17 @@ export class RadioList extends React.Component {
      */
     selectRadio(station) {
         MusicPlayer.playFromURL(station.Url);
+        this.props.history.push('/playlist');
+    }
+    
+    /**
+     * @desc Edit the data of a radio station.
+     * @param {object} radio The radio station.
+     * @param {object} event The javascript event. 
+     */
+    editRadio(radio, event) {
+        this.props.history.push('/radio/' + radio.ID);
+        event.stopPropagation();
     }
 
     /**
@@ -31,6 +43,11 @@ export class RadioList extends React.Component {
                         <div className="col">
                             {s.Genre}
                         </div>
+                        <div className="col-1">
+                            <button className="iconButton" onClick={(e) => this.editRadio(s, e)}>
+                                <i className="far fa-edit"></i>
+                            </button>
+                        </div>
                     </div>
                 )}
                 <Waypoint onEnter={() => this.props.radioStations.length > 0 && this.props.requestSongs(this.props.radioStations.length, 25)} bottomOffset="-100px" />
@@ -38,3 +55,5 @@ export class RadioList extends React.Component {
         );
     }
 }
+
+export default withRouter(RadioList);

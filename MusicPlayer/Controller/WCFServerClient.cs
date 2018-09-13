@@ -63,7 +63,7 @@ namespace MusicPlayer.Controller
         /// Play from an online location.
         /// </summary>
         /// <param name="url">The url.</param>
-        public void Play(string url)
+        public void PlayRadio(string url)
         {
             _musicClient.Play(url);
         }

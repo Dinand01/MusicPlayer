@@ -27,7 +27,7 @@ export default class EditRadio extends React.Component {
      */
     componentDidMount() {
         if (this.props.match.params.id > 0) {
-            MusicPlayer.getRadioStation(this.props.match.params.id).then(r => {
+            MusicPlayer.getRadioStation(parseInt(this.props.match.params.id)).then(r => {
                 let radio = parseJSON(r);
                 if (radio) {
                     this.setState({

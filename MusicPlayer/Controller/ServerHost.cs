@@ -150,7 +150,7 @@ namespace MusicPlayer.Controller
         public override void Play(string url)
         {
             base.Play(url);
-            SendToClients(c => c.Play(url));
+            SendToClients(c => c.PlayRadio(url));
         }
 
         /// <summary>
@@ -288,7 +288,14 @@ namespace MusicPlayer.Controller
                 {
                     song.FileName = Path.GetFileName(song.Location);
                     client.ClientContract.SetSong(song);
-                    client.ClientContract.SendFile(new MemoryStream(File.ReadAllBytes(song.Location)));
+                    if (Uri.IsWellFormedUriString(song.Location, UriKind.Absolute))
+                    {
+                        client.ClientContract.PlayRadio(song.Location);
+                    }
+                    else if (File.Exists(song.Location))
+                    {
+                        client.ClientContract.SendFile(new MemoryStream(File.ReadAllBytes(song.Location)));
+                    }
                 }
                 catch (Exception e)
                 {

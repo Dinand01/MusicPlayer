@@ -57,17 +57,18 @@ class App extends React.Component {
                         <ul className="navigation">
                             <li><Link to="/"><i className="fa fa-home" /></Link></li>
                             {this.props.currentSong && <li><Link to="/playlist"><i className="fa fa-music" /></Link></li>}
+                            {(this.props.currentSong && this.props.currentSong.IsInternetRadio) && <li><Link to="/radio"><i className="fab fa-soundcloud" /></Link></li>}
                             {this.props.serverInfo && this.props.serverInfo.IsHost && <li title={"Currently connected clients: " + this.props.serverInfo.Count}>
-                                <Link to="/server"><i className="fa fa-rss" /></Link>
+                                <Link to="/server"><i className="fas fa-broadcast-tower" /></Link>
                             </li>}
                             {this.props.serverInfo && !this.props.serverInfo.IsHost && <li title={"Currently connected to: " + this.props.serverInfo.Host}>
-                                <Link to="/client"><i className="fa fa-podcast" /></Link>
+                                <Link to="/client"><i className="fas fa-signal" /></Link>
                             </li>}
                             {this.props.serverInfo && this.props.serverInfo.VideoUrl && <li title={"Currently playing: " + this.props.serverInfo.VideoUrl}>
-                                <Link to="/video"><i className="fa fa-youtube" /></Link>
+                                <Link to="/video"><i className="fab fa-youtube" /></Link>
                             </li>}
                             {this.props.copyProgress != null && this.props.copyProgress != undefined && <li title={"Currently copying files: " + parseInt(this.props.copyProgress) + "%"}>
-                                <Link to="/copy"><i className="fa fa-files-o" /></Link>
+                                <Link to="/copy"><i className="far fa-copy" /></Link>
                             </li>}
                         </ul>
                     </div>

@@ -7,7 +7,7 @@ export default class TextField extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isDirty: null
+            valid: null
         }
     }
 
@@ -15,13 +15,7 @@ export default class TextField extends React.Component {
      * @desc The component mounted, send initial validation state.
      */
     componentDidMount() {
-        const event = {
-            target: {
-                name: this.props.name ? this.props.name : this.props.label,
-                value: this.props.value
-            }
-        };
-
+        const event = this.createEvent(this.props);
         this.props.onChange(event, this.validate(this.props, this.props.value));
     }
 
@@ -30,7 +24,19 @@ export default class TextField extends React.Component {
      * @param {object} nextprops The new properties. 
      */
     componentWillReceiveProps(nextprops) {
-        this.validate(nextprops, nextprops.value);
+        var valid = this.validate(nextprops, nextprops.value);
+        if (valid !== this.state.valid && valid !== null) {
+            this.props.onChange(this.createEvent(nextprops), valid);
+        }
+    }
+
+    createEvent(props) {
+        return event = {
+            target: {
+                name: props.name ? props.name : props.label,
+                value: props.value
+            }
+        };
     }
 
     /**
@@ -39,19 +45,22 @@ export default class TextField extends React.Component {
      * @param {*} value The value to use.
      */
     validate(props, value) {
+        var valid = null;
         if (props.required === undefined) {
             return null;
         }
 
-        if (props.required && !value && this.state.isDirty !== true) {
-            this.setState({ isDirty: true });
-            return false;
-        } else if ((!props.required || value) && this.state.isDirty !== false) {
-            this.setState({ isDirty: false });
-            return true;
+        if (props.required && !value) {
+            valid = false;
+        } else if (!props.required || value) {
+            valid = true;
         }
 
-        return !this.state.isDirty;
+        if (valid !== this.state.valid) {
+            this.setState({ valid: valid });
+        }
+
+        return valid;
     }
     
     /**
@@ -65,7 +74,7 @@ export default class TextField extends React.Component {
                 </div>
                 <div className="col-9">
                     <input type="text" 
-                        className={this.state.isDirty ? "invalid" : (this.state.isDirty == null ? "" : "valid")} 
+                        className={this.state.valid ? "valid" : (this.state.valid == null ? "" : "invalid")} 
                         name={this.props.name ? this.props.name : this.props.label} value={this.props.value} 
                         onChange={e => this.props.onChange(e, this.validate(this.props, e.target.value))} />
                 </div>

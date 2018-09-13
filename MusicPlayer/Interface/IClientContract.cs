@@ -60,7 +60,7 @@ namespace MusicPlayer.Interface
         /// </summary>
         /// <param name="url">The url.</param>
         [OperationContract(IsOneWay = true)]
-        void Play(string url);
+        void PlayRadio(string url);
 
         /// <summary>
         /// Pause the song.

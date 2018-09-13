@@ -50,7 +50,7 @@ class Server extends React.Component {
      */
     renderServerInfo() {
         return (
-            <div className="server-clients">
+            <div className="server-clients col">
                 <div>
                     <div>
                         <p>Connected Clients:</p>
@@ -71,7 +71,7 @@ class Server extends React.Component {
 
     render() {
         return (
-            <div className="server">
+            <div className="row h-100">
                 {!this.props.serverInfo && this.renderConnect()}
                 {this.props.serverInfo && this.renderServerInfo()}
             </div>

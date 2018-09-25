@@ -239,7 +239,7 @@ class Video extends React.Component {
                     <div id="youtube-player"></div>
                 </section>
                 <section style={!this.state.isPlaying ? {} : {display: "none"}}>
-                    {this.state.videoInfo.length == 0 && <i className="fa fa-youtube-square"></i>}
+                    {this.state.videoInfo.length == 0 && <i className="fab fa-youtube"></i>}
                     <div className="video-thumb-container">
                     {(() =>  { 
                         return this.state.videoInfo.map(info => {

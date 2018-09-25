@@ -206,6 +206,7 @@ namespace MusicPlayerWeb
         public void HostServer(int port)
         {
             _player = Factory.GetServerPlayer(port, _player);
+            _player.SongChanged += SongChanged;
             var server = (_player as IServer);
             server.OnInfoChanged += ServerInfoChanged;
             ServerInfoChanged(server.GetInfo());

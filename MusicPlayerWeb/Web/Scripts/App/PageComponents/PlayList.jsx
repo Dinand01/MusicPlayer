@@ -39,7 +39,7 @@ class PlayList extends React.Component {
 
     render() {
         return (
-            <div className="row h-100 align-items-center">
+            <div className="row h-100 align-items-center scroll">
                 <div className={this.state.currentSlide === 0 ? "col h-100 sliderHeightMax" : "col"}>
                         <Slider 
                             afterChange={e => this.slideChanged(e)}

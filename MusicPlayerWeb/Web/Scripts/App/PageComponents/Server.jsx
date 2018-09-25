@@ -40,7 +40,7 @@ class Server extends React.Component {
                 <h2>Host music</h2>
                 <p>By port forwarding the following port to your pc people can listen in on your music.</p>
                 <input type="number" value={this.state.port} onChange={(e) => this.setState({port: e.target.value})} />
-                <button className="bigButton" onClick={() => this.hostServer()}>Host</button>
+                <button className="primary-button" onClick={() => this.hostServer()}>Host</button>
             </div>
         )
     }
@@ -62,7 +62,7 @@ class Server extends React.Component {
 
                             return res;
                         })()}
-                        <button onClick={() => this.disconnectServer()}>Disconnect</button>
+                        <button onClick={() => this.disconnectServer()} className="primary-button">Disconnect</button>
                     </div>
                 </div>
             </div>

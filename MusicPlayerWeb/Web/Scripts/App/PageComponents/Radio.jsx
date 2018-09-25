@@ -24,6 +24,16 @@ export default class Radio extends React.Component {
     }
 
     /**
+     * @desc refresh data when the child component unmounts.
+     * @param {*} nextprops The xext properties.
+     */
+    componentWillReceiveProps(nextprops) {
+        if (!this.props.match.isExact && nextprops.match.isExact) {
+            this.getStations();
+        }
+    }
+
+    /**
      * @desc The search text changed.
      * @param {string} text The search text. 
      */

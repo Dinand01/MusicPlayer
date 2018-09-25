@@ -102,6 +102,20 @@ input {
     margin: 5px;
 }
 
+.primary-button {
+    background-color: inherit;
+    border: 5px $color-white solid;
+    border-radius: 18px;
+    color: $color-white;
+    font-weight: bold;
+    padding: 0 15px;
+}
+
+    .primary-button:hover {
+        border-color: $color-secondary-1-1;
+        color: $color-secondary-1-1;
+    }
+
 .iconButton {
     background-color: transparent;
     color: white;
@@ -118,6 +132,14 @@ input {
     .iconButton:hover > i {
         color: $color-secondary-1-1;
     }
+
+.text-red {
+    color: $color-secondary-2-0;
+}
+
+button.text-red:hover > i {
+    color: $color-secondary-2-2;
+}
 
 .navigation {
     height: 30px;
@@ -177,12 +199,16 @@ input {
     position: relative;
 }
 
-.menu-carousel-slide > div {
-    text-align: center;
-    padding: 10px 0;
+.menu-carousel-slide {
+    padding: 10%;
 }
 
-    .menu-carousel-slide:hover i {
+.menu-carousel-slide > div {
+    text-align: center;
+    padding: 5% 0;
+}
+
+    .menu-carousel-slide > div:hover i {
         color: $color-secondary-1-2;
         cursor: pointer;
     }
@@ -195,6 +221,11 @@ input {
 .slick-next {
     right: 5px;
 }
+
+    .slick-prev:before, .slick-next:before {
+        font-size: 2rem;
+        color: $color-primary-1;
+    }
 
 .playlist-pages {
     position: absolute;
@@ -461,10 +492,6 @@ form input[type=text] {
     margin-top: 1em;
 }
 
-.copy-page {
-    display: table-cell;
-}
-
 .copy-files-form {
     margin: 1em;
     display: flex;
@@ -586,4 +613,10 @@ form input[type=text] {
 .video-thumb > p:hover {
     font-weight: bold;
     font-size: inherit;
+}
+
+.loader {
+    position: sticky;
+    left: 50%;
+    top: 50%;
 }

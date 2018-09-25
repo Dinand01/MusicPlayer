@@ -26,11 +26,6 @@ namespace MusicPlayer.Controller
         private List<SongInformation> _sourceList;
 
         /// <summary>
-        /// Used for providing random songs.
-        /// </summary>
-        private Random _random;
-
-        /// <summary>
         /// An integer indicating the current song index.
         /// </summary>
         private int _currentIdx = 0;
@@ -90,7 +85,6 @@ namespace MusicPlayer.Controller
             _volume = DataController.GetSetting<int>(SettingType.Volume, 50);
             _shuffle = DataController.GetSetting<bool>(SettingType.Shuffle, false);
             _sourceList = new List<SongInformation>();
-            _random = new Random();
             this._isReceiveMode = isReceiveMode;
         }
 
@@ -149,8 +143,12 @@ namespace MusicPlayer.Controller
                     _waveOutDevice.Play();
                     _currentSong.IsPlaying = true;
                     _timetracker?.Abort();
-                    _timetracker = new Thread(UpdateTime);
-                    _timetracker.Start();
+                    if (!_currentSong.IsInternetRadio)
+                    {
+                        _timetracker = new Thread(UpdateTime);
+                        _timetracker.Start();
+                    }
+
                     result = true;
                 }
 
@@ -395,7 +393,7 @@ namespace MusicPlayer.Controller
             {
                 if (_shuffle)
                 {
-                    _currentIdx = _random.Next(0, _sourceList.Count);
+                    _currentIdx = new Random((int)DateTime.Now.Ticks).Next(0, _sourceList.Count);
                 }
                 else if (_waveOutDevice != null)
                 {

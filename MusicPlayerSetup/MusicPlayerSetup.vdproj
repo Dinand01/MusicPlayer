@@ -39,7 +39,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0B7349693E3C428583EF8B36EBBA244F"
+        "MsmKey" = "8:_09052A47743A4F869D17BFDBE2B7C6C3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -111,6 +111,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1AF9E6BC2CCC40FCA916264DE898752D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1E3F028F196B412EA1BCDFB5C09FA63F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -129,18 +135,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_217FEA2717104E59A859ED7198A256EF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_24D223E660344FC097F5AA1F168C5C05"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_25B72E91587D46EFA8420AA3B4B7C531"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -148,6 +142,18 @@
         "Entry"
         {
         "MsmKey" = "8:_26FE2F0BDF984C998685D89E6A065190"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_29D8278921014E69959FBA8925DDA312"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2E71CD59D98642ECAB977599F71538F7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -171,6 +177,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_39300E1836ED4EFD8E8F6FA45CEBE52C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3D24C140B12645B9A8F8EE6A7F6CAC41"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -184,6 +196,12 @@
         "Entry"
         {
         "MsmKey" = "8:_412C7FCFC78E4896BC8E566B8FE439A9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_492017824DAE4E2A872B5298A391DACE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -225,6 +243,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4F567D877A3948BD9DA1E8526C744750"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_528E8D0F12F4623FC9F817091903C528"
         "OwnerKey" = "8:_C807191BADF52BF94613745EFE345D14"
         "MsmSig" = "8:_UNDEFINED"
@@ -237,13 +261,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_55DC115A347049DB9FC4139AB92151C9"
+        "MsmKey" = "8:_5B7F1918F7EB4D59A9B2456FD3E4BD7E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_5B7F1918F7EB4D59A9B2456FD3E4BD7E"
+        "MsmKey" = "8:_5BD75925561740CFAD43C2FE23E9B043"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -262,6 +286,18 @@
         "Entry"
         {
         "MsmKey" = "8:_6412D14FA2904B2EB26F2A4CE06EF531"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_65E0338B531E46528A2776D6CF006F14"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6615355C14F1431A8F9C3F5CE6C7F95F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -303,7 +339,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6ECE448B82294847B3EFC2A018C7020F"
+        "MsmKey" = "8:_6F33DF7FD20948E18C7F804CA9F5DAFE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -333,6 +369,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7928AACCF379488BBB8708B7A8E671A4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7A1E0D90E077467C9070C8E6901D2454"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -340,6 +382,12 @@
         "Entry"
         {
         "MsmKey" = "8:_7A85C0715E2D435386524E73601DB0E4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7BA5CB5C0B8E4DFCAC3BF01C5E02C83C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -376,6 +424,12 @@
         "Entry"
         {
         "MsmKey" = "8:_84AADC8857694658BEA736F042BCE3D6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_85121A7E62A34F9AAFA121C22E7DD769"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -471,19 +525,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A65E87FA30B24133BDF6B2CEC2BAA89A"
+        "MsmKey" = "8:_A4ECFA890654492495D22D15CDC74398"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_AB425899C6F041C78549B20B8ECE1018"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_AEBAEAD248D74C1A87CF75299AE595F4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -509,6 +557,12 @@
         {
         "MsmKey" = "8:_B17D6F344E147FC4ABD3587166B1E6C8"
         "OwnerKey" = "8:_C34658AD7E41F7545CF38C51EB1245F3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BD4B54AC6C4A436491186BB03AFE1233"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -567,6 +621,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C9D6982C558C4DCAB8CE3516FAA6AA0C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CE58873E2EB543ACB2D12AF299D551BF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -621,6 +681,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DB1290DB50034869941088B2E4953C87"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DBBF95AABB984EF0A36570B94803E248"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DE8E276F186F4D6F7EC8CE5E48E0909F"
         "OwnerKey" = "8:_4D53E860D25F4CF3ABE360FC1EA47242"
         "MsmSig" = "8:_UNDEFINED"
@@ -629,6 +701,12 @@
         {
         "MsmKey" = "8:_DE8E276F186F4D6F7EC8CE5E48E0909F"
         "OwnerKey" = "8:_C34658AD7E41F7545CF38C51EB1245F3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DE8E276F186F4D6F7EC8CE5E48E0909F"
+        "OwnerKey" = "8:_C807191BADF52BF94613745EFE345D14"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -645,13 +723,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E50A569CA95D4B0AABAEA957D464260F"
+        "MsmKey" = "8:_E576F018EB7F478FA1FE2092E8606AEC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_E576F018EB7F478FA1FE2092E8606AEC"
+        "MsmKey" = "8:_E5974E20DF094AC6A657D54292AB0563"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -659,6 +737,12 @@
         {
         "MsmKey" = "8:_E605AB2DA285CDBD3C2C9051222C58F5"
         "OwnerKey" = "8:_0D84CED5EB2344079FA5F1017942BCAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E805D3C5C2F64AA09BF79336F47EF89A"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1082,10 +1166,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B7349693E3C428583EF8B36EBBA244F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09052A47743A4F869D17BFDBE2B7C6C3"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\fontawesome-webfont-af7ae505a9eed503f8b8e6982036873e.woff2"
-            "TargetName" = "8:fontawesome-webfont-af7ae505a9eed503f8b8e6982036873e.woff2"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-brands-400-b5472631dbace30d549357ec325b9c62.svg"
+            "TargetName" = "8:fa-brands-400-b5472631dbace30d549357ec325b9c62.svg"
             "Tag" = "8:"
             "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
@@ -1235,6 +1319,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1AF9E6BC2CCC40FCA916264DE898752D"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-solid-900-815694de1120d6c1e9d1f0895ee81056.woff"
+            "TargetName" = "8:fa-solid-900-815694de1120d6c1e9d1f0895ee81056.woff"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E3F028F196B412EA1BCDFB5C09FA63F"
             {
             "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\zh-CN.pak"
@@ -1295,46 +1399,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_217FEA2717104E59A859ED7198A256EF"
-            {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\fontawesome-webfont-fee66e712a8a08eef5805a46892932ad.woff"
-            "TargetName" = "8:fontawesome-webfont-fee66e712a8a08eef5805a46892932ad.woff"
-            "Tag" = "8:"
-            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_24D223E660344FC097F5AA1F168C5C05"
-            {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\App.css"
-            "TargetName" = "8:App.css"
-            "Tag" = "8:"
-            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_25B72E91587D46EFA8420AA3B4B7C531"
             {
             "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\mr.pak"
@@ -1361,6 +1425,46 @@
             "TargetName" = "8:fil.pak"
             "Tag" = "8:"
             "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_29D8278921014E69959FBA8925DDA312"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-regular-400-73fe7f1effbf382f499831a0a9f18626.ttf"
+            "TargetName" = "8:fa-regular-400-73fe7f1effbf382f499831a0a9f18626.ttf"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2E71CD59D98642ECAB977599F71538F7"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\App.css"
+            "TargetName" = "8:App.css"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1446,6 +1550,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_39300E1836ED4EFD8E8F6FA45CEBE52C"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fontawesome-webfont-fee66e712a8a08eef5805a46892932ad.woff"
+            "TargetName" = "8:fontawesome-webfont-fee66e712a8a08eef5805a46892932ad.woff"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3D24C140B12645B9A8F8EE6A7F6CAC41"
             {
             "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\CefSharp.xml"
@@ -1492,6 +1616,26 @@
             "TargetName" = "8:libGLESv2.dll"
             "Tag" = "8:"
             "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_492017824DAE4E2A872B5298A391DACE"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-brands-400-7b464e274bc331f9a765d765359635a5.woff"
+            "TargetName" = "8:fa-brands-400-7b464e274bc331f9a765d765359635a5.woff"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1606,6 +1750,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F567D877A3948BD9DA1E8526C744750"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fontawesome-webfont-912ec66d7572ff821749319396470bde.svg"
+            "TargetName" = "8:fontawesome-webfont-912ec66d7572ff821749319396470bde.svg"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_528E8D0F12F4623FC9F817091903C528"
             {
             "AssemblyRegister" = "3:1"
@@ -1637,12 +1801,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_55DC115A347049DB9FC4139AB92151C9"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5B7F1918F7EB4D59A9B2456FD3E4BD7E"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot"
-            "TargetName" = "8:fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\hr.pak"
+            "TargetName" = "8:hr.pak"
             "Tag" = "8:"
-            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1657,12 +1821,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5B7F1918F7EB4D59A9B2456FD3E4BD7E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5BD75925561740CFAD43C2FE23E9B043"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\hr.pak"
-            "TargetName" = "8:hr.pak"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-solid-900-38508b2e7fac045869a86a15936433f7.svg"
+            "TargetName" = "8:fa-solid-900-38508b2e7fac045869a86a15936433f7.svg"
             "Tag" = "8:"
-            "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1723,6 +1887,46 @@
             "TargetName" = "8:ko.pak"
             "Tag" = "8:"
             "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_65E0338B531E46528A2776D6CF006F14"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-solid-900-14a08198ec7d1eb96d515362293fed36.woff2"
+            "TargetName" = "8:fa-solid-900-14a08198ec7d1eb96d515362293fed36.woff2"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6615355C14F1431A8F9C3F5CE6C7F95F"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fontawesome-webfont-af7ae505a9eed503f8b8e6982036873e.woff2"
+            "TargetName" = "8:fontawesome-webfont-af7ae505a9eed503f8b8e6982036873e.woff2"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1848,10 +2052,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6ECE448B82294847B3EFC2A018C7020F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F33DF7FD20948E18C7F804CA9F5DAFE"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\fontawesome-webfont-912ec66d7572ff821749319396470bde.svg"
-            "TargetName" = "8:fontawesome-webfont-912ec66d7572ff821749319396470bde.svg"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\index.html"
+            "TargetName" = "8:index.html"
             "Tag" = "8:"
             "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
@@ -1959,6 +2163,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7928AACCF379488BBB8708B7A8E671A4"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-solid-900-0079a0ab6bec4da7d6e16f2a2e87cd71.ttf"
+            "TargetName" = "8:fa-solid-900-0079a0ab6bec4da7d6e16f2a2e87cd71.ttf"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7A1E0D90E077467C9070C8E6901D2454"
             {
             "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\fi.pak"
@@ -1985,6 +2209,26 @@
             "TargetName" = "8:libEGL.dll"
             "Tag" = "8:"
             "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BA5CB5C0B8E4DFCAC3BF01C5E02C83C"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-brands-400-48461ea4e797c9774dabb4a0440d2f56.woff2"
+            "TargetName" = "8:fa-brands-400-48461ea4e797c9774dabb4a0440d2f56.woff2"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2096,6 +2340,26 @@
             "TargetName" = "8:cef.pak"
             "Tag" = "8:"
             "Folder" = "8:_6344A89A037A432C9A25FD86B2408F69"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_85121A7E62A34F9AAFA121C22E7DD769"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\bundle.js"
+            "TargetName" = "8:bundle.js"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2392,10 +2656,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A65E87FA30B24133BDF6B2CEC2BAA89A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4ECFA890654492495D22D15CDC74398"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\index.html"
-            "TargetName" = "8:index.html"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-solid-900-70e65a7d34902f2c350816ecfe2f6492.eot"
+            "TargetName" = "8:fa-solid-900-70e65a7d34902f2c350816ecfe2f6492.eot"
             "Tag" = "8:"
             "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
@@ -2418,26 +2682,6 @@
             "TargetName" = "8:da.pak"
             "Tag" = "8:"
             "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AEBAEAD248D74C1A87CF75299AE595F4"
-            {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\fontawesome-webfont-b06871f281fee6b241d60582ae9369b9.ttf"
-            "TargetName" = "8:fontawesome-webfont-b06871f281fee6b241d60582ae9369b9.ttf"
-            "Tag" = "8:"
-            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2521,6 +2765,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BD4B54AC6C4A436491186BB03AFE1233"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-regular-400-b5a61b229c9c92a6ac21f5b0e3c6e9f1.svg"
+            "TargetName" = "8:fa-regular-400-b5a61b229c9c92a6ac21f5b0e3c6e9f1.svg"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF5103BB7EA7403793B8C8DA9D7D4168"
@@ -2669,7 +2933,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MusicPlayer, Version=1.4.0.2, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C807191BADF52BF94613745EFE345D14"
@@ -2694,6 +2958,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C9D6982C558C4DCAB8CE3516FAA6AA0C"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-brands-400-9b6c8da3c489424e2b3e9c9fb6314b37.eot"
+            "TargetName" = "8:fa-brands-400-9b6c8da3c489424e2b3e9c9fb6314b37.eot"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CE58873E2EB543ACB2D12AF299D551BF"
@@ -2878,6 +3162,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DB1290DB50034869941088B2E4953C87"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-brands-400-947b9537bc0fecc8130d48eb753495a1.ttf"
+            "TargetName" = "8:fa-brands-400-947b9537bc0fecc8130d48eb753495a1.ttf"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DBBF95AABB984EF0A36570B94803E248"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot"
+            "TargetName" = "8:fontawesome-webfont-674f50d287a8c48dc19ba404d20fe713.eot"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DE8E276F186F4D6F7EC8CE5E48E0909F"
             {
             "AssemblyRegister" = "3:1"
@@ -2949,12 +3273,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E50A569CA95D4B0AABAEA957D464260F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E576F018EB7F478FA1FE2092E8606AEC"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\Web\\Scripts\\Build\\bundle.js"
-            "TargetName" = "8:bundle.js"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\zh-TW.pak"
+            "TargetName" = "8:zh-TW.pak"
             "Tag" = "8:"
-            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2969,12 +3293,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E576F018EB7F478FA1FE2092E8606AEC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E5974E20DF094AC6A657D54292AB0563"
             {
-            "SourcePath" = "8:..\\MusicPlayerWeb\\bin\\x64\\Debug\\locales\\zh-TW.pak"
-            "TargetName" = "8:zh-TW.pak"
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fontawesome-webfont-b06871f281fee6b241d60582ae9369b9.ttf"
+            "TargetName" = "8:fontawesome-webfont-b06871f281fee6b241d60582ae9369b9.ttf"
             "Tag" = "8:"
-            "Folder" = "8:_F1E77BB996F2421DAE2835D8FB1B0539"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3018,6 +3342,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E805D3C5C2F64AA09BF79336F47EF89A"
+            {
+            "SourcePath" = "8:..\\MusicPlayerWeb\\Web\\Scripts\\Build\\fa-regular-400-7422060ca379ee9939d3b687d072acad.eot"
+            "TargetName" = "8:fa-regular-400-7422060ca379ee9939d3b687d072acad.eot"
+            "Tag" = "8:"
+            "Folder" = "8:_1B5E913874E542A3816DD6126F802901"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E8EA562D4F3947F6A8FD498B073BF74F"
@@ -3373,15 +3717,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MusicPlayer"
-        "ProductCode" = "8:{263F87C8-7FA8-49A3-B2D2-DB24E6BE0362}"
-        "PackageCode" = "8:{4EBD11AF-0CEF-4974-B86E-61FC03241A20}"
+        "ProductCode" = "8:{A2161676-D39A-4EF0-9B20-EE11096568B6}"
+        "PackageCode" = "8:{D2CC2AC8-0B82-49DF-9BA8-B5D36A9FBC55}"
         "UpgradeCode" = "8:{B5E2C2A9-4A22-44A2-B7C0-CB8C69BE0B33}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.4.1"
+        "ProductVersion" = "8:1.4.5"
         "Manufacturer" = "8:Lybaert Dinand"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -142,6 +142,20 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
+        /// Removes the radio station.
+        /// </summary>
+        /// <param name="id">The id of the radio station.</param>
+        /// <returns>The task.</returns>
+        public async Task DeleteStation(int id)
+        {
+            using (var db = new Db())
+            {
+                db.RadioStations.RemoveRange(db.RadioStations.Where(r => r.ID == id));
+                await db.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
         /// Gets the radio stations from dirble (Popular stations).
         /// </summary>
         /// <returns>The radio stations.</returns>

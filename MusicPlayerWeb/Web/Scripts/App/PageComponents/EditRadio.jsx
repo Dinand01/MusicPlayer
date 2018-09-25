@@ -87,6 +87,17 @@ export default class EditRadio extends React.Component {
     }
 
     /**
+     * @desc deletes a station.
+     */
+    deleteStation() {
+        if (this.state.radio.ID > 0) {
+            MusicPlayer.removeRadioStation(this.state.radio.ID).then(r => {
+                this.props.history.push("/radio");
+            });
+        }
+    }
+
+    /**
      * @desc Renders the form.
      */
     render() {
@@ -97,6 +108,11 @@ export default class EditRadio extends React.Component {
                         <div className="col">
                             <h2>{this.state.radio.ID > 0 ? "Edit " + this.state.radio.Name : "Add new internet radio"}</h2>
                         </div>
+                        {this.state.radio.ID > 0 && <div className="col-1">
+                            <button onClick={() => this.deleteStation()} className="iconButton text-red">
+                                <i className="fas fa-trash"></i>
+                            </button>
+                        </div>}
                     </div>
                     <TextField label="Name" value={this.state.radio.Name} onChange={(e, valid) => this.handleInputChange(e, valid)} required={true} help="The name of the radio station" />
                     <TextField label="Stream Url" name="Url" value={this.state.radio.Url} onChange={(e, valid) => this.handleInputChange(e, valid)} required={true} help="The internet radio stream URL" />
@@ -104,7 +120,7 @@ export default class EditRadio extends React.Component {
                     <TextField label="Image url" name="ImageUrl" value={this.state.radio.ImageUrl} onChange={e => this.handleInputChange(e)} help="The url of an image representing the radio station" />
                     <div className="row">
                         <div className="col">
-                            <button type="submit" disabled={!this.state.isValid}>Save</button>
+                            <button type="submit" disabled={!this.state.isValid} className="primary-button">Save</button>
                         </div>
                     </div>
                 </div>

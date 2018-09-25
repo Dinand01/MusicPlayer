@@ -12,7 +12,7 @@ class SongPosition extends React.Component {
                 <Slider 
                     disabled={this.props.disabled}
                     value={this.props.currentSong.Position} 
-                    max={this.props.currentSong.Duration}
+                    max={this.props.currentSong.Duration ? this.props.currentSong.Duration : 100}
                     onChange={(val) => this.props.moveToTime(val)}
                     title={"Change song position"} />
             </div>

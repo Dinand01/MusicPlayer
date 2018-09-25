@@ -47,10 +47,14 @@ namespace MusicPlayerWeb
         /// <returns>The serialized video info.</returns>
         public string GetChannelVideos()
         {
+            if (_player == null)
+            {
+                NewPlayer();
+            }
+
             var videoCtrl = Factory.GetVideoPlayer(_player) as IVideo;
-            var task = videoCtrl.GetYoutubeChannel();
-            task.Wait();
-            return JsonConvert.SerializeObject(task.Result);
+            var task = videoCtrl.GetYoutubeChannel().Result;
+            return JsonConvert.SerializeObject(task);
         }
 
         /// <summary>
@@ -127,6 +131,15 @@ namespace MusicPlayerWeb
             {
                 Task.Run(async () => await Factory.GetRadioInfo().AddStations(station: station)).Wait();
             }
+        }
+
+        /// <summary>
+        /// Removes a radio station.
+        /// </summary>
+        /// <param name="id">The id of the station.</param>
+        public void RemoveRadioStation(int id)
+        {
+            Task.Run(async () => await Factory.GetRadioInfo().DeleteStation(id)).Wait();
         }
     }
 }

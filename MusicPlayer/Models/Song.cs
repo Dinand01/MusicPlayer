@@ -62,6 +62,7 @@ namespace MusicPlayer.Models
             this.ImageUrl = radio.ImageUrl;
             this.IsInternetRadio = true;
             this.IsResolved = true;
+            this.Position = 0;
         }
 
         [Key]

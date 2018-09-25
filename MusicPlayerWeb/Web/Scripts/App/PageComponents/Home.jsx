@@ -78,7 +78,7 @@ class Home extends React.Component {
         } 
 
         return (
-        <div className="row h-100 align-items-center">
+        <div className="row h-100 align-items-center scroll">
             <div className="col">
                 {!this.state.isLoaded && <Loader loaded={this.state.isLoaded} options={{color: "#FFF"}} />}
                 {this.state.isLoaded && <div className="menu-carousel">

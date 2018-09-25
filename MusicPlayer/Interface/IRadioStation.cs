@@ -53,5 +53,12 @@ namespace MusicPlayer.Interface
         /// <param name="station">The radio station with the desired values.</param>
         /// <returns>A task.</returns>
         Task UpdateStation(RadioStation station);
+
+        /// <summary>
+        /// Removes the radio station.
+        /// </summary>
+        /// <param name="id">The id of the radio station.</param>
+        /// <returns>The task.</returns>
+        Task DeleteStation(int id);
     }
 }

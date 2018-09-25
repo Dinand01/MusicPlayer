@@ -43,6 +43,11 @@ namespace MusicPlayerWeb
         public MainWindow()
         {
             InitializeComponent();
+
+            // TODO: Build usefull window controls into CEF, get rid of default windows controls. 
+            ////this.AllowsTransparency = true;
+            ////this.WindowStyle = WindowStyle.None;
+            ////this.BorderThickness = new Thickness(0);
             _musicPlayer = new MusicPlayerGate(this.Browser, this);
             this.Browser.JavascriptObjectRepository.Register("MusicPlayer", _musicPlayer, isAsync: true);
             this.Browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>

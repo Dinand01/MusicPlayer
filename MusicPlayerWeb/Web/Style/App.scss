@@ -620,3 +620,9 @@ form input[type=text] {
     left: 50%;
     top: 50%;
 }
+
+.loader-center {
+    position: fixed !important;
+    top: 50% !important;
+    left: 25% !important;
+}

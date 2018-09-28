@@ -16,7 +16,7 @@ namespace MusicPlayer.Controller
     /// <summary>
     /// Plays the music
     /// </summary>
-    internal partial class Player : IMusicPlayer
+    internal partial class MusicPlayer : IMusicPlayer
     {
         #region Variables
 
@@ -26,9 +26,9 @@ namespace MusicPlayer.Controller
         private List<SongInformation> _sourceList;
 
         /// <summary>
-        /// An integer indicating the current song index.
+        /// This list stores the played locations in shuffle mode.
         /// </summary>
-        private int _currentIdx = 0;
+        private List<string> _locationsPlayed = new List<string>();
 
         /// <summary>
         ///  audio output.
@@ -80,7 +80,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// Initialises the player
         /// </summary>
-        public Player(bool isReceiveMode = false) 
+        public MusicPlayer(bool isReceiveMode = false) 
         {
             _volume = DataController.GetSetting<int>(SettingType.Volume, 50);
             _shuffle = DataController.GetSetting<bool>(SettingType.Shuffle, false);
@@ -165,7 +165,14 @@ namespace MusicPlayer.Controller
         private void Load(SongInformation song)
         {
             _currentSong = song;
-            this.Load(song.Location);
+            if (!song.IsInternetLocation)
+            {
+                this.Load(song.Location);
+            }
+            else
+            {
+                this.Play(song.Location);
+            }
         }
 
         /// <summary>
@@ -311,7 +318,7 @@ namespace MusicPlayer.Controller
                     _sourceList.Add(song);
                 }
 
-                this.PlayFromLocation(song.Location);
+                this.PlayFromFileLocation(song.Location);
             }
         }
 
@@ -326,7 +333,15 @@ namespace MusicPlayer.Controller
             try
             {
                 var radio = Factory.GetRadioInfo().GetStation(url).Result;
-                _currentSong = new SongInformation(radio);
+                if (radio != null)
+                {
+                    _currentSong = new SongInformation(radio);
+                }
+                else
+                {
+                    _currentSong = _sourceList.FirstOrDefault(sl => sl.Location == url);
+                }
+
                 if (_currentSong == null)
                 {
                     throw new ArgumentException("The url must be known");
@@ -389,23 +404,34 @@ namespace MusicPlayer.Controller
         /// </summary>
         public void Next()
         {
+            int index = 0;
             if (_sourceList != null && _sourceList.Count > 0)
             {
                 if (_shuffle)
                 {
-                    _currentIdx = new Random((int)DateTime.Now.Ticks).Next(0, _sourceList.Count);
+                    var listWithoutPlayed = _sourceList.Where(sl => !_locationsPlayed.Contains(sl.Location)).ToList();
+                    if (!listWithoutPlayed.Any())
+                    {
+                        _locationsPlayed.Clear();
+                        listWithoutPlayed = _sourceList;
+                    }
+                    
+                    index = new Random().Next(0, listWithoutPlayed.Count);
+                    index = _sourceList.IndexOf(listWithoutPlayed[index]);
+                    _locationsPlayed.Add(_sourceList[index].Location);
                 }
-                else if (_waveOutDevice != null)
+                else if (_waveOutDevice != null && _currentSong != null)
                 {
-                    _currentIdx++;
+                    _locationsPlayed.Clear();
+                    index = _sourceList.IndexOf(_currentSong) + 1;
                 }
 
-                if (_currentIdx >= _sourceList.Count)
+                if (index >= _sourceList.Count)
                 {
-                    _currentIdx = 0;
+                    index = 0;
                 }
                     
-                var song = _sourceList[_currentIdx];
+                var song = _sourceList[index];
                 Play(song);
             }
         }
@@ -474,7 +500,7 @@ namespace MusicPlayer.Controller
         /// <param name="e"></param>
         private void OnWaveOutStop(object sender, EventArgs e)
         {
-            if (!_isReceiveMode && _currentSong.IsPlaying)
+            if (!_isReceiveMode && _currentSong.IsPlaying && !_currentSong.IsInternetLocation)
             {
                 Next();
             }
@@ -512,7 +538,7 @@ namespace MusicPlayer.Controller
         /// The destructor.
         /// </summary>
         /// <remarks>This should not be called, the player should be disposed via the dispose method.</remarks>
-        ~Player()
+        ~MusicPlayer()
         {
             this.Dispose();
         }
@@ -521,29 +547,12 @@ namespace MusicPlayer.Controller
         /// Play from key (path).
         /// </summary>
         /// <param name="key"></param>
-        private void PlayFromLocation(string key = null)
+        private void PlayFromFileLocation(string key)
         {
-            SongInformation song;
-            if (key == null)
-            {
-                if (_currentIdx == -1)
-                {
-                    Next();
-                    return;
-                }
-                else
-                {
-                    song = _sourceList[_currentIdx];
-                }
-            }
-            else
-            {
-                song = _sourceList.FirstOrDefault(ct => ct.Location == key);
-            }
-
+            SongInformation song = _sourceList.FirstOrDefault(ct => ct.Location == key);
             if (song != null)
             {
-                if (!song.IsResolved)
+                if (!song.IsResolved && !song.IsInternetLocation)
                 {
                     SongInfoController.Resolve(song);
                 }

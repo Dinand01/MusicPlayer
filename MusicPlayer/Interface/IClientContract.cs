@@ -58,9 +58,10 @@ namespace MusicPlayer.Interface
         /// <summary>
         /// Play from an online location.
         /// </summary>
-        /// <param name="url">The url.</param>
+        /// <param name="radioInfo">The radio station.</param>
+        /// <param name="url">The url of the station.</param>
         [OperationContract(IsOneWay = true)]
-        void PlayRadio(string url);
+        void PlayRadio(SongInformation radioInfo, string url);
 
         /// <summary>
         /// Pause the song.

@@ -21,7 +21,7 @@ namespace MusicPlayer
         /// <returns>The music player.</returns>
         public static IMusicPlayer GetPlayer()
         {
-            return new Player();
+            return new Controller.MusicPlayer();
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace MusicPlayer
         /// <returns>The music player.</returns>
         internal static IMusicPlayer GetPlayerForReceiveMode()
         {
-            return new Player(true);
+            return new Controller.MusicPlayer(true);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace MusicPlayer
         {
             if (player == null)
             {
-                player = new Player();
+                player = new Controller.MusicPlayer();
             }
 
             return (player as IServer) == null ? new ServerHost(player, port) : player;

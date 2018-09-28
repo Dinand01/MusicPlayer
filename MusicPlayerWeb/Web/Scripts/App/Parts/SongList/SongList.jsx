@@ -105,7 +105,7 @@ class SongList extends React.Component {
                         onMouseMove={(e) => e.stopPropagation()}
                         onChange={(e) => this.changeQuerry(e.target.value)} disabled={this.props.receiveMode} />
                 </div>
-                {this.state.isLoaded && <div className="songlist-body">
+                <div className="songlist-body">
                     <div>
                         <div className="songlist-header">
                             <div>
@@ -124,8 +124,8 @@ class SongList extends React.Component {
                             </div>
                         </div>
                     </div>
-                </div>}
-                <Loader loaded={this.state.isLoaded} options={{color: "#FFF"}} className="songlist-body"></Loader>
+                </div>
+                <Loader loaded={this.state.isLoaded} color="#FFF" className="loader-center"></Loader>
             </div>
         )
     }

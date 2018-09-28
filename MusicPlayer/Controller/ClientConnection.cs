@@ -120,22 +120,25 @@ namespace MusicPlayer.Controller
         /// <param name="song">The song.</param>
         public override void Play(SongInformation song)
         {
-            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Music player downloaded files\\" + song.FileName;
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            
-            song.Location = filePath;
-            song.DateAdded = DateTime.Now;
+            if (!song.IsInternetLocation)
+            {
+                var filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Music player downloaded files\\" + song.FileName;
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-            try
-            {
-                using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                song.Location = filePath;
+                song.DateAdded = DateTime.Now;
+
+                try
                 {
-                    fileStream.Write(song.File, 0, song.File.Length);
+                    using (FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                    {
+                        fileStream.Write(song.File, 0, song.File.Length);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e, "Could not write file");
+                catch (Exception e)
+                {
+                    Logger.LogError(e, "Could not write file");
+                }
             }
 
             song.File = null;

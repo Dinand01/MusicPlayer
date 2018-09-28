@@ -144,16 +144,6 @@ namespace MusicPlayer.Controller
         }
 
         /// <summary>
-        /// Play an online resource.
-        /// </summary>
-        /// <param name="url">The url.</param>
-        public override void Play(string url)
-        {
-            base.Play(url);
-            SendToClients(c => c.PlayRadio(url));
-        }
-
-        /// <summary>
         /// Disconnect the WCF service.
         /// </summary>
         private void QuitService()
@@ -288,9 +278,9 @@ namespace MusicPlayer.Controller
                 {
                     song.FileName = Path.GetFileName(song.Location);
                     client.ClientContract.SetSong(song);
-                    if (Uri.IsWellFormedUriString(song.Location, UriKind.Absolute))
+                    if (song.IsInternetLocation)
                     {
-                        client.ClientContract.PlayRadio(song.Location);
+                        client.ClientContract.PlayRadio(song, song.Location);
                     }
                     else if (File.Exists(song.Location))
                     {

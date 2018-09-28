@@ -153,5 +153,17 @@ namespace MusicPlayer.Models
         /// </summary>
         [NotMapped]
         internal bool IsResolved { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the song is stored on the internet.
+        /// </summary>
+        [NotMapped]
+        internal bool IsInternetLocation
+        {
+            get
+            {
+                return Uri.IsWellFormedUriString(this.Location, UriKind.Absolute);
+            }
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace MusicPlayer.Models
         /// <summary>
         /// The connected clients ip: port.
         /// </summary>
-        public Dictionary<string, int> Clients { get; set; }
+        public HashSet<string> Clients { get; set; }
 
         /// <summary>
         /// Gets the number of connected clients.
@@ -38,7 +38,7 @@ namespace MusicPlayer.Models
         {
             get
             {
-                int? count = Clients?.Keys?.Count;
+                int? count = Clients?.Count;
                 return count == null ? 0 : (int)count;
             }
         }

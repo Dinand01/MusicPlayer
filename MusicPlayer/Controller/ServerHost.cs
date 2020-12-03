@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MusicPlayer.Models;
-using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.IO;
+using MusicPlayer.Communication;
+using MusicPlayer.Core.Models;
+using MusicPlayer.Core.Communication.StreamingMessages;
+using MusicPlayer.Core.Player;
 
 namespace MusicPlayer.Controller
 {
@@ -16,16 +17,6 @@ namespace MusicPlayer.Controller
     /// </summary>
     internal class ServerHost : MusicPlayerWrapper, IServer
     {
-        /// <summary>
-        /// The wcf service.
-        /// </summary>
-        private ServiceHost _service;
-
-        /// <summary>
-        /// The port at which the wcf service is hosted.
-        /// </summary>
-        private int _port;
-
         /// <summary>
         /// The serverinfo.
         /// </summary>
@@ -46,6 +37,8 @@ namespace MusicPlayer.Controller
         /// </summary>
         private new IMusicPlayer _player;
 
+        private readonly IMusicPlayerServer _server;
+
         /// <summary>
         /// The event that must be called when the serverinfo changes.
         /// </summary>
@@ -56,12 +49,15 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="player">The underlying music player.</param>
         /// <param name="port">The port to host the service at.</param>
-        public ServerHost(IMusicPlayer player, int port) : base(player)
+        public ServerHost(IMusicPlayer player, IMusicPlayerServer server) : base(player)
         {
-            _port = port;
             player.SongChanged += Player_SongChanged;
             _clients = new List<Client>();
             _player = player;
+            _server = server;
+            _server.Enable();
+            _server.ClientConnected += WCFServerService_ClientConnected;
+            _server.ClientDisconnected += WCFServerService_ClientDisconnected;
             InitWCFHost();
         }
 
@@ -72,18 +68,7 @@ namespace MusicPlayer.Controller
         public override bool TogglePlay(bool? pause)
         {
             bool isPlaying = base.TogglePlay(pause);
-            SendToClients(c =>
-            {
-                if (!isPlaying)
-                {
-                    c.Pause();
-                }
-                else
-                {
-                    c.Play();
-                }
-            });
-
+            SendToClients(new TogglePlayMessage { Playing = isPlaying });
             return isPlaying;
         }
 
@@ -94,7 +79,7 @@ namespace MusicPlayer.Controller
         public override void MoveToTime(long seconds)
         {
             base.MoveToTime(seconds);
-            SendToClients(c => c.SetSongPosition(seconds));
+            SendToClients(new SeekSongMessage { Position = seconds });
         }
 
         /// <summary>
@@ -131,7 +116,7 @@ namespace MusicPlayer.Controller
         /// <param name="url">The video url.</param>
         public void SetVideo(string url)
         {
-            SendToClients(c => c.PlayVideo(url));
+            SendToClients(new PlayVideoMessage { Location = url });
         }
 
         /// <summary>
@@ -140,42 +125,28 @@ namespace MusicPlayer.Controller
         /// <param name="position">The position in seconds.</param>
         public void SeekVideo(double position)
         {
-            SendToClients(c => c.SeekVideo(position));
+            SendToClients(new SeekVideoMessage { Position = position });
         }
 
         /// <summary>
-        /// Disconnect the WCF service.
+        /// Disconnect the service.
         /// </summary>
         private void QuitService()
         {
-            if (_service?.State == CommunicationState.Opened)
-            {
-                foreach (var client in _clients.ToList())
-                {
-                    try
-                    {
-                        client.ClientContract.Disconnect();
-                    }
-                    catch { }
-                }
-                
-                _service?.Close();
-            }
-
-            _service = null;
+            _server.Disable();
         }
 
         /// <summary>
         /// Runs a certain action on all clients.
         /// </summary>
         /// <param name="action">The action.</param>
-        private void SendToClients(Action<IClientContract> action)
+        private void SendToClients<T>(T action) where T : StreamingMessage
         {
             foreach (var client in _clients.ToList())
             {
                 try
                 {
-                    action(client.ClientContract);
+                    client.SendMessage(action);
                 }
                 catch (Exception e)
                 {
@@ -210,8 +181,7 @@ namespace MusicPlayer.Controller
                 Port = _port
             };
 
-            WCFServerService.ClientConnected += WCFServerService_ClientConnected;
-            WCFServerService.ClientDisconnected += WCFServerService_ClientDisconnected;
+
         }
 
         /// <summary>
@@ -219,7 +189,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="ip">The ip address of the client.</param>
         /// <param name="port">The port the client was connected to.</param>
-        private void WCFServerService_ClientDisconnected(string ip, int port)
+        private void WCFServerService_ClientDisconnected(string peer)
         {
             var client = _clients.FirstOrDefault(c => c.IpAddress == ip && c.Port == port);
             if (client != null)
@@ -301,13 +271,13 @@ namespace MusicPlayer.Controller
         /// <param name="e">The exception.</param>
         private void HandleClientError(Client client, Exception e)
         {
-            var cl = _clients.FirstOrDefault(c => c.IpAddress == client.IpAddress && c.Port == client.Port);
+            var cl = _clients.FirstOrDefault(c => c.Peer == client.Peer);
             if (cl != null)
             {
                 lock (_clients)
                 { 
                     _clients.Remove(cl);
-                    _serverInfo.Clients = _clients.GroupBy(c => c.IpAddress).Select(g => g.First()).ToDictionary(c => c.IpAddress, c => c.Port);
+                    _serverInfo.Clients = new HashSet<string>(_clients.Select(c => c.Peer));
                     OnInfoChanged?.Invoke(_serverInfo);
                 }
             }

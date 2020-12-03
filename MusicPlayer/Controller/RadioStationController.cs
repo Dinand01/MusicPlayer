@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MusicPlayer.Helpers;
 using MusicPlayer.Interface;
 using MusicPlayer.Models;
@@ -15,17 +14,21 @@ namespace MusicPlayer.Controller
     /// </summary>
     internal class RadioStationController : IRadioStation
     {
+        private readonly Db _db;
+
+        public RadioStationController(Db db)
+        {
+            _db = db;
+        }
+
         /// <summary>
         /// Gets a station by it's id.
         /// </summary>
         /// <param name="id">The station id.</param>
         /// <returns>The station.</returns>
-        public async Task<RadioStation> GetStation(int id)
+        public Task<RadioStation> GetStation(int id)
         {
-            using (var db = new Db())
-            {
-                return await db.RadioStations.SingleOrDefaultAsync(s => s.ID == id);
-            }
+            return _db.RadioStations.SingleOrDefaultAsync(s => s.ID == id);
         }
 
         /// <summary>
@@ -33,13 +36,10 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="url">The url.</param>
         /// <returns>The station.</returns>
-        public async Task<RadioStation> GetStation(string url)
+        public Task<RadioStation> GetStation(string url)
         {
-            using (var db = new Db())
-            {
-                url = url.ToLower();
-                return await db.RadioStations.SingleOrDefaultAsync(s => s.Url.ToLower() == url);
-            }
+            url = url.ToLower();
+            return _db.RadioStations.SingleOrDefaultAsync(s => s.Url.ToLower() == url);
         }
 
         /// <summary>
@@ -49,28 +49,23 @@ namespace MusicPlayer.Controller
         /// <returns>The radio stations.</returns>
         public async Task<List<RadioStation>> GetStations(string searchText)
         {
-            using (var db = new Db())
+            searchText = searchText.ToLower();
+            var stations = await _db.RadioStations
+                            .Where(s =>
+                                searchText == null
+                                || searchText == string.Empty
+                                || s.Name.ToLower().Contains(searchText)
+                                || s.Genre.ToLower().Contains(searchText)
+                                || s.Url.ToLower().Contains(searchText))
+                            .ToListAsync();
+            if (stations?.Count > 0)
             {
-                searchText = searchText.ToLower();
-                var stations = await db.RadioStations
-                                .Where(s =>
-                                    searchText == null
-                                    || searchText == string.Empty
-                                    || s.Name.ToLower().Contains(searchText)
-                                    || s.Genre.ToLower().Contains(searchText)
-                                    || s.Url.ToLower().Contains(searchText))
-                                .ToListAsync();
-                if (stations?.Count > 0)
-                {
-                    return stations;
-                }
-                else if (!await db.RadioStations.AnyAsync())
-                {
-                    if (await RefreshDirbleStations())
-                    {
-                        return await GetStations(searchText);
-                    }
-                }
+                return stations;
+            }
+
+            if (!await _db.RadioStations.AnyAsync() && await RefreshDirbleStations())
+            {
+                return await GetStations(searchText);
             }
 
             return new List<RadioStation>();
@@ -116,14 +111,11 @@ namespace MusicPlayer.Controller
 
             if (stations.Count() > 0)
             {
-                using (var db = new Db())
-                {
-                    string[] urls = stations.Select(s => s.Url.ToLower()).ToArray();
-                    var existing = await db.RadioStations.Where(s => urls.Contains(s.Url.ToLower())).ToListAsync();
-                    stations = stations.Where(s => !existing.Any(es => es.Url.ToLower() == s.Url.ToLower())).ToList();
-                    db.RadioStations.AddRange(stations);
-                    await db.SaveChangesAsync();
-                }
+                string[] urls = stations.Select(s => s.Url.ToLower()).ToArray();
+                var existing = await _db.RadioStations.Where(s => urls.Contains(s.Url.ToLower())).ToListAsync();
+                stations = stations.Where(s => !existing.Any(es => es.Url.ToLower() == s.Url.ToLower())).ToList();
+                _db.RadioStations.AddRange(stations);
+                await _db.SaveChangesAsync();
             }
         }
 
@@ -132,13 +124,10 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <param name="station">The radio station with the desired values.</param>
         /// <returns>A task.</returns>
-        public async Task UpdateStation(RadioStation station)
+        public Task UpdateStation(RadioStation station)
         {
-            using (var db = new Db())
-            {
-                db.Entry(station).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-            }
+            _db.Entry(station).State = EntityState.Modified;
+            return _db.SaveChangesAsync();
         }
 
         /// <summary>
@@ -148,11 +137,8 @@ namespace MusicPlayer.Controller
         /// <returns>The task.</returns>
         public async Task DeleteStation(int id)
         {
-            using (var db = new Db())
-            {
-                db.RadioStations.RemoveRange(db.RadioStations.Where(r => r.ID == id));
-                await db.SaveChangesAsync();
-            }
+            _db.RadioStations.RemoveRange(_db.RadioStations.Where(r => r.ID == id));
+            await _db.SaveChangesAsync();
         }
 
         /// <summary>

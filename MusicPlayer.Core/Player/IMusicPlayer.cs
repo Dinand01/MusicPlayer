@@ -1,12 +1,8 @@
-﻿using MusicPlayer.Models;
+﻿using MusicPlayer.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MusicPlayer.Interface
+namespace MusicPlayer.Core.Player
 {
     /// <summary>
     /// The song changed description.

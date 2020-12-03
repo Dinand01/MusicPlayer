@@ -1,4 +1,5 @@
-﻿using MusicPlayer.Interface;
+﻿using MusicPlayer.Core.Player;
+using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ namespace MusicPlayer.Controller
     /// <summary>
     /// The wcf service.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     internal class WCFServerService : IServerContract
     {
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using MusicPlayer.Extensions;
+﻿using MusicPlayer.Core.Player;
+using MusicPlayer.Extensions;
 using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using System;

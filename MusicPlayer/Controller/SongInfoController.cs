@@ -1,24 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MusicPlayer.Models;
-using System.Diagnostics;
 using System.IO;
 using NAudio.Wave;
+using System.Collections.Concurrent;
 
 namespace MusicPlayer.Controller
 {
     /// <summary>
     /// Reads and writes songs from the db
     /// </summary>
+    /// 
+    // TODO: no static 
     public static class SongInfoController
     {
         /// <summary>
         /// The songs that are currently in the database.
         /// </summary>
-        private static SynchronizedCollection<SongInformation> _resolvedSongs = new SynchronizedCollection<SongInformation>();
+        private static ConcurrentDictionary<string, SongInformation> _resolvedSongs = new ConcurrentDictionary<string, SongInformation>();
 
         /// <summary>
         /// Resoloves the song info.
@@ -29,20 +28,13 @@ namespace MusicPlayer.Controller
         {
             if (song != null && !string.IsNullOrEmpty(song.Location))
             {
-                SongInformation found = null;
-                lock(_resolvedSongs)
-                {
-                    found = _resolvedSongs.ToList().FirstOrDefault(s => s.Location.ToLower() == song.Location.ToLower());
-                }
-
-                if (found != null)
-                {
+                if (_resolvedSongs.TryGetValue(song.Location.ToLower(), out SongInformation found))
                     return found;
-                }
 
+                // TODO: remove if not needed
                 try
                 {
-                    var file = TagLib.File.Create(song.Location);
+                    using var file = TagLib.File.Create(song.Location);
 
                     try
                     {
@@ -69,12 +61,8 @@ namespace MusicPlayer.Controller
                     song.Title = string.IsNullOrEmpty(file.Tag.Title) ? song.Title : file.Tag.Title;
                     song.Image = file.Tag.Pictures?.FirstOrDefault()?.Data?.Data;
                     song.IsResolved = true;
-                    lock (_resolvedSongs)
-                    {
-                        _resolvedSongs.Add(song);
-                    }
 
-                    file.Dispose();
+                    _resolvedSongs.TryAdd(song.Location.ToLower(), song);
                 }
                 catch
                 {

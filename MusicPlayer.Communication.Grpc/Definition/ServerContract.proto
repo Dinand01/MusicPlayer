@@ -1,0 +1,73 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+service MusicPlayerServer {
+  rpc GetServerStream (Empty) returns (stream StreamingMessage);
+
+  rpc GoodBye (Empty) returns (Empty);
+
+  rpc GetCurrentPosition (Empty) returns (PositionInfo);
+}
+
+message Empty {
+
+}
+
+message PositionInfo {
+	bool HasPosition = 1;
+	double Position = 2;
+}
+
+message StreamingMessage {
+	oneof MessageType {
+        GoodByeMessage GoodBye = 1;
+        PlayVideoMessage PlayVideoMessage = 2;
+        SeekSongMessage SeekSongMessage = 3;
+        SeekVideoMessage SeekVideoMessage = 4;
+        SetSongInformationMessage SetSongInformationMessage = 5;
+        StreamDataMessage StreamDataMessage = 6;
+        TogglePlayMessage TogglePlayMessage = 7;
+        SetRadioInformationMessage SetRadioInformationMessage = 8;
+    }
+}
+
+message GoodByeMessage { }
+
+message PlayVideoMessage {
+    string Location = 1;
+}
+
+message SeekSongMessage {
+    double Position = 1;
+}
+
+message SeekVideoMessage {
+    double Position = 1;
+}
+
+message SetRadioInformationMessage {
+    string Location = 1;
+}
+
+message SetSongInformationMessage {
+    string Title = 1;
+    string Band = 2;
+    string Album = 3;
+    string Genre = 4;
+    google.protobuf.Timestamp DateCreated = 5;
+    sfixed64 Duration = 6;
+    sfixed64 Position = 7;
+    bytes Image = 8;
+    string ImageUrl = 9;
+    bool IsInternetRadio = 10;
+}
+
+message StreamDataMessage {
+    sfixed64 ContentLength = 1;
+    bytes Content = 2;
+}
+
+message TogglePlayMessage {
+    bool Playing = 1;
+}

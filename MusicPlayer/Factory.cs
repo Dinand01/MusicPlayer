@@ -1,4 +1,5 @@
 ﻿using MusicPlayer.Controller;
+using MusicPlayer.Core.Player;
 using MusicPlayer.Interface;
 using MusicPlayer.UI;
 using System;

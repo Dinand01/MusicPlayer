@@ -9,7 +9,7 @@ using NAudio.Wave;
 using MusicPlayer.Extensions;
 using MusicPlayer.Models;
 using NAudio.CoreAudioApi;
-using MusicPlayer.Interface;
+using MusicPlayer.Core.Player;
 
 namespace MusicPlayer.Controller
 {

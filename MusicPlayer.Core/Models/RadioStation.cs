@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
-namespace MusicPlayer.Models
+namespace MusicPlayer.Core.Models
 {
     /// <summary>
     /// Describes a radio station.
@@ -18,21 +14,21 @@ namespace MusicPlayer.Models
         {
         }
 
-        /// <summary>
-        /// Initializes the radio station with dirble data.
-        /// </summary>
-        /// <param name="station">The dirble station.</param>
-        internal RadioStation(Dirble.RadioStation station)
-        {
-            this.Name = station.Name;
-            this.Genre = station.Categories?.Aggregate(string.Empty, (res, cat) => res += string.IsNullOrEmpty(res) ? cat.Title : $", { cat.Title }") ?? string.Empty;
-            this.Priority = 999;
-            this.Url = station.Streams?.FirstOrDefault()?.Stream ?? string.Empty;
-            this.ImageUrl = station.Image?.Url ?? station.Image?.Thumb?.Url;
-            this.Facebook = station.Facebook;
-            this.Twitter = station.Twitter;
-            this.Website = station.Website;
-        }
+        ///// <summary>
+        ///// Initializes the radio station with dirble data.
+        ///// </summary>
+        ///// <param name="station">The dirble station.</param>
+        //internal RadioStation(Dirble.RadioStation station)
+        //{
+        //    Name = station.Name;
+        //    Genre = station.Categories?.Aggregate(string.Empty, (res, cat) => res += string.IsNullOrEmpty(res) ? cat.Title : $", { cat.Title }") ?? string.Empty;
+        //    Priority = 999;
+        //    Url = station.Streams?.FirstOrDefault()?.Stream ?? string.Empty;
+        //    ImageUrl = station.Image?.Url ?? station.Image?.Thumb?.Url;
+        //    Facebook = station.Facebook;
+        //    Twitter = station.Twitter;
+        //    Website = station.Website;
+        //}
 
         /// <summary>
         /// Gets or sets the id.

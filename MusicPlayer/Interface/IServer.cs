@@ -1,4 +1,5 @@
-﻿using MusicPlayer.Models;
+﻿using MusicPlayer.Core.Player;
+using MusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

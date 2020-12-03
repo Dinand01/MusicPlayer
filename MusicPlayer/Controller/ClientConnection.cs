@@ -8,6 +8,7 @@ using MusicPlayer.Models;
 using System.Net;
 using System.ServiceModel;
 using System.IO;
+using MusicPlayer.Core.Player;
 
 namespace MusicPlayer.Controller
 {
@@ -25,11 +26,6 @@ namespace MusicPlayer.Controller
         /// The WCF client.
         /// </summary>
         private WCFServerClient _client;
-
-        /// <summary>
-        /// The channel factory.
-        /// </summary>
-        private DuplexChannelFactory<IServerContract> _factory;
 
         /// <summary>
         /// The server info.
@@ -50,14 +46,14 @@ namespace MusicPlayer.Controller
         public ClientConnection(IMusicPlayer player, IPAddress address, int port) : base(player)
         {
             _client = new WCFServerClient(this);
-            string serviceAddress = $"net.tcp://{address.ToString()}:{port}/";
-            NetTcpContextBinding binding = new NetTcpContextBinding(SecurityMode.None);
-            binding.CloseTimeout = new TimeSpan(0, 1, 0);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
-            binding.SendTimeout = new TimeSpan(0, 1, 0);
-            binding.MaxReceivedMessageSize = 100000000; // 100Mb
-            _factory = new DuplexChannelFactory<IServerContract>(new InstanceContext(_client), binding, serviceAddress);
-            _server = _factory.CreateChannel();
+            //string serviceAddress = $"net.tcp://{address.ToString()}:{port}/";
+            //NetTcpContextBinding binding = new NetTcpContextBinding(SecurityMode.None);
+            //binding.CloseTimeout = new TimeSpan(0, 1, 0);
+            //binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
+            //binding.SendTimeout = new TimeSpan(0, 1, 0);
+            //binding.MaxReceivedMessageSize = 100000000; // 100Mb
+            //_factory = new DuplexChannelFactory<IServerContract>(new InstanceContext(_client), binding, serviceAddress);
+            //_server = _factory.CreateChannel();
             _server.Anounce();
         }
 
@@ -67,19 +63,8 @@ namespace MusicPlayer.Controller
         /// <returns>The musicplayer.</returns>
         public IMusicPlayer Disconnect()
         {
-            if (_factory.State == CommunicationState.Opened)
-            {
-                try
-                {
-                    _server.Goodbye();
-                    _factory.Close();
-                }
-                catch { }
-            }
-
-            _factory.Abort();
+            _server?.Goodbye();
             OnInfoChanged?.Invoke(null);
-            base.Dispose();
             return null;
         }
 
@@ -94,9 +79,9 @@ namespace MusicPlayer.Controller
                 _serverInfo = new ServerInfo
                 {
                     IsHost = false,
-                    Host = _factory.Endpoint.Address.Uri.DnsSafeHost,
+                    //Host = _factory.Endpoint.Address.Uri.DnsSafeHost,
                     Clients = null,
-                    Port = _factory.Endpoint.Address.Uri.Port
+                    //Port = _factory.Endpoint.Address.Uri.Port
                 };
             }
 

@@ -1,12 +1,5 @@
-﻿using MusicPlayer.Models;
-using SQLite.CodeFirst;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.SQLite.EF6;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicPlayer.Models;
 
 namespace MusicPlayer
 {
@@ -18,7 +11,7 @@ namespace MusicPlayer
         /// <summary>
         /// Initializes a new instance of the <see cref="Db" /> class.
         /// </summary>
-        public Db() : base("Db")
+        public Db(DbContextOptions<Db> options) : base(options)
         {
         }
 
@@ -36,9 +29,10 @@ namespace MusicPlayer
         /// Create the database.
         /// </summary>
         /// <param name="modelBuilder">The model builder.</param>
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Database.SetInitializer<Db>(new SqliteDropCreateDatabaseWhenModelChanges<Db>(modelBuilder));
+            // TODO: fix
+            //Database.SetInitializer<Db>(new SqliteDropCreateDatabaseWhenModelChanges<Db>(modelBuilder));
             base.OnModelCreating(modelBuilder);
         }
     }

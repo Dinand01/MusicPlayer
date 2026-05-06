@@ -1,4 +1,4 @@
-﻿using MusicPlayer.Controller;
+using MusicPlayer.Controller;
 using MusicPlayer.Interface;
 using MusicPlayer.UI;
 using System;
@@ -7,6 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Grpc.AspNetCore;
+using Grpc.Core;
+using MusicPlayer.Protos;
 
 namespace MusicPlayer
 {
@@ -46,7 +49,30 @@ namespace MusicPlayer
                 player = new Controller.MusicPlayer();
             }
 
-            // TODO: Implement gRPC server hosting
+            // Store reference to player in GrpcServerService
+            GrpcServerService.Player = player as Controller.MusicPlayer;
+
+            // Start gRPC server in background
+            Task.Run(() =>
+            {
+                try
+                {
+                    var server = new Server
+                    {
+                        Services = { MusicPlayerServerService.BindService(new GrpcServerService()) },
+                        Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
+                    };
+                    server.Start();
+                    Console.WriteLine($"gRPC Server started on port {port}");
+                    // Keep server running
+                    server.ShutdownTask.Wait();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"gRPC Server error: {ex.Message}");
+                }
+            });
+
             return player;
         }
 
@@ -60,8 +86,16 @@ namespace MusicPlayer
         public static IMusicPlayer GetClientPlayer(IPAddress ip, int port, IMusicPlayer player = null)
         {
             player?.Dispose();
-            // TODO: Implement gRPC client connection
-            return GetPlayerForReceiveMode();
+            
+            // Create gRPC client contract
+            var serverUrl = $"http://{ip}:{port}";
+            var clientContract = new GrpcClientContract(serverUrl);
+            
+            var musicPlayer = GetPlayerForReceiveMode();
+            // TODO: Attach clientContract to musicPlayer for server callbacks
+            // This requires bidirectional streaming setup
+            
+            return musicPlayer;
         }
 
         /// <summary>

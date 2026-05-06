@@ -1,32 +1,30 @@
-﻿// CefSharp temporarily disabled for .NET 10 upgrade
-// using CefSharp;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Threading;
+using Xilium.CefGlue;
+using Xilium.CefGlue.Avalonia;
 using MusicPlayer;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace MusicPlayerWeb
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainWindow.axaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// The CefGlue browser instance.
+        /// </summary>
+        private AvaloniaCefBrowser _browser;
+
         /// <summary>
         /// The instance of the musicplayer interface.
         /// </summary>
@@ -35,7 +33,7 @@ namespace MusicPlayerWeb
         /// <summary>
         /// The dispatcher for the current thread;
         /// </summary>
-        private Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private Dispatcher _dispatcher = Dispatcher.UIThread;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow" /> class.
@@ -44,63 +42,77 @@ namespace MusicPlayerWeb
         {
             InitializeComponent();
 
-            // TODO: Build usefull window controls into CEF, get rid of default windows controls. 
-            ////this.AllowsTransparency = true;
-            ////this.WindowStyle = WindowStyle.None;
-            ////this.BorderThickness = new Thickness(0);
-            
-            // CefSharp temporarily disabled - Browser control replaced with Border placeholder
-            // _musicPlayer = new MusicPlayerGate(this.Browser, this);
-            _musicPlayer = new MusicPlayerGate(null, this);
-            
-            /*
-            this.Browser.JavascriptObjectRepository.Register("MusicPlayer", _musicPlayer, isAsync: true);
-            this.Browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-            {
-                Logger.LogInfo($"C# object was registered in javascript variable: {e.ObjectName}");
-            };
+            // Get the browser wrapper from XAML
+            var browserWrapper = this.FindControl<Decorator>("BrowserWrapper");
 
-            this.Browser.DisplayHandler = new DisplayHandler(this, _dispatcher);
-            */
+            // Create browser in code-behind (not in XAML)
+            _browser = new AvaloniaCefBrowser();
+            _browser.Address = "custom://custom/index.html";
             
-            this.KeyDown += MainWindow_KeyDown;
-
-            /*
-            this.Browser.Loaded += (sender, e) =>
+            // Add browser to the visual tree
+            browserWrapper.Child = _browser;
+            
+            // Wait for browser to load, then set up JS interop
+            _browser.LoadEnd += (sender, e) =>
             {
-                string[] args = Environment.GetCommandLineArgs();
-                if (args?.Length > 1)
+                if (e.Frame.IsMain)
                 {
-                    FileAttributes attr = File.GetAttributes(args[1]);
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                    {
-                        _musicPlayer.LoadFolder(args[1]);
-                    }
-                    else
-                    {
-                        _musicPlayer.OpenFiles(args.Skip(1).Take(args.Length - 1).ToArray());
-                    }
+                    Logger.LogInfo("CefGlue browser loaded");
+                    
+                    // Set up JS interop after browser is ready
+                    SetupJsInterop();
                 }
             };
-            */
+
+            _musicPlayer = new MusicPlayerGate(_browser, this);
+
+            this.KeyDown += MainWindow_KeyDown;
+        }
+
+        /// <summary>
+        /// Set up JavaScript interop.
+        /// </summary>
+        private void SetupJsInterop()
+        {
+            // In CefGlue, inject JS object using ExecuteJavaScript
+            // Wait for frame to load, then inject MusicPlayer object
+            string script = @"
+                window.MusicPlayer = {
+                    togglePlay: function() { window.external && window.external.TogglePlay && window.external.TogglePlay(); },
+                    nextSong: function() { window.external && window.external.NextSong && window.external.NextSong(); },
+                    playSong: function(jsonSong) { window.external && window.external.Play && window.external.Play(jsonSong); },
+                    toggleShuffle: function(shuffle) { window.external && window.external.Shuffle && window.external.Shuffle(shuffle); },
+                    setVolume: function(volume) { window.external && window.external.SetVolume && window.external.SetVolume(volume); },
+                    seekVideo: function(position) { window.external && window.external.SeekVideo && window.external.SeekVideo(position); },
+                    moveToTime: function(seconds) { window.external && window.external.MoveToTime && window.external.MoveToTime(seconds); },
+                    stop: function() { window.external && window.external.Stop && window.external.Stop(); },
+                    hostServer: function(port) { window.external && window.external.HostServer && window.external.HostServer(port); },
+                    connectToServer: function(ip, port) { window.external && window.external.ConnectToServer && window.external.ConnectToServer(ip, port); },
+                    disconnectServer: function() { window.external && window.external.DisconnectServer && window.external.DisconnectServer(); },
+                    startVideo: function(url) { window.external && window.external.StartVideo && window.external.StartVideo(url); },
+                    stopVideo: function() { window.external && window.external.StopVideo && window.external.StopVideo(); },
+                    copySongs: function(source, dest, number) { window.external && window.external.CopySongs && window.external.CopySongs(source, dest, number); },
+                    openFolder: function() { window.external && window.external.OpenFolder && window.external.OpenFolder(); },
+                    openFiles: function() { window.external && window.external.OpenFiles && window.external.OpenFiles(); }
+                };
+            ";
+            _browser.ExecuteJavaScript(script, "musicplayer-inject", 0);
         }
 
         /// <summary>
         /// Handle keydown events for the main window.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.F5:
-                    // CefSharp temporarily disabled
-                    // this.Browser.Reload(true);
+                    // Reload current page
+                    _browser.ExecuteJavaScript("location.reload();", "musicplayer-reload", 0);
                     break;
                 case Key.F12:
-                    // CefSharp temporarily disabled
-                    // this.Browser.ShowDevTools();
+                    // Show dev tools
+                    _browser.ShowDeveloperTools();
                     break;
                 default:
                     break;
@@ -108,51 +120,18 @@ namespace MusicPlayerWeb
         }
 
         /// <summary>
-        /// Handle the click for the show dev tools.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MenuItem_ShowDev_Click(object sender, RoutedEventArgs e)
-        {
-            // CefSharp temporarily disabled
-            // this.Browser.ShowDevTools();
-        }
-
-        /// <summary>
         /// Dispose of the music player UI.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // CefSharp temporarily disabled
-            // Cef.Shutdown();
-            if (_musicPlayer != null)
-            {
-                _musicPlayer.Dispose();
-                _musicPlayer = null;
-            }
-        }
-
-        /// <summary>
-        /// Try to initialize cefsharp when it is not initialized.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Window_StateChanged(object sender, EventArgs e)
-        {
-            // CefSharp temporarily disabled
-            // if (_musicPlayer != null && this.WindowState == WindowState.Maximized && !this.Browser.IsInitialized)
-            // {
-            //     Cef.Initialize();
-            // }
+            _musicPlayer?.Dispose();
+            _musicPlayer = null;
+            CefRuntime.Shutdown();
         }
 
         /// <summary>
         /// Play or Pause the music.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void PlayPause_Click(object sender, EventArgs e)
         {
             _musicPlayer.TogglePlay();
@@ -161,8 +140,6 @@ namespace MusicPlayerWeb
         /// <summary>
         /// Skip to the next song.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Next_Click(object sender, EventArgs e)
         {
             _musicPlayer.NextSong();

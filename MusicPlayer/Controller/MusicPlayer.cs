@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using NAudio.Wave;
 using MusicPlayer.Extensions;
 using MusicPlayer.Models;
-using NAudio.CoreAudioApi;
 using MusicPlayer.Interface;
 
 namespace MusicPlayer.Controller
@@ -33,7 +32,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         ///  audio output.
         /// </summary>
-        private WaveOut _waveOutDevice;
+        private IWavePlayer _waveOutDevice;
 
         /// <summary>
         /// Indicates whether the class is owned by another class and is only receiving commands.
@@ -371,7 +370,7 @@ namespace MusicPlayer.Controller
                 _volume = percentage;
                 if (_waveOutDevice == null)
                 {
-                    _waveOutDevice = new WaveOut();
+                    _waveOutDevice = new WaveOutEvent();
                 }
 
                 _waveOutDevice.Volume = percentage / (float)100;
@@ -392,12 +391,11 @@ namespace MusicPlayer.Controller
         /// </summary>
         /// <returns></returns>
         private static int GetVolumeOfDefaultAudioDevice()
-        {
-            MMDeviceEnumerator devEnum = new MMDeviceEnumerator();
-            MMDevice defaultDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            int leftVolume = (int)(defaultDevice.AudioMeterInformation.PeakValues[0] * 100);
-            return leftVolume;
-        }
+{
+    // TODO: Cross-platform audio device enumeration
+    // This was using NAudio.CoreAudioApi (Windows-only)
+    return 50; // Default volume
+}
 
         /// <summary>
         /// Starts a next song from the source list.
@@ -463,9 +461,10 @@ namespace MusicPlayer.Controller
                     _playstream.Dispose();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO: fix other thread exception
+                // Log the exception but don't re-throw during disposal
+                Logger.LogError(ex, "Error during MusicPlayer disposal");
             }
         }
 
@@ -528,7 +527,7 @@ namespace MusicPlayer.Controller
 
             if (reinit)
             {
-                _waveOutDevice = new WaveOut();
+                _waveOutDevice = new WaveOutEvent();
                 _waveOutDevice.PlaybackStopped += OnWaveOutStop;
                 SetVolume(_volume);
             }

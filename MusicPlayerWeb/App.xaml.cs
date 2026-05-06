@@ -1,49 +1,54 @@
-﻿using MusicPlayer;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+using MusicPlayer;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows;
 
 namespace MusicPlayerWeb
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Avalonia Application class for MusicPlayerWeb
     /// </summary>
-    public partial class App : Application
+    public class App : Application
     {
         /// <summary>
-        /// Initialize CefSharp.
+        /// Initializes the application.
         /// </summary>
-        public App()
+        public override void Initialize()
         {
-            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
-            try
-            {
-                EnsureExecutingDirectoryIsExecutableDirectory();
-                // CefSharp Startup temporarily disabled
-                // MusicPlayerWeb.Startup.Start();
-            }
-            catch (Exception e)
-            {
-                Logger.LogInfo("Execution dir: " + Directory.GetCurrentDirectory());
-                Logger.LogError(e, "Application startup failure");
-                // CefSharp dependencies temporarily disabled
-                // RunResource("vcredist_x64_(1).exe");
-                // RunResource("vcredist_x64_(2).exe");
-                // CefSharp Startup temporarily disabled
-                // MusicPlayerWeb.Startup.Start();
-            }
+            // Avalonia automatically loads XAML for Application class
+            // No need to call AvaloniaXamlLoader.Load(this) here
+            base.Initialize();
         }
 
         /// <summary>
-        /// Logs unhandled exceptions.
+        /// Called when framework initialization is completed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        public override void OnFrameworkInitializationCompleted()
         {
-            Logger.LogError(e.Exception, "Application failure");
+            try
+            {
+                EnsureExecutingDirectoryIsExecutableDirectory();
+                MusicPlayerWeb.Startup.Start();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Startup failure: {e.Message}");
+                // Try again without ensuring directory
+                try
+                {
+                    MusicPlayerWeb.Startup.Start();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Second startup failure: {ex.Message}");
+                }
+            }
+
+            base.OnFrameworkInitializationCompleted();
         }
 
         /// <summary>
@@ -54,37 +59,6 @@ namespace MusicPlayerWeb
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
             string directory = new FileInfo(location.LocalPath).Directory.FullName;
             Directory.SetCurrentDirectory(directory);
-        }
-
-        /// <summary>
-        /// Runs a resource.
-        /// </summary>
-        /// <param name="filename">The embedded file.</param>
-        private void RunResource(string filename)
-        {
-            var assembly = typeof(App).Assembly;
-            var resourceName = "MusicPlayerWeb.redist." + filename;
-            string dir = Path.GetTempPath();
-            dir = dir.EndsWith("\\") ? dir : dir + "\\";
-
-            try
-            {
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                using (FileStream fs = new FileStream(dir + filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-                {
-                    stream.CopyTo(fs);
-                }
-
-                using (var pr = Process.Start(dir + filename, "/install /quiet /norestart"))
-                {
-                    pr.WaitForExit();
-                    File.Delete(dir + filename);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e, "Installation of resource failed");
-            }
         }
     }
 }

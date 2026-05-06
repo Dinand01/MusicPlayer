@@ -1,4 +1,4 @@
-﻿using MusicPlayer.Extensions;
+using MusicPlayer.Extensions;
 using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using System;
@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode;
+using YoutubeExplode.Videos;
+using IVideo = MusicPlayer.Interface.IVideo;
 
 namespace MusicPlayer.Controller
 {
@@ -87,8 +89,20 @@ namespace MusicPlayer.Controller
         public async Task<List<VideoInfo>> GetYoutubeChannel(string id)
         {
             var client = new YoutubeClient();
-            var videos = await client.GetChannelUploadsAsync(id);
-            return videos.Select(v => new VideoInfo(v)).ToList();
+            // YoutubeExplode 6.x: GetUploadsAsync returns IAsyncEnumerable<PlaylistVideo>
+            var videos = new List<VideoInfo>();
+            await foreach (var video in client.Channels.GetUploadsAsync(id))
+            {
+                videos.Add(new VideoInfo
+                {
+                    ID = video.Id.Value,
+                    Title = video.Title,
+                    Duration = video.Duration ?? TimeSpan.Zero,
+                    ThumbnailUrl = video.Thumbnails.OrderByDescending(t => t.Resolution.Area).FirstOrDefault()?.Url ?? "",
+                    Url = "https://www.youtube.com/watch?v=" + video.Id.Value
+                });
+            }
+            return videos;
         }
 
         /// <summary>
@@ -99,8 +113,20 @@ namespace MusicPlayer.Controller
         public async Task<List<VideoInfo>> GetYoutubePlayList(string id)
         {
             var client = new YoutubeClient();
-            var playlist = await client.GetPlaylistAsync(id);
-            return playlist.Videos.Select(v => new VideoInfo(v)).ToList();
+            var videos = new List<VideoInfo>();
+            // YoutubeExplode 6.x: Get playlist videos returns IAsyncEnumerable<PlaylistVideo>
+            await foreach (var video in client.Playlists.GetVideosAsync(id))
+            {
+                videos.Add(new VideoInfo
+                {
+                    ID = video.Id.Value,
+                    Title = video.Title,
+                    Duration = video.Duration ?? TimeSpan.Zero,
+                    ThumbnailUrl = video.Thumbnails.OrderByDescending(t => t.Resolution.Area).FirstOrDefault()?.Url ?? "",
+                    Url = "https://www.youtube.com/watch?v=" + video.Id.Value
+                });
+            }
+            return videos;
         }
 
         /// <summary>

@@ -2,14 +2,16 @@
 
 ## Overview
 
-Music Player uses a hybrid architecture combining:
-- **Desktop Backend**: .NET WPF application
-- **Browser Engine**: CefSharp (Chromium embedded)
+Music Player has been upgraded to modern technologies:
+
+- **Desktop Backend**: .NET 10 WPF application
+- **Browser Engine**: CefSharp (Chromium embedded) - Windows only
 - **Web Frontend**: React with Redux
 - **Audio Processing**: NAudio library
 - **Metadata**: TagLib#
 - **YouTube**: YoutubeExplode library
-- **Database**: SQLite via System.Data.SQLite
+- **Database**: SQLite via Microsoft.Data.Sqlite (EF Core 10)
+- **Communication**: gRPC (replacing WCF)
 
 ## Complete Technology Listing
 
@@ -17,8 +19,8 @@ Music Player uses a hybrid architecture combining:
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| .NET Framework | 4.5.2 | Runtime | Legacy .NET, Windows-only |
-| C# | Latest compatible | Backend logic | Type-safe, cross-compilable |
+| .NET 10 | 10.0.104 SDK | Runtime | Cross-platform, WPF requires net10.0-windows |
+| C# | 12.0 | Backend logic | Latest features, nullable enable |
 | JavaScript | ES5/ES6 | Frontend | Babel transpiles modern syntax |
 | JavaScript Object Model | N/A | Browser APIs | CefSharp exposes to JS |
 
@@ -26,37 +28,46 @@ Music Player uses a hybrid architecture combining:
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| WPF (Windows Presentation Foundation) | 4.5.2 | Desktop UI | MainWindow, file dialogs |
+| WPF (Windows Presentation Foundation) | net10.0-windows | Desktop UI | MainWindow, file dialogs |
 | React | 15.5.4 | Web UI | Legacy version, consider upgrading |
 | React Router | 4.1.1 | Routing | Navigate between pages |
 | React Redux | 5.0.5 | State management | Centralized state store |
-| CefSharp | Latest | Chromium browser | Embeds Chrome in .NET |
+| CefSharp | 128.4.90 | Chromium browser | Embeds Chrome in .NET, Windows only |
 
 ### 3. Audio & Media Libraries
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| NAudio | Latest | Audio playback | Core audio I/O |
+| NAudio | 2.2.1 | Audio playback | Core audio I/O, supports multiple formats |
 | TagLib# | 2.1.0 | Metadata | Read ID3 tags, Vorbis comments, etc. |
-| CefSharp | Latest | YouTube playback | Renders YouTube videos |
+| YoutubeExplode | 6.3.10 | YouTube API | Parse video IDs, fetch playlists, channels |
 
 ### 4. Data & Persistence
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| System.Data.SQLite | 1.0.108 | Database | Embedded SQLite for metadata |
-| SQLite Linq | 1.0.108 | LINQ support | Query SQLite with LINQ |
-| System.Data.SQLite.Core | 1.0.108 | Core SQLite | Native binding |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.0.0 | Database ORM | EF Core 10 with SQLite provider |
+| Microsoft.EntityFrameworkCore.Tools | 10.0.0 | Migrations | Code-first migrations |
+| Microsoft.Data.Sqlite | 10.0.0 | SQLite provider | Native SQLite support |
 
-### 5. YouTube Integration
+### 5. Communication Layer
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| YoutubeExplode | 4.2.4 | YouTube API | Parse video IDs, fetch playlists |
+| gRPC | 2.67.0 | Inter-process communication | Replaces WCF duplex contracts |
+| Grpc.AspNetCore | 2.67.0 | Server hosting | gRPC services in ASP.NET Core |
+| Grpc.Net.Client | 2.67.0 | Client calls | Call gRPC services |
+| Google.Protobuf | 3.29.3 | Message serialization | Protocol buffer messages |
+
+### 6. YouTube Integration
+
+| Technology | Version | Purpose | Notes |
+|------|------|------|--------|
+| YoutubeExplode | 6.3.10 | YouTube API | Parse video IDs, fetch playlists |
 | YouTube Iframe API | N/A | Embed player | YouTube's official embed API |
 | Dirble API Key | Embedded | Station data | Radio station discovery |
 
-### 6. UI Components & Libraries
+### 7. UI Components & Libraries
 
 | Package | Purpose |
 |------|------|
@@ -66,7 +77,7 @@ Music Player uses a hybrid architecture combining:
 | react-waypoint | Scroll position tracking |
 | react-slick | Carousel/slider components |
 
-### 7. Development Tooling
+### 8. Development Tooling
 
 | Tool | Purpose |
 |------|------|
@@ -79,7 +90,7 @@ Music Player uses a hybrid architecture combining:
 | extract-text-webpack-plugin | Split CSS from JS bundles |
 | node-sass | SCSS compiler |
 
-### 8. System Integration
+### 9. System Integration
 
 | Technology | Purpose |
 |------|------|
@@ -87,17 +98,17 @@ Music Player uses a hybrid architecture combining:
 | Windows Registry | Installer configuration |
 | PowerShell | Setup scripts (Initialize.ps1) |
 
-### 9. Build Tools
+### 10. Build Tools
 
 | Tool | Purpose |
-|------|------|------|------|
-| msbuild | Build orchestration |
-| nuget | Package management |
+|------|------|------|
+| dotnet CLI | Build orchestration |
+| NuGet | Package management |
 | npm | Node.js dependencies |
 | webpack-cli | Webpack execution |
 | ps1 | PowerShell scripts |
 
-### 10. External Dependencies
+### 11. External Dependencies
 
 #### NAudio Dependencies
 - Windows Audio API
@@ -119,11 +130,18 @@ Music Player uses a hybrid architecture combining:
 - Windows CRT DLLs
 - VCRUNTIME library
 - Visual C++ Redistributables
+- **Note**: Version 128.4.90 has known high severity vulnerability (NU1903)
 
 #### YoutubeExplode Dependencies
 - YouTube HTTP API
 - Video parsing libraries
 - Playlist data structures
+- Channel uploads API
+
+#### gRPC Dependencies
+- HTTP/2 protocol
+- Protocol Buffers
+- Native gRPC C core library
 
 ## Architecture by Layer
 
@@ -138,26 +156,28 @@ Music Player uses a hybrid architecture combining:
 - HTML5 elements
 - CSS/SASS styling
 - YouTube Iframe
+- CefSharp Chromium browser
 
 ### Business Logic Layer
 - MusicPlayer namespace
-  - Db.cs (data access)
-  - Factory.cs (singleton)
+  - Db.cs (data access, EF Core 10)
+  - Factory.cs (factory + gRPC server/client)
   - Entity classes (Song, Album, etc.)
 - MusicPlayerGate namespace
   - Actions.cs (commands)
   - Gateway (orchestration)
-- MusicPlayerWeb (browser bridge)
-
-### Data Layer
-- SQLite database
-- In-memory collections (for speed)
-- FileSystem for media scanning
+- MusicPlayerWeb (browser bridge, CefSharp)
 
 ### Communication Layer
-- TCP Socket (streaming protocol)
+- gRPC (MusicPlayerServerService, MusicPlayerClientService)
 - HTTP (web requests)
 - YouTube API HTTP
+- Bidirectional streaming for WCF duplex replacement
+
+### Data Layer
+- SQLite database (EF Core 10)
+- In-memory collections (for speed)
+- FileSystem for media scanning
 
 ### File System Layer
 - Local media folder scanning
@@ -166,18 +186,31 @@ Music Player uses a hybrid architecture combining:
 
 ## Technology Decisions Rationale
 
-### Why .NET Framework?
-- Windows platform alignment
-- Rich UI capabilities (WPF)
-- Extensive audio libraries (NAudio)
-- Maturity and stability
-- File system integration
+### Why .NET 10?
+- Modern C# features (nullable, records, etc.)
+- Cross-platform capability (with EnableWindowsTargeting for WPF)
+- Long-term support and updates
+- Better performance than .NET Framework 4.5.2
+
+### Why gRPC?
+- Replaces WCF duplex contracts
+- Strong typing via Protocol Buffers
+- Native support for bidirectional streaming
+- Better .NET 10 integration than WCF
+- Cross-platform compatibility
 
 ### Why CefSharp?
 - Modern rendering (Chromium)
 - YouTube embed required
 - Custom protocols possible
 - Cross-browser compatibility
+- **Limitation**: Windows-only, no net10.0-windows support on Linux
+
+### Why EF Core 10?
+- Replaces EF6 (incompatible with .NET 10)
+- Native SQLite support via Microsoft.Data.Sqlite
+- Better performance and LINQ support
+- Code-first migrations
 
 ### Why React?
 - Component reusability
@@ -195,22 +228,23 @@ Music Player uses a hybrid architecture combining:
 - Lightweight (embedded)
 - No server installation
 - ACID compliant
-- LINQ support
-
-### Why TCP Streaming?
-- Direct audio transfer
-- Minimal overhead
-- Synchronization control
-- Cross-client broadcasting
+- EF Core support
 
 ## Package Sources
 
 ### NuGet Packages (Backend)
-- System.Data.SQLite.*
-- taglib-sharp
-- YoutubeExplode
-- NAudio (via nuget)
-- CefSharp
+- Microsoft.EntityFrameworkCore.Sqlite 10.0.0
+- Microsoft.EntityFrameworkCore.Tools 10.0.0
+- NAudio 2.2.1
+- TagLib# 2.1.0
+- YoutubeExplode 6.3.10
+- Grpc.AspNetCore 2.67.0
+- Grpc.Net.Client 2.67.0
+- Google.Protobuf 3.29.3
+- Newtonsoft.Json 13.0.3
+- NLog 5.3.4
+- AngleSharp 1.3.0
+- CefSharp.Wpf 128.4.90 (Windows only)
 
 ### npm Packages (Frontend)
 - React ecosystem (via package.json)
@@ -218,63 +252,14 @@ Music Player uses a hybrid architecture combining:
 - Webpack ecosystem
 - FontAwesome icons
 
-## Technology Roadmap
-
-### Current State
-- Legacy technology stack
-- React 15.5.4 (end of life)
-- .NET 4.5.2
-- Modernize recommended
-
-### Recommended Upgrades
-1. **React**: Migrate to v17 or v18
-   - Use `react-scripts` or modern webpack
-   - Modern lifecycle methods
-   
-2. **.NET**: Upgrade to .NET Core / .NET 6+
-   - Cross-platform capability
-   - Modern C# features
-   
-3. **CefSharp**: Keep current
-   - Already good
-   - Stay on latest
-
-4. **Redux**: Upgrade to v5+
-   - Redux Toolkit
-   - Redux DevTools
-   
-5. **YouTube**: Migrate to official API
-   - OAuth 2.0
-   - Better rate limits
-
-### Technology Avoidance
-- Legacy React (15.5.4)
-- Deprecated .NET Framework 4.5.2 (consider 4.8 end-of-life soon)
-- Custom streaming (use MQTT/WebRTC for better sync)
-
-## Dependency Management
-
-### Backend Dependencies
-Managed via:
-- `packages.config` (NuGet)
-- Global NuGet cache
-- Restore on build
-
-### Frontend Dependencies
-Managed via:
-- `package.json`
-- npm scripts
-- webpack bundling
-
 ## Compatibility Matrix
 
 | Platform | Backend | Frontend | Notes |
 |------|------|------|--------|
-| Windows 7+ | ✅ | ✅ | Primary platform |
-| Windows 10/11| ✅ | ✅ | Recommended |
-| Windows Server| ✅ | ✅ | Server editions |
-| Linux | ❌ | ✅ | No WPF, use .NET MAUI |
-| macOS | ❌ | ✅ | No WPF, use .NET MAUI |
+| Windows 10/11 | ✅ | ✅ | Primary platform, full support |
+| Windows 7+ | ✅ | ✅ | Legacy Windows support |
+| Linux | ✅ | ⚠️ | Backend works, CefSharp blocked (Windows-only) |
+| macOS | ✅ | ⚠️ | Backend works, CefSharp blocked (Windows-only) |
 
 ## License & Legal
 
@@ -284,9 +269,10 @@ Managed via:
 - NAudio: BSD
 - CefSharp: MIT
 - Webpack: MIT
-- FontAwesome: SL (free for personal)
-- TagLib: LGPL
+- FontAwesome: CC BY 4.0 (free for personal)
+- TagLib#: LGPL
 - SQLite: Public Domain
+- gRPC: Apache 2.0
 
 ### YouTube API
 - TOS compliance required
@@ -297,13 +283,18 @@ Managed via:
 
 ### .NET Environment
 ```bash
-# Minimum requirements
-# Windows + .NET Framework 4.5.2
-# Visual Studio 2015+ or VS Code with C# extension
+# Requirements
+# .NET 10 SDK 10.0.104+
+# Visual Studio 2022+ or VS Code with C# extension
 
-# Install dependencies
-dotnet restore  # Works on .NET Core
-msbuild /t:Restore # .NET Framework
+# Restore packages
+dotnet restore
+
+# Build (Windows)
+dotnet build MusicPlayerWeb.sln
+
+# Build (Linux/macOS - MusicPlayer only)
+dotnet build MusicPlayer/MusicPlayer.csproj
 ```
 
 ### Node Environment
@@ -314,35 +305,48 @@ npm install
 npm run webpack
 ```
 
+## Migration History
+
+### From .NET Framework 4.5.2 to .NET 10
+1. **Framework**: .NET Framework 4.5.2 → .NET 10
+2. **WCF → gRPC**: Duplex contracts replaced with gRPC services
+3. **EF6 → EF Core 10**: Database ORM upgraded
+4. **System.Data.SQLite → Microsoft.Data.Sqlite**: Provider changed
+5. **Packages**: All packages upgraded to .NET 10 compatible versions
+
+### Breaking Changes
+- WCF duplex contracts replaced with gRPC bidirectional streaming
+- EF6 APIs changed to EF Core 10
+- YoutubeExplode 6.x API changes (VideoId, PlaylistVideo, IAsyncEnumerable)
+- CefSharp 63 → 128 API changes (DisplayHandler, SchemeHandlerFactory)
+- NAudio 1.8.4 → 2.2.1 API changes
+
+## Known Issues
+
+### CefSharp.Wpf 128.4.90
+- **Vulnerability**: NU1903 (high severity)
+- **Platform**: No net10.0-windows support on Linux
+- **Status**: Blocked on Linux, works on Windows
+
+### TagLib# 2.1.0
+- **Warning**: NU1701 (restored using .NET Framework)
+- **Status**: Works but shows compatibility warning
+
+### YoutubeExplode 6.3.10
+- **API Changes**: Major API changes from 4.x
+- **IAsyncEnumerable**: Requires `await foreach` for video collections
+
 ## Technology Summary
 
-**Backend**: .NET Framework 4.5.2 + WPF
+**Backend**: .NET 10 + WPF (net10.0-windows)
 **Frontend**: React 15.5.4 + Redux 5 + Webpack
-**Audio**: NAudio + TagLib#
-**Database**: SQLite via System.Data.SQLite
-**YouTube**: CefSharp + YoutubeExplode
-**Streaming**: Custom TCP protocol
+**Audio**: NAudio 2.2.1 + TagLib# 2.1.0
+**Database**: EF Core 10 + Microsoft.Data.Sqlite
+**YouTube**: YoutubeExplode 6.3.10 + CefSharp 128.4.90
+**Communication**: gRPC (replacing WCF duplex)
 **Icons**: FontAwesome Free
 **Styling**: SCSS → CSS (webpack)
-**Build**: MSBuild + Webpack + npm
+**Build**: dotnet CLI + Webpack + npm
 
-**Total Size**: ~100+ packages (combined)
-**Maintainer Effort**: High (legacy stack + manual streaming)
-
-## Migration Considerations
-
-### If Moving to Modern Stack
-1. **.NET**: Switch to .NET 6/8
-2. **WPF**: Consider .NET MAUI or Blazor
-3. **React**: Upgrade to v17+ LTS
-4. **Redux**: Use Redux Toolkit
-5. **YouTube**: Official Data API v3
-6. **Streaming**: Evaluate MQTT/WS alternatives
-
-### Breaking Changes to Avoid
-- Don't touch CefSharp integration (works well)
-- Don't change NAudio usage pattern (efficient)
-- Keep SQLite (simple, effective)
-- Preserve TCP protocol semantics
-
-**Contact** for questions about migration paths or technology questions!
+**Total Size**: ~15 packages (backend), ~50 packages (frontend)
+**Maintainer Effort**: Medium (modern stack, active support)

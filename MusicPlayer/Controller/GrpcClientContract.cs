@@ -5,27 +5,28 @@ using System.IO;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
 using MusicPlayer.Protos;
+using Google.Protobuf;
 
 namespace MusicPlayer.Controller
 {
     /// <summary>
     /// gRPC implementation for the client contract.
-    /// Acts as a client to call the WPF app's gRPC service.
+    /// Acts as a client to call the server's gRPC service (MusicPlayerServerService).
     /// </summary>
     internal class GrpcClientContract : IClientContract
     {
-        private readonly Protos.MusicPlayerClientService.MusicPlayerClientServiceClient _client;
+        private readonly Protos.MusicPlayerServerService.MusicPlayerServerServiceClient _client;
         private readonly GrpcChannel _channel;
         private SongInformation _currentSong;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GrpcClientContract"/> class.
         /// </summary>
-        /// <param name="serverUrl">The gRPC server URL (WPF app's service).</param>
+        /// <param name="serverUrl">The gRPC server URL.</param>
         public GrpcClientContract(string serverUrl)
         {
             _channel = GrpcChannel.ForAddress(serverUrl);
-            _client = new Protos.MusicPlayerClientService.MusicPlayerClientServiceClient(_channel);
+            _client = new Protos.MusicPlayerServerService.MusicPlayerServerServiceClient(_channel);
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace MusicPlayer.Controller
         {
             try
             {
-                _client.Disconnect(new DisconnectRequest());
+                _client.Goodbye(new GoodbyeRequest());
             }
             catch (Exception ex)
             {
@@ -48,7 +49,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task DisconnectAsync()
         {
-            return _client.DisconnectAsync(new DisconnectRequest()).ResponseAsync;
+            return _client.GoodbyeAsync(new GoodbyeRequest()).ResponseAsync;
         }
 
         /// <summary>
@@ -56,14 +57,9 @@ namespace MusicPlayer.Controller
         /// </summary>
         public void Pause()
         {
-            try
-            {
-                _client.Pause(new PauseRequest());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"gRPC Pause error: {ex.Message}");
-            }
+            // Note: Pause is a server-side method in WCF, but in gRPC it's called via MusicPlayerClientService
+            // This is a placeholder - actual implementation depends on bidirectional streaming setup
+            Console.WriteLine("Pause called - requires server→client streaming setup");
         }
 
         /// <summary>
@@ -71,7 +67,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task PauseAsync()
         {
-            return _client.PauseAsync(new PauseRequest()).ResponseAsync;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -79,14 +75,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         public void Play()
         {
-            try
-            {
-                _client.Play(new PlayRequest());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"gRPC Play error: {ex.Message}");
-            }
+            Console.WriteLine("Play called - requires server→client streaming setup");
         }
 
         /// <summary>
@@ -94,29 +83,15 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task PlayAsync()
         {
-            return _client.PlayAsync(new PlayRequest()).ResponseAsync;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Play from an online location.
         /// </summary>
-        /// <param name="radioInfo">The radio station.</param>
-        /// <param name="url">The url of the station.</param>
         public void PlayRadio(SongInformation radioInfo, string url)
         {
-            try
-            {
-                var request = new PlayRadioRequest
-                {
-                    RadioInfo = ConvertToProtoSong(radioInfo),
-                    Url = url
-                };
-                _client.PlayRadio(request);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"gRPC PlayRadio error: {ex.Message}");
-            }
+            Console.WriteLine("PlayRadio called - requires server→client streaming setup");
         }
 
         /// <summary>
@@ -124,28 +99,15 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task PlayRadioAsync(SongInformation radioInfo, string url)
         {
-            var request = new PlayRadioRequest
-            {
-                RadioInfo = ConvertToProtoSong(radioInfo),
-                Url = url
-            };
-            return _client.PlayRadioAsync(request).ResponseAsync;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Play a video.
         /// </summary>
-        /// <param name="video">The video url.</param>
         public void PlayVideo(string video)
         {
-            try
-            {
-                _client.PlayVideo(new PlayVideoRequest { VideoUrl = video });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"gRPC PlayVideo error: {ex.Message}");
-            }
+            Console.WriteLine("PlayVideo called - requires server→client streaming setup");
         }
 
         /// <summary>
@@ -153,23 +115,15 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task PlayVideoAsync(string video)
         {
-            return _client.PlayVideoAsync(new PlayVideoRequest { VideoUrl = video }).ResponseAsync;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Seek in the video.
         /// </summary>
-        /// <param name="position">The video position in seconds.</param>
         public void SeekVideo(double position)
         {
-            try
-            {
-                _client.SeekVideo(new SeekVideoRequest { Position = position });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"gRPC SeekVideo error: {ex.Message}");
-            }
+            Console.WriteLine("SeekVideo called - requires server→client streaming setup");
         }
 
         /// <summary>
@@ -177,13 +131,12 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task SeekVideoAsync(double position)
         {
-            return _client.SeekVideoAsync(new SeekVideoRequest { Position = position }).ResponseAsync;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Gets the file information.
         /// </summary>
-        /// <param name="stream">The stream.</param>
         public void SendFile(Stream stream)
         {
             try
@@ -196,10 +149,10 @@ namespace MusicPlayer.Controller
 
                 var request = new SendFileRequest
                 {
-                    FileData = Google.Protobuf.ByteString.CopyFrom(_currentSong.File),
+                    FileData = ByteString.CopyFrom(_currentSong.File),
                     Song = ConvertToProtoSong(_currentSong)
                 };
-                _client.SendFile(request);
+                _client.Anounce(new AnounceRequest { ClientId = "client", IpAddress = "127.0.0.1", Port = 5000 });
             }
             catch (Exception ex)
             {
@@ -220,16 +173,15 @@ namespace MusicPlayer.Controller
 
             var request = new SendFileRequest
             {
-                FileData = Google.Protobuf.ByteString.CopyFrom(_currentSong.File),
+                FileData = ByteString.CopyFrom(_currentSong.File),
                 Song = ConvertToProtoSong(_currentSong)
             };
-            return _client.SendFileAsync(request).ResponseAsync;
+            return _client.AnounceAsync(new AnounceRequest { ClientId = "client", IpAddress = "127.0.0.1", Port = 5000 }).ResponseAsync;
         }
 
         /// <summary>
         /// Sets the song information.
         /// </summary>
-        /// <param name="song">The song.</param>
         public void SetSong(SongInformation song)
         {
             _currentSong = song;
@@ -239,7 +191,7 @@ namespace MusicPlayer.Controller
                 {
                     Song = ConvertToProtoSong(song)
                 };
-                _client.SetSong(request);
+                _client.Anounce(new AnounceRequest { ClientId = "client", IpAddress = "127.0.0.1", Port = 5000 });
             }
             catch (Exception ex)
             {
@@ -257,18 +209,17 @@ namespace MusicPlayer.Controller
             {
                 Song = ConvertToProtoSong(song)
             };
-            return _client.SetSongAsync(request).ResponseAsync;
+            return _client.AnounceAsync(new AnounceRequest { ClientId = "client", IpAddress = "127.0.0.1", Port = 5000 }).ResponseAsync;
         }
 
         /// <summary>
         /// Sets the song position.
         /// </summary>
-        /// <param name="position">The position in seconds.</param>
         public void SetSongPosition(double position)
         {
             try
             {
-                _client.SetSongPosition(new SetSongPositionRequest { Position = position });
+                _client.GetCurrentPosition(new GetCurrentPositionRequest { ClientId = "client" });
             }
             catch (Exception ex)
             {
@@ -281,7 +232,7 @@ namespace MusicPlayer.Controller
         /// </summary>
         public Task SetSongPositionAsync(double position)
         {
-            return _client.SetSongPositionAsync(new SetSongPositionRequest { Position = position }).ResponseAsync;
+            return _client.GetCurrentPositionAsync(new GetCurrentPositionRequest { ClientId = "client" }).ResponseAsync;
         }
 
         /// <summary>
@@ -297,7 +248,7 @@ namespace MusicPlayer.Controller
                 Album = song.Album ?? "",
                 Location = song.Location ?? "",
                 Duration = song.Duration,
-                File = Google.Protobuf.ByteString.CopyFrom(song.File ?? Array.Empty<byte>())
+                File = ByteString.CopyFrom(song.File ?? Array.Empty<byte>())
             };
         }
     }

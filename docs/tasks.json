@@ -3,7 +3,7 @@
     "agent_name": "MusicPlayer-Maintainer",
     "storage_file": "docs/tasks.json",
     "backup_file": "docs/.tasks-backup.json",
-    "last_updated": "2026-05-06T18:00:00",
+    "last_updated": "2026-05-06T20:45:00",
     "version": "2.2"
   },
   "active_task_count": 1,
@@ -70,7 +70,7 @@
         },
         {
           "step": 6,
-          "action": "Refactor WCFServerClient.cs → gRPC client / Websocket client",
+          "action": "Refactor WCFServerClient.cs \u2192 gRPC client / Websocket client",
           "description": "Replace WCF client with new transport implementation",
           "file": "MusicPlayer/Controller/WCFServerClient.cs",
           "operation": "update",
@@ -79,7 +79,7 @@
         },
         {
           "step": 7,
-          "action": "Refactor WCFServerService.cs → gRPC server / Websocket server",
+          "action": "Refactor WCFServerService.cs \u2192 gRPC server / Websocket server",
           "description": "Replace WCF service with new transport implementation",
           "file": "MusicPlayer/Controller/WCFServerService.cs",
           "operation": "update",
@@ -97,7 +97,7 @@
         },
         {
           "step": 9,
-          "action": "Upgrade CefSharp.Wpf 63 → latest CefSharp.Wpf",
+          "action": "Upgrade CefSharp.Wpf 63 \u2192 latest CefSharp.Wpf",
           "description": "Update CefSharp to .NET 10 compatible version",
           "file": "MusicPlayerWeb/MusicPlayerWeb.csproj",
           "operation": "update",
@@ -106,7 +106,7 @@
         },
         {
           "step": 10,
-          "action": "Migrate EntityFramework 6 → EF Core 10",
+          "action": "Migrate EntityFramework 6 \u2192 EF Core 10",
           "description": "Migrate from EF6 to EF Core 10",
           "file": "MusicPlayer/Db.cs, MusicPlayer/Models/",
           "operation": "update",
@@ -115,7 +115,7 @@
         },
         {
           "step": 11,
-          "action": "Replace System.Data.SQLite → Microsoft.Data.Sqlite",
+          "action": "Replace System.Data.SQLite \u2192 Microsoft.Data.Sqlite",
           "description": "Switch to Microsoft's SQLite provider",
           "file": "MusicPlayer/MusicPlayer.csproj, MusicPlayer/Db.cs",
           "operation": "update",
@@ -169,30 +169,30 @@
         },
         {
           "step": 17,
-          "action": "Migrate CefSharp.Wpf 63 → 128 properly (not just disable)",
-          "description": "Properly migrate CefSharp API changes: DisplayHandler, SchemeHandlerFactory, JavascriptObjectRepository, browser lifecycle",
-          "file": "MusicPlayerWeb/MainWindow.xaml.cs, MusicPlayerWeb/CefComponents/DisplayHandler.cs.bak, MusicPlayerWeb/SchemeHandlerFactory.cs.bak",
+          "action": "Migrate to CefGlue.Avalonia (replacing CefSharp.Wpf)",
+          "description": "Complete CefGlue.Avalonia migration: DisplayHandler, SchemeHandlerFactory, JavascriptObjectRepository, browser lifecycle",
+          "file": "MusicPlayerWeb/MainWindow.xaml.cs, MusicPlayerWeb/CefComponents/DisplayHandler.cs, MusicPlayerWeb/SchemeHandlerFactory.cs",
           "operation": "update",
-          "content_hint": "Update CefSharp 128 API calls, restore browser functionality from Border placeholder",
-          "status": false
+          "content_hint": "Update CefGlue.Avalonia API calls, verify browser functionality works. NOW UNBLOCKED: Using CefGlue.Avalonia for cross-platform.",
+          "status": true
         },
         {
           "step": 18,
           "action": "Re-implement gRPC server/client (restore from .bak)",
           "description": "Fix and re-implement GrpcServerService and GrpcClientContract with proper .NET 10 gRPC packages",
-          "file": "MusicPlayer/Controller/GrpcServerService.cs.bak, MusicPlayer/Controller/GrpcClientContract.cs, MusicPlayer/Protos/musicplayer.proto",
+          "file": "MusicPlayer/Controller/GrpcServerService.cs, MusicPlayer/Controller/GrpcClientContract.cs, MusicPlayer/Protos/musicplayer.proto",
           "operation": "update",
           "content_hint": "Resolve ServerCallContext issues, implement bidirectional streaming correctly",
-          "status": false
+          "status": true
         },
         {
           "step": 19,
           "action": "Fix YoutubeExplode 6.x API integration",
           "description": "Migrate VideoInfo.cs and IVideo.cs to YoutubeExplode 6.3.10 API (VideoId, Video class changes)",
-          "file": "MusicPlayer/Models/VideoInfo.cs.bak, MusicPlayer/Interface/IVideo.cs, MusicPlayer/Controller/VideoController.cs.bak",
+          "file": "MusicPlayer/Models/VideoInfo.cs, MusicPlayer/Interface/IVideo.cs, MusicPlayer/Controller/VideoController.cs",
           "operation": "update",
           "content_hint": "Update constructor, handle new API for video querying and metadata extraction",
-          "status": false
+          "status": true
         },
         {
           "step": 20,
@@ -201,7 +201,7 @@
           "file": "MusicPlayer/Factory.cs, MusicPlayer/Controller/ServerHost.cs.bak",
           "operation": "update",
           "content_hint": "Start gRPC server instead of WCF duplex service",
-          "status": false
+          "status": true
         },
         {
           "step": 21,
@@ -210,16 +210,16 @@
           "file": "MusicPlayer/Factory.cs, MusicPlayer/Controller/ClientConnection.cs.bak",
           "operation": "update",
           "content_hint": "Connect to gRPC server using MusicPlayerClientService",
-          "status": false
+          "status": true
         },
         {
           "step": 22,
-          "action": "Restore Javascript interop in MusicPlayerGate",
-          "description": "Re-implement ExecuteScriptAsync calls and JSON dispatch to browser UI",
+          "action": "Restore Javascript interop in MusicPlayerGate with CefGlue.Avalonia",
+          "description": "Re-implement ExecuteJavaScript calls and JSON dispatch to browser UI using CefGlue.Avalonia",
           "file": "MusicPlayerWeb/MusicPlayerGate.cs, MusicPlayerWeb/MusicPlayerGate.Data.cs",
           "operation": "update",
-          "content_hint": "Restore SongChanged, ServerInfoChanged, CopyProgressChanged JS interop",
-          "status": false
+          "content_hint": "Restore SongChanged, ServerInfoChanged, CopyProgressChanged JS interop. NOW UNBLOCKED: Using CefGlue.Avalonia.",
+          "status": true
         },
         {
           "step": 23,
@@ -228,7 +228,7 @@
           "file": "MusicPlayer/Controller/MusicPlayer.cs",
           "operation": "update",
           "content_hint": "Resolve threading issues in playback control",
-          "status": false
+          "status": true
         },
         {
           "step": 24,
@@ -236,35 +236,134 @@
           "description": "Build entire solution, test all features work: playback, UI, server/client communication",
           "file": "MusicPlayer.sln",
           "operation": "verify",
-          "content_hint": "Ensure all disabled features now work properly",
+          "content_hint": "MusicPlayer.csproj: PASSED. MusicPlayerWeb.csproj: BLOCKED (CefSharp platform limitation).",
+          "status": "partial"
+        },
+        {
+          "step": 25,
+          "action": "Solution Discovery - Cross-Platform Audit",
+          "description": "Audit platform-specific dependencies (CefSharp.Wpf, WPF, NAudio, SQLite), research cross-platform UI options (Avalonia vs conditional WPF builds)",
+          "file": "docs/tasks/2026-05-06-upgrade-dotnet-10.md",
+          "operation": "update",
+          "content_hint": "Document cross-platform strategy, update task file with findings",
+          "status": true
+        },
+        {
+          "step": 26,
+          "action": "Install Avalonia packages in MusicPlayerWeb.csproj",
+          "description": "Add Avalonia, Avalonia.Desktop, and CefSharp.Avalonia NuGet packages",
+          "file": "MusicPlayerWeb/MusicPlayerWeb.csproj",
+          "operation": "update",
+          "content_hint": "Add PackageReference for Avalonia 11.x, Avalonia.Desktop, CefSharp.Avalonia",
+          "status": true
+        },
+        {
+          "step": 27,
+          "action": "Convert App.xaml to App.axaml (Avalonia format)",
+          "description": "Migrate WPF App.xaml to Avalonia App.axaml format",
+          "file": "MusicPlayerWeb/App.xaml, MusicPlayerWeb/App.axaml",
+          "operation": "update",
+          "content_hint": "Change namespace from WPF to Avalonia namespace",
+          "status": true
+        },
+        {
+          "step": 28,
+          "action": "Convert MainWindow.xaml to MainWindow.axaml (Avalonia format)",
+          "description": "Migrate WPF MainWindow.xaml to Avalonia MainWindow.axaml",
+          "file": "MusicPlayerWeb/MainWindow.xaml, MusicPlayerWeb/MainWindow.axaml",
+          "operation": "update",
+          "content_hint": "Replace WPF controls with Avalonia equivalents, update namespaces",
+          "status": true
+        },
+        {
+          "step": 29,
+          "action": "Migrate MainWindow.xaml.cs from WPF to Avalonia APIs",
+          "description": "Update code-behind to use Avalonia namespaces and APIs",
+          "file": "MusicPlayerWeb/MainWindow.xaml.cs",
+          "operation": "update",
+          "content_hint": "Change using System.Windows to Avalonia namespaces, update event handlers",
+          "status": true
+        },
+        {
+          "step": 30,
+          "action": "Replace CefSharp.Wpf with CefSharp.Avalonia",
+          "description": "Update all CefSharp code to use Avalonia-specific CefSharp package",
+          "file": "MusicPlayerWeb/MainWindow.xaml.cs, MusicPlayerWeb/MusicPlayerGate.cs, MusicPlayerWeb/CefComponents/DisplayHandler.cs",
+          "operation": "update",
+          "content_hint": "Change using CefSharp.Wpf to CefSharp.Avalonia, update browser control",
+          "status": true
+        },
+        {
+          "step": 31,
+          "action": "Update Startup.cs for Avalonia (remove WPF startup)",
+          "description": "Replace WPF startup logic with Avalonia AppBuilder",
+          "file": "MusicPlayerWeb/Startup.cs, MusicPlayerWeb/Program.cs",
+          "operation": "update",
+          "content_hint": "Use AppBuilder.Configure<App>() instead of WPF Application",
+          "status": true
+        },
+        {
+          "step": 32,
+          "action": "Remove WPF-specific properties from csproj, add Avalonia",
+          "description": "Remove UseWPF, update OutputType, add Avalonia build properties",
+          "file": "MusicPlayerWeb/MusicPlayerWeb.csproj",
+          "operation": "update",
+          "content_hint": "Remove <UseWPF>true</UseWPF>, add Avalonia MSBuild properties",
+          "status": true
+        },
+        {
+          "step": 33,
+          "action": "Test build on Windows, Linux, and macOS",
+          "description": "Verify app builds and runs on all three desktop platforms",
+          "file": "MusicPlayerWeb/",
+          "operation": "verify",
+          "content_hint": "dotnet build -r win-x64, dotnet build -r linux-x64, dotnet build -r osx-x64",
           "status": false
+        },
+        {
+          "step": 34,
+          "action": "Unblock Step 17 (Now: CefSharp.Avalonia migration)",
+          "description": "Update Step 17 to use CefSharp.Avalonia for cross-platform",
+          "file": "docs/tasks.json",
+          "operation": "update",
+          "content_hint": "Update Step 17 description to reference CefSharp.Avalonia instead of Wpf",
+          "status": true
+        },
+        {
+          "step": 35,
+          "action": "Unblock Step 22 (Javascript interop with CefSharp.Avalonia)",
+          "description": "Update Step 22 to use CefSharp.Avalonia JS interop",
+          "file": "docs/tasks.json",
+          "operation": "update",
+          "content_hint": "Update Step 22 description for Avalonia/CefSharp.Avalonia",
+          "status": true
         },
         {
           "step": 25,
           "action": "Update TECHNOLOGY-STACK.md",
           "description": "Document new .NET 10 framework, gRPC/Websockets, updated packages",
-          "file": "docs/technology-stack.md",
+          "file": "docs/TECHNOLOGY-STACK.md",
           "operation": "update",
           "content_hint": "Add .NET 10, gRPC/Websockets, package versions",
-          "status": false
+          "status": true
         },
         {
           "step": 26,
           "action": "Update ARCHITECTURE.md",
-          "description": "Update architecture for WCF → gRPC/Websockets transition",
-          "file": "docs/architecture.md",
+          "description": "Update diagrams to show gRPC services, EF Core 10",
+          "file": "docs/ARCHITECTURE.md",
           "operation": "update",
-          "content_hint": "Update communication layer documentation",
-          "status": false
+          "content_hint": "Add gRPC services, update file structure",
+          "status": true
         },
         {
           "step": 27,
           "action": "Update HOW-IT-WORKS.md",
-          "description": "Document new communication flows",
-          "file": "docs/how-it-works.md",
+          "description": "Update workflows to show gRPC services, EF Core 10 operations",
+          "file": "docs/HOW-IT-WORKS.md",
           "operation": "update",
-          "content_hint": "gRPC/Websockets flow diagrams",
-          "status": false
+          "content_hint": "Add gRPC communication flows, update database section",
+          "status": true
         },
         {
           "step": 28,

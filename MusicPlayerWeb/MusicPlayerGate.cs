@@ -1,20 +1,15 @@
-﻿using MusicPlayer.UI;
+using MusicPlayer.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using MusicPlayer.Models;
 using MusicPlayer;
 using MusicPlayer.Interface;
 using System.Threading;
-// CefSharp temporarily disabled for .NET 10 upgrade
-// using CefSharp.Wpf;
-// using CefSharp;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Threading;
+using Xilium.CefGlue.Avalonia;
+using Avalonia.Threading;
 using Newtonsoft.Json;
 using System.Net;
 using MusicPlayer.Controller;
@@ -38,27 +33,25 @@ namespace MusicPlayerWeb
         private ICopy _copy;
         
         /// <summary>
-        /// The cromium web browser UI.
+        /// The chromium web browser UI.
         /// </summary>
-        // CefSharp temporarily disabled - using object as placeholder
-        // private ChromiumWebBrowser _browser;
-        private object _browser;
+        private AvaloniaCefBrowser _browser;
 
         /// <summary>
         /// The main dispatcher.
         /// </summary>
-        private Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private Dispatcher _dispatcher = Dispatcher.UIThread;
 
         /// <summary>
         /// The owner window.
         /// </summary>
-        private Window _owner;
+        private Avalonia.Controls.Window _owner;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MusicPlayerGate" /> class.
         /// </summary>
         /// <param name="browser"></param>
-        public MusicPlayerGate(object browser, Window window)
+        public MusicPlayerGate(AvaloniaCefBrowser browser, Avalonia.Controls.Window window)
         {
             this._browser = browser;
             this._owner = window;
@@ -69,8 +62,7 @@ namespace MusicPlayerWeb
         /// </summary>
         public void Dispose()
         {
-            // CefSharp temporarily disabled
-            // _browser?.Dispose();
+            _browser?.Dispose();
             _browser = null;
             _player?.Dispose();
         }
@@ -81,8 +73,8 @@ namespace MusicPlayerWeb
         /// <param name="percentage">The new percentage.</param>
         private void CopyProgressChanged(double percentage)
         {
-            // CefSharp temporarily disabled
-            // _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCopyProgress", percentage != 100 ? (double?)percentage : null);
+            string script = $"window.CSSharpDispatcher.dispatchSetCopyProgress({(percentage != 100 ? percentage.ToString() : "null")})";
+            _browser?.ExecuteJavaScript(script, "musicplayer", 0);
         }
 
         /// <summary>
@@ -91,8 +83,9 @@ namespace MusicPlayerWeb
         /// <param name="song">The new song.</param>
         private void SongChanged(SongInformation song)
         {
-            // CefSharp temporarily disabled
-            // _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCurrentSong", JsonConvert.SerializeObject(song).Replace("\\", "\\\\"));
+            string json = JsonConvert.SerializeObject(song).Replace("\\", "\\\\");
+            string script = $"window.CSSharpDispatcher.dispatchSetCurrentSong({json})";
+            _browser?.ExecuteJavaScript(script, "musicplayer", 0);
         }
 
         /// <summary>
@@ -101,8 +94,9 @@ namespace MusicPlayerWeb
         /// <param name="serverInfo">The new server info.</param>
         private void ServerInfoChanged(ServerInfo serverInfo)
         {
-            // CefSharp temporarily disabled
-            // _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetServerInfo", JsonConvert.SerializeObject(serverInfo).Replace("\\", "\\\\"));
+            string json = JsonConvert.SerializeObject(serverInfo).Replace("\\", "\\\\");
+            string script = $"window.CSSharpDispatcher.dispatchSetServerInfo({json})";
+            _browser?.ExecuteJavaScript(script, "musicplayer", 0);
         }
 
         /// <summary>

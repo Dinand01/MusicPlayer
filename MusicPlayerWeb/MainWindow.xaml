@@ -19,12 +19,9 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="0,1" Margin="0,0,0.445,-0.111" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <!-- TODO: Fix CefSharp integration
-            <wpf:ChromiumWebBrowser x:Name="Browser" Address="custom://custom/index.html" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            </wpf:ChromiumWebBrowser>
-            -->
-            <Border Background="LightGray" x:Name="BrowserPlaceholder">
-                <TextBlock Text="Browser placeholder - CefSharp integration pending" 
+            <!-- ChromiumWebBrowser will be added programmatically -->
+            <Border x:Name="BrowserContainer" Background="LightGray">
+                <TextBlock Text="Initializing browser..." 
                            HorizontalAlignment="Center" 
                            VerticalAlignment="Center" />
             </Border>

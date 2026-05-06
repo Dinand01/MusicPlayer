@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MusicPlayerWeb"
+        x:Class="MusicPlayerWeb.MainWindow"
+        Title="Music Player" Height="350" Width="700"
+        Icon="play_button.ico">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height=".9*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="0,1" Margin="0,0,0.445,-0.111" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Decorator x:Name="BrowserWrapper" />
+        </Border>
+    </Grid>
+</Window>

@@ -1,15 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using MusicPlayer;
 using MusicPlayer.Controller;
 using MusicPlayer.Interface;
 using MusicPlayer.Models;
 using Newtonsoft.Json;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 
 namespace MusicPlayerWeb
 {
@@ -24,21 +26,26 @@ namespace MusicPlayerWeb
         /// <returns>A boolean indicating whether anything was opened.</returns>
         public bool OpenFolder()
         {
-            return _owner.Dispatcher.Invoke(() =>
+            bool result = false;
+            Dispatcher.UIThread.Post(async () =>
             {
-                using (var dialog = new FolderBrowserDialog())
+                var topLevel = GetTopLevel(_owner);
+                if (topLevel == null) return;
+                
+                var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
-                    dialog.SelectedPath += Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-                    DialogResult result = dialog.ShowDialog();
-                    if (result == DialogResult.OK && !string.IsNullOrEmpty(dialog.SelectedPath))
-                    {
-                        LoadFolder(dialog.SelectedPath);
-                        return true;
-                    }
-
-                    return false;
+                    Title = "Select Music Folder",
+                    SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(
+                        Environment.GetFolderPath(Environment.SpecialFolder.MyMusic))
+                });
+                
+                if (folder != null && folder.Count > 0)
+                {
+                    LoadFolder(folder[0].Path.LocalPath);
+                    result = true;
                 }
             });
+            return result;
         }
 
         /// <summary>
@@ -51,28 +58,43 @@ namespace MusicPlayerWeb
             NewPlayer();
             if (files == null)
             {
-                return _owner.Dispatcher.Invoke(() =>
+                bool result = false;
+                Dispatcher.UIThread.Post(async () =>
                 {
-                    using (var dialog = new OpenFileDialog())
+                    var topLevel = GetTopLevel(_owner);
+                    if (topLevel == null) return;
+                    
+                    var resultFiles = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
-                        dialog.Filter = "Audio files |*.mp3;*.flac;*.wma|All files (*.*)|*.*";
-                        dialog.Multiselect = true;
-                        DialogResult result = dialog.ShowDialog();
-                        if (result == DialogResult.OK && dialog.FileNames.Length > 0)
+                        Title = "Select Audio Files",
+                        AllowMultiple = true,
+                        FileTypeFilter = new[] 
                         {
-                            var song = _player.LoadFiles(dialog.FileNames).FirstOrDefault();
-                            _dispatcher.Invoke(() => _player.Play(song));
-                            return true;
+                            new FilePickerFileType("Audio files") 
+                            {
+                                Patterns = new[] { "*.mp3", "*.flac", "*.wma" }
+                            },
+                            new FilePickerFileType("All files") 
+                            {
+                                Patterns = new[] { "*.*" }
+                            }
                         }
-
-                        return false;
+                    });
+                    
+                    if (resultFiles != null && resultFiles.Count > 0)
+                    {
+                        var paths = resultFiles.Select(f => f.Path.LocalPath).ToArray();
+                        var song = _player.LoadFiles(paths).FirstOrDefault();
+                        _player.Play(song);
+                        result = true;
                     }
                 });
+                return result;
             }
             else
             {
                 var song = _player.LoadFiles(files).FirstOrDefault();
-                _dispatcher.Invoke(() => _player.Play(song));
+                _player.Play(song);
                 return true;
             }
         }
@@ -83,21 +105,25 @@ namespace MusicPlayerWeb
         /// <returns>The folder selection.</returns>
         public string SelectFolder()
         {
-            string result = string.Empty;
-            _owner.Dispatcher.Invoke(() =>
+            string selectedPath = string.Empty;
+            Dispatcher.UIThread.Post(async () =>
             {
-                using (var dialog = new FolderBrowserDialog())
+                var topLevel = GetTopLevel(_owner);
+                if (topLevel == null) return;
+                
+                var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
-                    dialog.SelectedPath += Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-                    DialogResult diagResult = dialog.ShowDialog();
-                    if (diagResult == DialogResult.OK && !string.IsNullOrEmpty(dialog.SelectedPath))
-                    {
-                        result = dialog.SelectedPath;
-                    }
+                    Title = "Select Folder",
+                    SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(
+                        Environment.GetFolderPath(Environment.SpecialFolder.MyMusic))
+                });
+                
+                if (folder != null && folder.Count > 0)
+                {
+                    selectedPath = folder[0].Path.LocalPath;
                 }
             });
-
-            return result;
+            return selectedPath;
         }
 
         /// <summary>
@@ -105,10 +131,7 @@ namespace MusicPlayerWeb
         /// </summary>
         public void NextSong()
         {
-            _owner.Dispatcher.Invoke(() =>
-            {
-                _player?.Next();
-            });
+            _player?.Next();
         }
 
         /// <summary>
@@ -117,11 +140,8 @@ namespace MusicPlayerWeb
         /// <param name="jsonSong">The json song.</param>
         public void Play(string jsonSong)
         {
-            _owner.Dispatcher.Invoke(() =>
-            {
-                SongInformation song = JsonConvert.DeserializeObject<SongInformation>(jsonSong);
-                _player?.Play(song);
-            });
+            SongInformation song = JsonConvert.DeserializeObject<SongInformation>(jsonSong);
+            _player?.Play(song);
         }
 
         /// <summary>
@@ -131,10 +151,7 @@ namespace MusicPlayerWeb
         public void PlayFromURL(string url)
         {
             NewPlayer();
-            _owner.Dispatcher.Invoke(() =>
-            {
-                _player?.Play(url);
-            });
+            _player?.Play(url);
         }
 
         /// <summary>
@@ -142,10 +159,7 @@ namespace MusicPlayerWeb
         /// </summary>
         public void TogglePlay()
         {
-            _owner.Dispatcher.Invoke(() =>
-            {
-                _player?.TogglePlay();
-            });
+            _player?.TogglePlay();
         }
 
         /// <summary>
@@ -154,10 +168,7 @@ namespace MusicPlayerWeb
         /// <param name="seconds">The seconds to move to.</param>
         public void MoveToTime(long seconds)
         {
-            _owner.Dispatcher.Invoke(() =>
-            {
-                _player?.MoveToTime(seconds);
-            });
+            _player?.MoveToTime(seconds);
         }
 
         /// <summary>
@@ -222,6 +233,7 @@ namespace MusicPlayerWeb
             IPAddress address;
             if (IPAddress.TryParse(ip, out address))
             {
+                // Fix: Setting.Type.RemoteIP -> SettingType.RemoteIP
                 DataController.SetSetting<string>(SettingType.RemoteIP, ip);
                 NewPlayer(Factory.GetClientPlayer(address, port, _player));
                 var client = _player as IClient;
@@ -293,7 +305,15 @@ namespace MusicPlayerWeb
         {
             NewPlayer();
             _player.LoadFolder(path);
-            _dispatcher.Invoke(() => _player.Next());
+            _player.Next();
+        }
+
+        /// <summary>
+        /// Get the top-level control for dialog operations.
+        /// </summary>
+        private static TopLevel GetTopLevel(Control control)
+        {
+            return TopLevel.GetTopLevel(control);
         }
     }
 }

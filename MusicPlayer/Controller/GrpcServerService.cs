@@ -1,7 +1,6 @@
 using MusicPlayer.Interface;
 using MusicPlayer.Models;
-using Grpc.Net.Client;
-using Grpc.Net;
+using Grpc.Core;
 using System.Threading.Tasks;
 using MusicPlayer.Protos;
 

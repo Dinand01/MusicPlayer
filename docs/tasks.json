@@ -1,13 +1,229 @@
 {
   "meta": {
-    "agent_name": "Documentation-Maintainer & Refactoring Agent",
+    "agent_name": "MusicPlayer-Maintainer",
     "storage_file": "docs/tasks.json",
     "backup_file": "docs/.tasks-backup.json",
-    "last_updated": "2026-05-06T14:45:00",
+    "last_updated": "2026-05-06T15:30:00",
     "version": "2.1"
   },
-  "active_task_count": 0,
-  "tasks": [],
+  "active_task_count": 1,
+  "tasks": [
+    {
+      "id": "2026-05-06-upgrade-dotnet-10",
+      "title": "Upgrade to .NET 10",
+      "status": "pending",
+      "task_file": "docs/tasks/2026-05-06-upgrade-dotnet-10.md",
+      "subtasks": [
+        {
+          "step": 0,
+          "action": "Solution Discovery - Research WCF contracts, gRPC/Websockets, component compatibility",
+          "description": "Audit current state, evaluate gRPC vs Websockets for WCF replacement, verify CefSharp/.NET 10 compatibility",
+          "file": "MusicPlayer/Controller/WCFServerClient.cs, MusicPlayer/Controller/WCFServerService.cs",
+          "operation": "verify",
+          "content_hint": "Document component replacement matrix and migration approach",
+          "status": false
+        },
+        {
+          "step": 1,
+          "action": "Convert MusicPlayer.csproj to SDK-style format",
+          "description": "Convert legacy VS2015-style .csproj to SDK-style for .NET 10",
+          "file": "MusicPlayer/MusicPlayer.csproj",
+          "operation": "update",
+          "content_hint": "Remove explicit references, use PackageReference format, set net10.0",
+          "status": false
+        },
+        {
+          "step": 2,
+          "action": "Convert MusicPlayerWeb.csproj (WPF) to SDK-style format",
+          "description": "Convert WPF project to SDK-style preserving WPF-specific properties",
+          "file": "MusicPlayerWeb/MusicPlayerWeb.csproj",
+          "operation": "update",
+          "content_hint": "Preserve WPF settings, use PackageReference, set net10.0",
+          "status": false
+        },
+        {
+          "step": 3,
+          "action": "Update target framework to net10.0 in both projects",
+          "description": "Ensure both projects target .NET 10 explicitly",
+          "file": "MusicPlayer/MusicPlayer.csproj, MusicPlayerWeb/MusicPlayerWeb.csproj",
+          "operation": "update",
+          "content_hint": "Set TargetFramework to net10.0",
+          "status": false
+        },
+        {
+          "step": 4,
+          "action": "Research gRPC compatibility with current WCF contract",
+          "description": "Analyze WCF contracts and design gRPC proto files or Websocket protocol",
+          "file": "MusicPlayer/Interface/IClientContract.cs, MusicPlayer/Interface/IServerContract.cs",
+          "operation": "verify",
+          "content_hint": "Create proto files or document websocket message protocol",
+          "status": false
+        },
+        {
+          "step": 5,
+          "action": "Implement gRPC services (preferred) OR Websocket transport layer",
+          "description": "Create new transport layer replacing WCF",
+          "file": "MusicPlayer/Protos/ or MusicPlayer/Controllers/WebSocket/",
+          "operation": "create",
+          "content_hint": "Implement gRPC server/client or Websocket communication",
+          "status": false
+        },
+        {
+          "step": 6,
+          "action": "Refactor WCFServerClient.cs → gRPC client / Websocket client",
+          "description": "Replace WCF client with new transport implementation",
+          "file": "MusicPlayer/Controller/WCFServerClient.cs",
+          "operation": "update",
+          "content_hint": "Maintain IClientContract interface compatibility",
+          "status": false
+        },
+        {
+          "step": 7,
+          "action": "Refactor WCFServerService.cs → gRPC server / Websocket server",
+          "description": "Replace WCF service with new transport implementation",
+          "file": "MusicPlayer/Controller/WCFServerService.cs",
+          "operation": "update",
+          "content_hint": "Maintain IServerContract interface compatibility",
+          "status": false
+        },
+        {
+          "step": 8,
+          "action": "Update interfaces for new transport",
+          "description": "Update interface definitions for gRPC/Websockets",
+          "file": "MusicPlayer/Interface/IClientContract.cs, MusicPlayer/Interface/IServerContract.cs",
+          "operation": "update",
+          "content_hint": "Adjust for async patterns if needed",
+          "status": false
+        },
+        {
+          "step": 9,
+          "action": "Upgrade CefSharp.Wpf 63 → latest CefSharp.Wpf",
+          "description": "Update CefSharp to .NET 10 compatible version",
+          "file": "MusicPlayerWeb/MusicPlayerWeb.csproj",
+          "operation": "update",
+          "content_hint": "Remove old CefSharp 63, add latest version",
+          "status": false
+        },
+        {
+          "step": 10,
+          "action": "Migrate EntityFramework 6 → EF Core 10",
+          "description": "Migrate from EF6 to EF Core 10",
+          "file": "MusicPlayer/Db.cs, MusicPlayer/Models/",
+          "operation": "update",
+          "content_hint": "Update DbContext, model configurations, create migration",
+          "status": false
+        },
+        {
+          "step": 11,
+          "action": "Replace System.Data.SQLite → Microsoft.Data.Sqlite",
+          "description": "Switch to Microsoft's SQLite provider",
+          "file": "MusicPlayer/MusicPlayer.csproj, MusicPlayer/Db.cs",
+          "operation": "update",
+          "content_hint": "Update connection string and provider config",
+          "status": false
+        },
+        {
+          "step": 12,
+          "action": "Update NAudio to .NET 10 compatible version",
+          "description": "Update NAudio NuGet package",
+          "file": "MusicPlayer/MusicPlayer.csproj",
+          "operation": "update",
+          "content_hint": "Fix any API changes in audio playback code",
+          "status": false
+        },
+        {
+          "step": 13,
+          "action": "Update all remaining NuGet packages",
+          "description": "Update Newtonsoft.Json, NLog, AngleSharp, YoutubeExplode, TagLib",
+          "file": "MusicPlayer/MusicPlayer.csproj, MusicPlayerWeb/MusicPlayerWeb.csproj",
+          "operation": "update",
+          "content_hint": "Fix any breaking API changes",
+          "status": false
+        },
+        {
+          "step": 14,
+          "action": "Fix code breaking changes for .NET 10",
+          "description": "Fix obsolete APIs and compilation errors",
+          "file": "MusicPlayer/, MusicPlayerWeb/",
+          "operation": "update",
+          "content_hint": "Replace obsolete APIs, update using statements",
+          "status": false
+        },
+        {
+          "step": 15,
+          "action": "Update MusicPlayerWrapper.cs (WPF-specific code)",
+          "description": "Ensure WPF wrapper works with .NET 10 and updated CefSharp",
+          "file": "MusicPlayer/Controller/MusicPlayerWrapper.cs",
+          "operation": "update",
+          "content_hint": "Update WPF interop code if needed",
+          "status": false
+        },
+        {
+          "step": 16,
+          "action": "Test WPF UI loads correctly with CefSharp",
+          "description": "Verify WPF application UI components function",
+          "file": "MusicPlayerWeb/",
+          "operation": "verify",
+          "content_hint": "Main window, CefSharp browser, all features",
+          "status": false
+        },
+        {
+          "step": 17,
+          "action": "Update TECHNOLOGY-STACK.md",
+          "description": "Document new .NET 10 framework, gRPC/Websockets, updated packages",
+          "file": "docs/technology-stack.md",
+          "operation": "update",
+          "content_hint": "Add .NET 10, gRPC/Websockets, package versions",
+          "status": false
+        },
+        {
+          "step": 18,
+          "action": "Update ARCHITECTURE.md",
+          "description": "Update architecture for WCF → gRPC/Websockets transition",
+          "file": "docs/architecture.md",
+          "operation": "update",
+          "content_hint": "Update communication layer documentation",
+          "status": false
+        },
+        {
+          "step": 19,
+          "action": "Update HOW-IT-WORKS.md",
+          "description": "Document new communication flows",
+          "file": "docs/how-it-works.md",
+          "operation": "update",
+          "content_hint": "gRPC/Websockets flow diagrams",
+          "status": false
+        },
+        {
+          "step": 20,
+          "action": "Update API.md",
+          "description": "Document gRPC proto definitions OR Websocket message specs",
+          "file": "docs/api.md",
+          "operation": "update",
+          "content_hint": "gRPC service/method docs OR websocket protocol",
+          "status": false
+        },
+        {
+          "step": 21,
+          "action": "Update INDEX.md",
+          "description": "Update table of contents with new documentation",
+          "file": "docs/index.md",
+          "operation": "update",
+          "content_hint": "Verify all doc links are current",
+          "status": false
+        },
+        {
+          "step": 22,
+          "action": "Verify all docs are current (final step)",
+          "description": "Final verification that all documentation matches implementation",
+          "file": "docs/",
+          "operation": "verify",
+          "content_hint": "Review all updated docs for accuracy",
+          "status": false
+        }
+      ]
+    }
+  ],
   "rules": {
     "documentation_required": true,
     "plan_every_new_task": true,

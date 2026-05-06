@@ -7,6 +7,7 @@ using MusicPlayer.Models;
 using System.Diagnostics;
 using System.IO;
 using NAudio.Wave;
+using System.Collections.Concurrent;
 
 namespace MusicPlayer.Controller
 {
@@ -18,7 +19,7 @@ namespace MusicPlayer.Controller
         /// <summary>
         /// The songs that are currently in the database.
         /// </summary>
-        private static SynchronizedCollection<SongInformation> _resolvedSongs = new SynchronizedCollection<SongInformation>();
+        private static List<SongInformation> _resolvedSongs = new List<SongInformation>();
 
         /// <summary>
         /// Resoloves the song info.

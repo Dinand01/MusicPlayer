@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using YoutubeExplode.Models;
+using YoutubeExplode.Videos;
 
 namespace MusicPlayer.Models
 {
@@ -23,12 +23,12 @@ namespace MusicPlayer.Models
         /// <param name="video">The YoutubeExplode model.</param>
         public VideoInfo(Video video)
         {
-            this.ID = video.Id;
+            this.ID = video.Id.Value;
             this.Title = video.Title;
             this.ViewCount = video.Statistics.ViewCount;
-            this.ThumbnailUrl = video.Thumbnails.HighResUrl;
-            this.Duration = video.Duration;
-            this.Url = "https://www.youtube.com/watch?v=" + video.Id;
+            this.ThumbnailUrl = video.Thumbnails.HighResUrl ?? video.Thumbnails.FirstOrDefault()?.Url ?? "";
+            this.Duration = video.Duration ?? TimeSpan.Zero;
+            this.Url = "https://www.youtube.com/watch?v=" + video.Id.Value;
         }
 
         /// <summary>

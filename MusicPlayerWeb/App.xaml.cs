@@ -21,15 +21,18 @@ namespace MusicPlayerWeb
             try
             {
                 EnsureExecutingDirectoryIsExecutableDirectory();
-                MusicPlayerWeb.Startup.Start();
+                // CefSharp Startup temporarily disabled
+                // MusicPlayerWeb.Startup.Start();
             }
             catch (Exception e)
             {
                 Logger.LogInfo("Execution dir: " + Directory.GetCurrentDirectory());
                 Logger.LogError(e, "Application startup failure");
-                RunResource("vcredist_x64_(1).exe");
-                RunResource("vcredist_x64_(2).exe");
-                MusicPlayerWeb.Startup.Start();
+                // CefSharp dependencies temporarily disabled
+                // RunResource("vcredist_x64_(1).exe");
+                // RunResource("vcredist_x64_(2).exe");
+                // CefSharp Startup temporarily disabled
+                // MusicPlayerWeb.Startup.Start();
             }
         }
 

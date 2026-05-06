@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +28,8 @@ namespace MusicPlayerWeb
             return JsonConvert.SerializeObject(songs);
         }
 
+        // TODO: Fix YoutubeExplode API integration
+        /*
         /// <summary>
         /// Gets video info from a youtube playlist id.
         /// </summary>
@@ -56,6 +58,7 @@ namespace MusicPlayerWeb
             var task = videoCtrl.GetYoutubeChannel().Result;
             return JsonConvert.SerializeObject(task);
         }
+        */
 
         /// <summary>
         /// Gets the default ip address.

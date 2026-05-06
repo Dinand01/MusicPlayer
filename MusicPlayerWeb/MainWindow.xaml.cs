@@ -1,6 +1,6 @@
-﻿using CefSharp;
+﻿// CefSharp temporarily disabled for .NET 10 upgrade
+// using CefSharp;
 using MusicPlayer;
-using MusicPlayerWeb.CefComponents;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +48,12 @@ namespace MusicPlayerWeb
             ////this.AllowsTransparency = true;
             ////this.WindowStyle = WindowStyle.None;
             ////this.BorderThickness = new Thickness(0);
-            _musicPlayer = new MusicPlayerGate(this.Browser, this);
+            
+            // CefSharp temporarily disabled - Browser control replaced with Border placeholder
+            // _musicPlayer = new MusicPlayerGate(this.Browser, this);
+            _musicPlayer = new MusicPlayerGate(null, this);
+            
+            /*
             this.Browser.JavascriptObjectRepository.Register("MusicPlayer", _musicPlayer, isAsync: true);
             this.Browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
             {
@@ -56,8 +61,11 @@ namespace MusicPlayerWeb
             };
 
             this.Browser.DisplayHandler = new DisplayHandler(this, _dispatcher);
+            */
+            
             this.KeyDown += MainWindow_KeyDown;
 
+            /*
             this.Browser.Loaded += (sender, e) =>
             {
                 string[] args = Environment.GetCommandLineArgs();
@@ -74,6 +82,7 @@ namespace MusicPlayerWeb
                     }
                 }
             };
+            */
         }
 
         /// <summary>
@@ -86,10 +95,12 @@ namespace MusicPlayerWeb
             switch (e.Key)
             {
                 case Key.F5:
-                    this.Browser.Reload(true);
+                    // CefSharp temporarily disabled
+                    // this.Browser.Reload(true);
                     break;
                 case Key.F12:
-                    this.Browser.ShowDevTools();
+                    // CefSharp temporarily disabled
+                    // this.Browser.ShowDevTools();
                     break;
                 default:
                     break;
@@ -103,7 +114,8 @@ namespace MusicPlayerWeb
         /// <param name="e"></param>
         private void MenuItem_ShowDev_Click(object sender, RoutedEventArgs e)
         {
-            this.Browser.ShowDevTools();
+            // CefSharp temporarily disabled
+            // this.Browser.ShowDevTools();
         }
 
         /// <summary>
@@ -113,9 +125,13 @@ namespace MusicPlayerWeb
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Cef.Shutdown();
-            _musicPlayer.Dispose();
-            _musicPlayer = null;
+            // CefSharp temporarily disabled
+            // Cef.Shutdown();
+            if (_musicPlayer != null)
+            {
+                _musicPlayer.Dispose();
+                _musicPlayer = null;
+            }
         }
 
         /// <summary>
@@ -125,10 +141,11 @@ namespace MusicPlayerWeb
         /// <param name="e"></param>
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            if (_musicPlayer != null && this.WindowState == WindowState.Maximized && !this.Browser.IsInitialized)
-            {
-                Cef.Initialize();
-            }
+            // CefSharp temporarily disabled
+            // if (_musicPlayer != null && this.WindowState == WindowState.Maximized && !this.Browser.IsInitialized)
+            // {
+            //     Cef.Initialize();
+            // }
         }
 
         /// <summary>

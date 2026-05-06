@@ -1,4 +1,4 @@
-﻿using MusicPlayer.Models;
+using MusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +12,9 @@ namespace MusicPlayer.Interface
     /// </summary>
     public interface IVideo : IMusicPlayer, IDisposable
     {
-        /// <summary>
-        /// Gets the youtube channels video's.
-        /// </summary>
-        /// <param name="id">The id of the youtube channel.</param>
-        /// <returns>A list of video info.</returns>
-        Task<List<VideoInfo>> GetYoutubeChannel(string id = "UCj1xVEV4zKWr2dslkAgQAFA");
-
-        /// <summary>
-        /// Gets the playlists videos.
-        /// </summary>
-        /// <param name="id">The id of the playlist.</param>
-        /// <returns>The video info.</returns>
-        Task<List<VideoInfo>> GetYoutubePlayList(string id);
+        // TODO: Fix YoutubeExplode API integration
+        // Task<List<VideoInfo>> GetYoutubeChannel(string id = "UCj1xVEV4zKWr2dslkAgQAFA");
+        // Task<List<VideoInfo>> GetYoutubePlayList(string id);
 
         /// <summary>
         /// Start a video.

@@ -46,7 +46,8 @@ namespace MusicPlayer
                 player = new Controller.MusicPlayer();
             }
 
-            return (player as IServer) == null ? new ServerHost(player, port) : player;
+            // TODO: Implement gRPC server hosting
+            return player;
         }
 
         /// <summary>
@@ -59,7 +60,8 @@ namespace MusicPlayer
         public static IMusicPlayer GetClientPlayer(IPAddress ip, int port, IMusicPlayer player = null)
         {
             player?.Dispose();
-            return new ClientConnection(GetPlayerForReceiveMode(), ip, port);
+            // TODO: Implement gRPC client connection
+            return GetPlayerForReceiveMode();
         }
 
         /// <summary>
@@ -69,7 +71,9 @@ namespace MusicPlayer
         /// <returns>The video player.</returns>
         public static IMusicPlayer GetVideoPlayer(IMusicPlayer player = null)
         {
-            return player is IVideo p ? p : new VideoController(player);
+            // TODO: Fix YoutubeExplode API integration
+            // return player is IVideo p ? p : new VideoController(player);
+            return player;
         }
 
         /// <summary>

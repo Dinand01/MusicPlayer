@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package musicplayer;
+
+option csharp_namespace = "MusicPlayer.Protos";
+
+import "google/protobuf/timestamp.proto";
+
+// Song information message
+message SongInformationProto {
+  string title = 1;
+  string artist = 2;
+  string album = 3;
+  string location = 4;
+  bytes file = 5;
+  double duration = 6;
+  google.protobuf.Timestamp created = 7;
+}
+
+// Service for server methods (called by client)
+service MusicPlayerServerService {
+  rpc Anounce(AnounceRequest) returns (AnounceResponse);
+  rpc Goodbye(GoodbyeRequest) returns (GoodbyeResponse);
+  rpc GetCurrentPosition(GetCurrentPositionRequest) returns (GetCurrentPositionResponse);
+}
+
+// Service for client methods (called by server on the client)
+service MusicPlayerClientService {
+  rpc PlayVideo(PlayVideoRequest) returns (PlayVideoResponse);
+  rpc SeekVideo(SeekVideoRequest) returns (SeekVideoResponse);
+  rpc SetSongPosition(SetSongPositionRequest) returns (SetSongPositionResponse);
+  rpc SetSong(SetSongRequest) returns (SetSongResponse);
+  rpc SendFile(SendFileRequest) returns (SendFileResponse);
+  rpc Play(PlayRequest) returns (PlayResponse);
+  rpc PlayRadio(PlayRadioRequest) returns (PlayRadioResponse);
+  rpc Pause(PauseRequest) returns (PauseResponse);
+  rpc Disconnect(DisconnectRequest) returns (DisconnectResponse);
+}
+
+// Request/Response messages
+
+message AnounceRequest {
+  string client_id = 1;
+  string ip_address = 2;
+  int32 port = 3;
+}
+
+message AnounceResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GoodbyeRequest {
+  string client_id = 1;
+  string ip_address = 2;
+  int32 port = 3;
+}
+
+message GoodbyeResponse {
+  bool success = 1;
+}
+
+message GetCurrentPositionRequest {
+  string client_id = 1;
+}
+
+message GetCurrentPositionResponse {
+  double position = 1;
+}
+
+message PlayVideoRequest {
+  string video_url = 1;
+}
+
+message PlayVideoResponse {
+  bool success = 1;
+}
+
+message SeekVideoRequest {
+  double position = 1;
+}
+
+message SeekVideoResponse {
+  bool success = 1;
+}
+
+message SetSongPositionRequest {
+  double position = 1;
+}
+
+message SetSongPositionResponse {
+  bool success = 1;
+}
+
+message SetSongRequest {
+  SongInformationProto song = 1;
+}
+
+message SetSongResponse {
+  bool success = 1;
+}
+
+message SendFileRequest {
+  bytes file_data = 1;
+  SongInformationProto song = 2;
+}
+
+message SendFileResponse {
+  bool success = 1;
+}
+
+message PlayRequest {
+}
+
+message PlayResponse {
+  bool success = 1;
+}
+
+message PlayRadioRequest {
+  SongInformationProto radio_info = 1;
+  string url = 2;
+}
+
+message PlayRadioResponse {
+  bool success = 1;
+}
+
+message PauseRequest {
+}
+
+message PauseResponse {
+  bool success = 1;
+}
+
+message DisconnectRequest {
+}
+
+message DisconnectResponse {
+  bool success = 1;
+}

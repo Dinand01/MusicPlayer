@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MusicPlayer.Helpers;
 using MusicPlayer.Interface;
 using MusicPlayer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MusicPlayer.Controller
 {

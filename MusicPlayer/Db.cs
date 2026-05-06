@@ -1,9 +1,7 @@
-﻿using MusicPlayer.Models;
-using SQLite.CodeFirst;
+using MusicPlayer.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.SQLite.EF6;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,17 +9,10 @@ using System.Threading.Tasks;
 namespace MusicPlayer
 {
     /// <summary>
-    /// The database context.
+    /// The database context using EF Core.
     /// </summary>
     internal class Db : DbContext
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Db" /> class.
-        /// </summary>
-        public Db() : base("Db")
-        {
-        }
-
         /// <summary>
         /// Gets or sets the settings.
         /// </summary>
@@ -33,13 +24,33 @@ namespace MusicPlayer
         public DbSet<RadioStation> RadioStations { get; set; }
 
         /// <summary>
-        /// Create the database.
+        /// Configures the database context.
+        /// </summary>
+        /// <param name="optionsBuilder">The options builder.</param>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=MusicPlayer.db");
+        }
+
+        /// <summary>
+        /// Create the database model.
         /// </summary>
         /// <param name="modelBuilder">The model builder.</param>
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Database.SetInitializer<Db>(new SqliteDropCreateDatabaseWhenModelChanges<Db>(modelBuilder));
             base.OnModelCreating(modelBuilder);
+
+            // Configure Setting entity - key is Name (configured via [Key] attribute)
+            modelBuilder.Entity<Setting>(entity =>
+            {
+                entity.HasKey(e => e.Name);
+            });
+
+            // Configure RadioStation entity - key is ID
+            modelBuilder.Entity<RadioStation>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
         }
     }
 }

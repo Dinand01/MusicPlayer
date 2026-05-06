@@ -9,8 +9,9 @@ using MusicPlayer.Models;
 using MusicPlayer;
 using MusicPlayer.Interface;
 using System.Threading;
-using CefSharp.Wpf;
-using CefSharp;
+// CefSharp temporarily disabled for .NET 10 upgrade
+// using CefSharp.Wpf;
+// using CefSharp;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -39,7 +40,9 @@ namespace MusicPlayerWeb
         /// <summary>
         /// The cromium web browser UI.
         /// </summary>
-        private ChromiumWebBrowser _browser;
+        // CefSharp temporarily disabled - using object as placeholder
+        // private ChromiumWebBrowser _browser;
+        private object _browser;
 
         /// <summary>
         /// The main dispatcher.
@@ -55,7 +58,7 @@ namespace MusicPlayerWeb
         /// Initializes a new instance of the <see cref="MusicPlayerGate" /> class.
         /// </summary>
         /// <param name="browser"></param>
-        public MusicPlayerGate(ChromiumWebBrowser browser, Window window)
+        public MusicPlayerGate(object browser, Window window)
         {
             this._browser = browser;
             this._owner = window;
@@ -66,7 +69,8 @@ namespace MusicPlayerWeb
         /// </summary>
         public void Dispose()
         {
-            _browser?.Dispose();
+            // CefSharp temporarily disabled
+            // _browser?.Dispose();
             _browser = null;
             _player?.Dispose();
         }
@@ -77,7 +81,8 @@ namespace MusicPlayerWeb
         /// <param name="percentage">The new percentage.</param>
         private void CopyProgressChanged(double percentage)
         {
-            _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCopyProgress", percentage != 100 ? (double?)percentage : null);
+            // CefSharp temporarily disabled
+            // _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCopyProgress", percentage != 100 ? (double?)percentage : null);
         }
 
         /// <summary>
@@ -86,7 +91,8 @@ namespace MusicPlayerWeb
         /// <param name="song">The new song.</param>
         private void SongChanged(SongInformation song)
         {
-            _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCurrentSong", JsonConvert.SerializeObject(song).Replace("\\", "\\\\"));
+            // CefSharp temporarily disabled
+            // _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetCurrentSong", JsonConvert.SerializeObject(song).Replace("\\", "\\\\"));
         }
 
         /// <summary>
@@ -95,7 +101,8 @@ namespace MusicPlayerWeb
         /// <param name="serverInfo">The new server info.</param>
         private void ServerInfoChanged(ServerInfo serverInfo)
         {
-            _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetServerInfo", JsonConvert.SerializeObject(serverInfo).Replace("\\", "\\\\"));
+            // CefSharp temporarily disabled
+            // _browser?.ExecuteScriptAsync("window.CSSharpDispatcher.dispatchSetServerInfo", JsonConvert.SerializeObject(serverInfo).Replace("\\", "\\\\"));
         }
 
         /// <summary>

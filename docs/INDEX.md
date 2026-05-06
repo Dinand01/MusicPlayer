@@ -222,6 +222,20 @@ MusicPlayer.exe
 
 ---
 
+# Documentation Maintenance Guidelines
+
+For detailed guidelines on maintaining project documentation, including update triggers, file management rules, and verification steps, refer to the **Music Player Docs Maintenance** skill:
+
+- **Skill location**: `.hermes/skills/music-player/music-player-docs-maintenance/SKILL.md`
+- **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
+
+### Quick Rules
+1. Every code change requires documentation updates
+2. Update `docs/INDEX.md` TOC when adding new docs
+3. Verify documentation status as the last step of any task
+
+---
+
 # Version History
 
 | Version | Date | Notes |

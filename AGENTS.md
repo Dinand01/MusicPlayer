@@ -41,74 +41,11 @@ This agent is responsible for:
 
 ---
 
-## Task Structure
+## Task Planning
 
-### Task JSON Format
-
-```json
-{
-  "meta": {
-    "agent_name": "Documentation-Maintainer",
-    "storage_file": "docs/tasks.json"
-  },
-  "tasks": [
-    {
-      "id": "unique-identifier",
-      "title": "Short summary of task",
-      "status": "pending|in_progress|complete",
-      "subtasks": [
-        {
-          "step": 1,
-          "action": "File operation or command",
-          "description": "Detailed description of what to do",
-          "file": "relative/path/to/file",
-          "operation": "create|update|delete|verify",
-          "content_hint": "Notes about content, examples, etc.",
-          "status": true|false
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Step Examples
-
-**Documentation Update:**
-```json
-{
-  "step": 5,
-  "action": "Update ARCHITECTURE.md",
-  "description": "Add new WebSocket server component",
-  "file": "docs/architecture.md",
-  "operation": "update",
-  "content_hint": "Add component in server streaming architecture section"
-}
-```
-
-**Code Implementation:**
-```json
-{
-  "step": 3,
-  "action": "Implement Spotify connector service",
-  "description": "Create SpotifyAPI class with OAuth 2.0",
-  "file": "MusicPlayer/SpotifyAPI.cs",
-  "operation": "create",
-  "content_hint": "Include OAuth flow, token refresh, song fetching methods"
-}
-```
-
-**Feature Documentation:**
-```json
-{
-  "step": 7,
-  "action": "Add Spotify feature to FEATURES.md",
-  "description": "Document Spotify integration feature",
-  "file": "docs/features.md",
-  "operation": "update",
-  "content_hint": "Add new section under 'Music Source Integration'"
-}
-```
+Task structure, JSON format, and step examples are now maintained in the **Music Player Task Planning** skill:
+- **Skill name**: `music-player-task-planning` (load with `skill_view(name='music-player-task-planning')`)
+- **Skill location**: `.hermes/skills/music-player/music-player-task-planning/SKILL.md`
 
 ---
 
@@ -197,26 +134,11 @@ Continue? (y/n)"
 
 ---
 
-### Flow 4: Documentation Update Detection
+### Documentation Update Detection
 
-**Triggers (automatic):**
-- File created: Check if new feature needs doc
-- Code changed: Check affected docs
-- Library added: Check TECHNOLOGY-STACK.md
-- Architecture changed: Check ARCHITECTURE.md
-
-**Response:**
-```
-Detected change in: MusicPlayer/SpotifyAPI.cs
-
-Documentation update needed:
-├── FEATURES.md: Add Spotify feature
-├── TECHNOLOGY-STACK.md: Add Spotify library
-├── API.md: Add Spotify API endpoints
-└── INDEX.md: Update TOC
-
-Will add these to task. Continue?
-```
+Documentation update triggers and response templates are now maintained in the **Music Player Docs Maintenance** skill:
+- **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
+- **Skill location**: `.hermes/skills/music-player/music-player-docs-maintenance/SKILL.md`
 
 ---
 
@@ -260,26 +182,11 @@ Will add these to task. Continue?
 
 ---
 
-## Files I Maintain
+## Documentation Files Management
 
-### Read (to understand state)
-- `docs/tasks.json` - Active tasks
-- `docs/.tasks-backup.json` - Backup tasks
-- `docs/architecture.md` - System architecture
-- `docs/features.md` - Feature list
-- `docs/technology-stack.md` - Tech stack
-- `docs/how-it-works.md` - Detailed flows
-- `docs/api.md` - API reference
-- `docs/index.md` - Table of contents
-
-### Write (to maintain state)
-- `docs/tasks.json` - Add/remove/update tasks
-- `.tasks-backup.json` - Backup created when I update
-
-### Never Touch (by default)
-- Actual code files (unless part of task)
-- Pre-existing documentation (I update them as part of tasks)
-- Test files (unless explicitly requested)
+The list of files maintained, read/write rules, and never-touch guidelines are now in the **Music Player Docs Maintenance** skill:
+- **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
+- **Skill location**: `.hermes/skills/music-player/music-player-docs-maintenance/SKILL.md`
 
 ---
 

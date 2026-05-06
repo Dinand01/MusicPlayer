@@ -3,8 +3,8 @@
     "agent_name": "Documentation-Maintainer & Refactoring Agent",
     "storage_file": "docs/tasks.json",
     "backup_file": "docs/.tasks-backup.json",
-    "last_updated": "2026-05-06T14:25:00",
-    "version": "2.0"
+    "last_updated": "2026-05-06T14:45:00",
+    "version": "2.1"
   },
   "active_task_count": 0,
   "tasks": [],
@@ -13,7 +13,10 @@
     "plan_every_new_task": true,
     "atomic_steps": true,
     "verify_before_complete": true,
-    "auto_create_plan_if_not_in_list": false
+    "auto_create_plan_if_not_in_list": false,
+    "task_file_required": true,
+    "task_file_location": "docs/tasks/yyyy-MM-dd-taskdescription.md",
+    "task_file_template": "docs/tasks/.template.md"
   },
   "documentation_files": {
     "architecture": {

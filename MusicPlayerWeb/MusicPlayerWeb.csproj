@@ -2,34 +2,33 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>MusicPlayerWeb</RootNamespace>
+    <OutputType>Exe</OutputType>
     <AssemblyName>MusicPlayerWeb</AssemblyName>
+    <RootNamespace>MusicPlayerWeb</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>play_button.ico</ApplicationIcon>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Avalonia packages -->
-    <PackageReference Include="Avalonia" Version="11.2.3" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
-    <!-- CefGlue for Avalonia (Chromium) -->
-    <PackageReference Include="CefGlue.Avalonia" Version="120.6099.1" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="CefGlue.Common" />
+    <PackageReference Include="CefGlue.Avalonia" />
     <!-- JSON -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MusicPlayer\MusicPlayer.csproj" />
+    <ProjectReference Include="../MusicPlayer/MusicPlayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx" />
-    <EmbeddedResource Include="Resources\DirbleApiKey.dirbleapikey" />
+    <AvaloniaResource Include="play_button.ico" />
   </ItemGroup>
 
 </Project>

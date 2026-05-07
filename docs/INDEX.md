@@ -5,8 +5,8 @@
 Welcome to the **Music Player Documentation** for the current state of this repository.
 
 This project is a .NET-based music streaming application that combines:
-- A **WPF desktop backend** (C# / .NET Framework 4.5.2)
-- A **React web frontend** (v15.5.4) embedded via CefSharp
+- A **Avalonia desktop backend** (C# / .NET 10)
+- A **React web frontend** embedded via CefGlue.Avalonia (Chromium)
 - Custom **TCP streaming protocol** for real-time audio broadcasting
 - Full **YouTube integration** for video streaming
 - Support for **internet radio** and **file copying utilities**
@@ -27,7 +27,7 @@ Music Player is a desktop music streaming application that lets you:
 
 ## Current State
 
-This documentation captures the **current state** of the repository. As changes are made, relevant documentation sections will be updated accordingly.
+This documentation captures the **current state** of the repository (migrated to .NET 10 with cross-platform support). As changes are made, relevant documentation sections will be updated accordingly.
 
 ## Quick Links
 
@@ -38,7 +38,7 @@ This documentation captures the **current state** of the repository. As changes 
 | [Technology Stack](./TECHNOLOGY-STACK.md) | Technologies, libraries, and dependencies |
 | [How It Works](./HOW-IT-WORKS.md) | Detailed inner workings of features |
 | [API Reference](./API.md) | Data structures, functions, and protocols |
-| [Index](./README.md) | This overview |
+| [Task List](./tasks.json) | Current development tasks and progress |
 
 ---
 
@@ -49,16 +49,17 @@ This documentation captures the **current state** of the repository. As changes 
 The application follows a **hybrid architecture**:
 
 ```
-┌────────────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────┐
 │                      Music Player System                     │
-├────────────────────────────────────────────────────────────┤
+├────────────────────────────────────────────────────┤
 │                                                              │
-│  Desktop App (WPF)                                          │
-│    └── MainWindow.xaml                                        │
-│        └── MusicPlayer namespace                            │
-│            └── Audio playback, library management          │
+│  Desktop App (Avalonia + CefGlue)                       │
+│    └── MainWindow.axaml                                  │
+│        └── MusicPlayerGate namespace                      │
+│            ├── Audio playback, library management          │
+│            └── CefGlue.Avalonia browser integration       │
 │                                                              │
-│  Browser (CefSharp)                                         │
+│  Browser (CefGlue.Avalonia - Chromium)                         │
 │    └── React App (Webpack Bundle)                           │
 │        └── Redux Store                                        │
 │            ├── currentSong                                   │
@@ -68,7 +69,7 @@ The application follows a **hybrid architecture**:
 │  Streaming (Custom TCP Protocol)                            │
 │    └── Server ↔ Client communication                        │
 │                                                              │
-└────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────┘
 ```
 
 **See [ARCHITECTURE.md](./ARCHITECTURE.md) for full details.**
@@ -83,26 +84,27 @@ The application follows a **hybrid architecture**:
 - ✅ **Internet Radio** - Browse and tune in
 - ✅ **File Copy** - Copy random files between folders
 - ✅ **Metadata** - Full ID3/TagLib metadata support
+- ✅ **Cross-Platform** - Windows, Linux, macOS support
 
 **See [FEATURES.md](./FEATURES.md) for feature details.**
 
 ## Technology Stack
 
 **Backend:**
-- .NET Framework 4.5.2
-- WPF + System.Web
-- CefSharp
+- .NET 10 (net10.0)
+- Avalonia 11.2.3 (cross-platform UI)
+- CefGlue.Avalonia 120.6099.1 (Chromium browser)
 
 **Frontend:**
-- React 15.5.4
-- Redux 5
+- React (version in package.json)
+- Redux
 - Webpack
 
 **Libraries:**
-- NAudio (audio)
+- NAudio (cross-platform audio)
 - TagLib# (metadata)
 - YoutubeExplode (YouTube)
-- SQLite (database)
+- Microsoft.Data.Sqlite (database)
 
 **See [TECHNOLOGY-STACK.md](./TECHNOLOGY-STACK.md) for full list.**
 
@@ -110,12 +112,13 @@ The application follows a **hybrid architecture**:
 
 The application uses:
 - **Redux** for state management
-- **CSharpDispatcher** for JS-interop with C#
+- **window.MusicPlayer** for JS-interop with C#
 - **Custom TCP protocol** for streaming
 - **SQLite** for metadata storage
+- **CefGlue.Avalonia** for Chromium browser integration
 
 Major flows documented:
-1. **Startup** → WPF + CefSharp initialization
+1. **Startup** → Avalonia + CefGlue initialization
 2. **Audio Import** → NAudio scanning
 3. **Server Connection** → TCP handshake
 4. **YouTube Sync** → Position/volume sync
@@ -126,11 +129,11 @@ Major flows documented:
 ## API Documentation
 
 The API covers:
-- **C# Bridge** - Functions exposed to JavaScript
+- **C# Bridge** - Functions exposed to JavaScript via window.MusicPlayer
 - **Redux State** - State shapes and actions
 - **Streaming Protocol** - TCP message format
 - **YouTube API** - Integration patterns
-- **Database API** - SQLite operations
+- **Database API** - SQLite operations via Microsoft.Data.Sqlite
 
 **See [API.md](./API.md) for full API reference.**
 
@@ -142,46 +145,51 @@ The API covers:
 
 ```
 .
-├── MusicPlayer/                    # WPF backend project
-│   ├── MusicPlayer.csproj
-│   ├── MusicPlayerGate.*.cs
-│   └── [audio logic]
-├── MusicPlayer.Installer/          # Setup installer
-├── MusicPlayerWeb/                 # CefSharp + Web project
-│   ├── MusicPlayerWeb.csproj
-│   ├── Startup.cs
-│   ├── SchemeHandlerFactory.cs
-│   └── Web/                       # React frontend
+├── MusicPlayer/                    # Core library project
+│   ├── MusicPlayer.csproj        # net10.0
+│   ├── Controller/               # Business logic
+│   ├── Models/                  # Data models
+│   └── Interface/               # Contracts
+├── MusicPlayerWeb/               # Avalonia UI project
+│   ├── MusicPlayerWeb.csproj   # net10.0 + Avalonia + CefGlue
+│   ├── MainWindow.axaml         # Avalonia XAML
+│   ├── MusicPlayerGate.*.cs     # C# ↔ JS bridge
+│   └── Web/                    # React frontend
 │       ├── Pages/
 │       ├── Scripts/
 │       ├── Style/
 │       └── Resources/
+├── docs/                         # Documentation
+│   ├── tasks.json              # Task list
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   ├── HOW-IT-WORKS.md
+│   ├── TECHNOLOGY-STACK.md
+│   └── INDEX.md                # This file
 └── README.md
 ```
 
 ## Status
 
 | Aspect | Status | Notes |
-|--------|--------|-|-|
+|--------|--------|-------|
 | Functionality | ✅ Operational | All features working |
-| Code State | ⚠️ Legacy | React 15.5.4, .NET 4.5.2 |
-| Documentation | ✅ Complete | Current state documented |
-| Build System | ⚠️ Visual Studio 2015+ | .NET Framework |
+| Code State | ✅ Migrated | .NET 10 + Avalonia + CefGlue |
+| Documentation | ✅ In Progress | Current state documented |
+| Build System | ✅ .NET 10 | Cross-platform (win-x64, linux-x64, osx-x64) |
+| Platform Support | ✅ Cross-Platform | Windows, Linux (tested), macOS (pending) |
 
 ## Known Limitations
 
-1. **React Version**: v15.5.4 (very outdated, consider upgrade)
-2. **.NET Framework**: 4.5.2 (modernize recommended)
-3. **Protocol**: Custom TCP (consider HTTP/WebSocket alternatives)
-4. **Platform**: Windows-only (WPF limitation)
+1. **React Version**: May be outdated, consider upgrade
+2. **.NET 10**: Recently migrated from .NET Framework 4.5.2
+3. **Protocol**: Custom TCP (consider HTTP/WebSocket alternatives for future)
+4. **macOS Testing**: Build works, needs runtime testing
 
-## Upgrade Opportunities
+## Upgrade History
 
-- **React v16/v17/v18** migration
-- **.NET Core / .NET 6+** for cross-platform
-- **Official YouTube Data API** instead of embed
-- **HTTPS** support
-- **WebSocket** for modern streaming
+- **2026-05-06**: Migrated to .NET 10 + Avalonia + CefGlue.Avalonia
+- **Earlier**: .NET Framework 4.5.2 + WPF + CefSharp.Wpf
 
 ---
 
@@ -196,16 +204,32 @@ When you modify the codebase, update this documentation:
 - **Library dependency added** → [TECHNOLOGY-STACK.md](./TECHNOLOGY-STACK.md)
 - **New module/flow documented** → [HOW-IT-WORKS.md](./HOW-IT-WORKS.md)
 - **New API endpoint/function** → [API.md](./API.md)
+- **New doc added** → Update this INDEX.md
 
 ## Build Instructions
 
-### Build Backend (WPF)
+### Build Solution (.NET 10)
+
 ```bash
-# Requires Visual Studio + .NET Framework 4.5.2
-msbuild MusicPlayer.sln /p:Configuration=Release
+dotnet restore
+dotnet build MusicPlayerWeb/MusicPlayerWeb.csproj
+```
+
+### Build for Specific Platform
+
+```bash
+# Windows
+dotnet build MusicPlayerWeb/MusicPlayerWeb.csproj -r win-x64
+
+# Linux
+dotnet build MusicPlayerWeb/MusicPlayerWeb.csproj -r linux-x64
+
+# macOS
+dotnet build MusicPlayerWeb/MusicPlayerWeb.csproj -r osx-x64
 ```
 
 ### Build Frontend (React)
+
 ```bash
 cd MusicPlayerWeb/Web
 npm install
@@ -213,11 +237,9 @@ npm run webpack
 ```
 
 ### Run
-```bash
-# Backend
-MusicPlayer.exe
 
-# Frontend (auto-loaded by CefSharp)
+```bash
+dotnet run --project MusicPlayerWeb/MusicPlayerWeb.csproj
 ```
 
 ---
@@ -230,9 +252,11 @@ For detailed guidelines on maintaining project documentation, including update t
 - **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
 
 ### Quick Rules
+
 1. Every code change requires documentation updates
 2. Update `docs/INDEX.md` TOC when adding new docs
 3. Verify documentation status as the last step of any task
+4. Cross-platform changes must be documented in TECHNOLOGY-STACK.md
 
 ---
 
@@ -240,7 +264,8 @@ For detailed guidelines on maintaining project documentation, including update t
 
 | Version | Date | Notes |
 |--------|------|-------|
-| Initial | N/A | Current state documented |
+| .NET 10 + Avalonia | 2026-05-06 | Cross-platform support added |
+| .NET Framework 4.5.2 + WPF | Prior | Windows-only, legacy |
 
 ---
 
@@ -248,7 +273,8 @@ For detailed guidelines on maintaining project documentation, including update t
 
 - **Music Player**: See repository LICENSE
 - **React**: MIT
-- **CefSharp**: MIT
+- **Avalonia**: MIT
+- **CefGlue**: See CefGlue license
 - **NAudio**: BSD
 - **TagLib#**: LGPL
 - **YouTube**: Subject to YouTube Terms of Service
@@ -257,7 +283,7 @@ For detailed guidelines on maintaining project documentation, including update t
 
 # Quick Reference
 
-### Most Common Tasks
+## Most Common Tasks
 
 | Task | How-To | See |
 |------|--------|-----|
@@ -268,6 +294,14 @@ For detailed guidelines on maintaining project documentation, including update t
 | Browse radio | `/radio` → Search → Click station | [Features](./FEATURES.md) |
 | Copy files | `/copy` → Select folders → "Copy" | [Features](./FEATURES.md) |
 
+## Cross-Platform Notes
+
+- **Windows**: ✅ Tested, CEF 120 binaries included
+- **Linux**: ✅ Tested (current build platform)
+- **macOS**: ⚠️ Build verified, runtime testing pending
+
+**See [API.md - Cross-Platform Notes](./API.md#7-cross-platform-notes) for details.**
+
 ---
 
 # Support & Troubleshooting
@@ -277,6 +311,7 @@ For detailed guidelines on maintaining project documentation, including update t
 - Videos not playing → Check YouTube API/iframe
 - Can't connect → Verify IP/port/firewall
 - Slow import → Large libraries may need batching
+- Audio not working → Check NAudio output device
 
 **See [HOW-IT-WORKS.md](./HOW-IT-WORKS.md) for troubleshooting.**
 

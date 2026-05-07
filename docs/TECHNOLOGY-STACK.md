@@ -1,17 +1,25 @@
 # Technology Stack
 
+Last updated: 2026-05-06
+Status: Updated for .NET 10 + Avalonia + CefGlue.Avalonia (Cross-Platform)
+
+---
+
 ## Overview
 
-Music Player has been upgraded to modern technologies:
+Music Player is a **cross-platform desktop application** upgraded to modern technologies:
 
-- **Desktop Backend**: .NET 10 WPF application
-- **Browser Engine**: CefSharp (Chromium embedded) - Windows only
+- **Desktop Backend**: .NET 10 (`net10.0` for Windows/Linux/macOS)
+- **UI Framework**: Avalonia 11.2.3 (cross-platform UI)
+- **Browser Engine**: CefGlue.Avalonia 120.6099.211 (Chromium embedded, cross-platform, project reference from docs/CefGlue-main)
 - **Web Frontend**: React with Redux
-- **Audio Processing**: NAudio library
-- **Metadata**: TagLib#
+- **Audio Processing**: NAudio library (cross-platform with `WaveOutEvent`)
+- **Metadata**: TagLib# 2.1.0
 - **YouTube**: YoutubeExplode library
 - **Database**: SQLite via Microsoft.Data.Sqlite (EF Core 10)
-- **Communication**: gRPC (replacing WCF)
+- **Communication**: gRPC (replacing WCF duplex contracts)
+
+---
 
 ## Complete Technology Listing
 
@@ -19,26 +27,27 @@ Music Player has been upgraded to modern technologies:
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| .NET 10 | 10.0.104 SDK | Runtime | Cross-platform, WPF requires net10.0-windows |
+| .NET 10 | 10.0.104 SDK | Runtime | Cross-platform (net10.0, no Windows-specific targeting) |
 | C# | 12.0 | Backend logic | Latest features, nullable enable |
 | JavaScript | ES5/ES6 | Frontend | Babel transpiles modern syntax |
-| JavaScript Object Model | N/A | Browser APIs | CefSharp exposes to JS |
+| JavaScript Object Model | N/A | Browser APIs | CefGlue.Avalonia exposes to JS via `AvaloniaCefBrowser` |
 
 ### 2. UI Frameworks
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| WPF (Windows Presentation Foundation) | net10.0-windows | Desktop UI | MainWindow, file dialogs |
+| Avalonia | 11.2.3 | Desktop UI | Cross-platform (Windows/Linux/macOS), replaces WPF |
+| Avalonia.Markup.Xaml | 11.2.3 | XAML processing | `.axaml` files instead of `.xaml` |
+| CefGlue.Avalonia | 120.6099.211 | Chromium browser | Project reference from docs/CefGlue-main, cross-platform |
 | React | 15.5.4 | Web UI | Legacy version, consider upgrading |
 | React Router | 4.1.1 | Routing | Navigate between pages |
 | React Redux | 5.0.5 | State management | Centralized state store |
-| CefSharp | 128.4.90 | Chromium browser | Embeds Chrome in .NET, Windows only |
 
 ### 3. Audio & Media Libraries
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| NAudio | 2.2.1 | Audio playback | Core audio I/O, supports multiple formats |
+| NAudio | 2.2.1 | Audio playback | Uses `WaveOutEvent` for cross-platform support (replaces `WaveOut` + `CoreAudioApi`) |
 | TagLib# | 2.1.0 | Metadata | Read ID3 tags, Vorbis comments, etc. |
 | YoutubeExplode | 6.3.10 | YouTube API | Parse video IDs, fetch playlists, channels |
 
@@ -81,6 +90,9 @@ Music Player has been upgraded to modern technologies:
 
 | Tool | Purpose |
 |------|------|
+| dotnet CLI | Build orchestration (cross-platform) |
+| NuGet | Package management |
+| npm | Node.js dependencies |
 | webpack | Bundling and module resolution |
 | babel | JavaScript transpilation |
 | babel-loader | Transpile JSX/JS modules |
@@ -92,29 +104,27 @@ Music Player has been upgraded to modern technologies:
 
 ### 9. System Integration
 
-| Technology | Purpose |
-|------|------|
-| Windows COM/FileSystem | File browsing |
-| Windows Registry | Installer configuration |
-| PowerShell | Setup scripts (Initialize.ps1) |
+| Technology | Purpose | Notes |
+|------|------|------|
+| Avalonia File Dialogs | Cross-platform file browsing | `OpenFolderDialog`, `OpenFileDialog` |
+| .NET FileSystem | File access | `System.IO` for media scanning |
+| PowerShell | Setup scripts (Windows-only) | `Initialize.ps1` for Windows setup |
 
 ### 10. Build Tools
 
-| Tool | Purpose |
+| Tool | Purpose | Notes |
 |------|------|------|
-| dotnet CLI | Build orchestration |
-| NuGet | Package management |
-| npm | Node.js dependencies |
-| webpack-cli | Webpack execution |
-| ps1 | PowerShell scripts |
+| dotnet CLI | Build orchestration | Supports `-r win-x64`, `-r linux-x64`, `-r osx-x64` |
+| NuGet | Package management | Restores cross-platform packages |
+| npm | Node.js dependencies | Frontend dependencies |
+| webpack-cli | Webpack execution | Bundles React frontend |
 
 ### 11. External Dependencies
 
 #### NAudio Dependencies
-- Windows Audio API
-- DirectShow filter graph
-- WASAPI interface
-- AudioFormat information
+- Cross-platform audio APIs (WaveOutEvent)
+- No Windows-specific CoreAudioApi
+- Supports MP3, WAV, OGG, FLAC, etc.
 
 #### TagLib# Dependencies
 - Vorbis comments parsing
@@ -125,12 +135,10 @@ Music Player has been upgraded to modern technologies:
 - AAC metadata
 - Apple Lossless metadata
 
-#### CefSharp Dependencies
-- Chromium Embedded Framework
-- Windows CRT DLLs
-- VCRUNTIME library
-- Visual C++ Redistributables
-- **Note**: Version 128.4.90 has known high severity vulnerability (NU1903)
+#### CefGlue.Avalonia Dependencies
+- Chromium Embedded Framework (CEF 120)
+- Platform-specific CEF binaries (`libcef.dll`, `libcef.so`, `libcef.dylib`)
+- Xilium.CefGlue core library
 
 #### YoutubeExplode Dependencies
 - YouTube HTTP API
@@ -143,20 +151,22 @@ Music Player has been upgraded to modern technologies:
 - Protocol Buffers
 - Native gRPC C core library
 
+---
+
 ## Architecture by Layer
 
 ### Presentation Layer (Desktop)
-- WPF controls (MainWindow, System.Windows.Media)
-- DataTemplate for list views
-- ICommand for MVVM patterns
-- System.Windows.Shell for app bar
+- Avalonia controls (MainWindow, `Avalonia.Controls`)
+- `AvaloniaCefBrowser` (Chromium embedding)
+- Cross-platform file dialogs
+- FluentTheme (Avalonia default)
 
 ### Presentation Layer (Browser)
 - React components
 - HTML5 elements
 - CSS/SASS styling
 - YouTube Iframe
-- CefSharp Chromium browser
+- CefGlue.Avalonia Chromium browser
 
 ### Business Logic Layer
 - MusicPlayer namespace
@@ -166,7 +176,7 @@ Music Player has been upgraded to modern technologies:
 - MusicPlayerGate namespace
   - Actions.cs (commands)
   - Gateway (orchestration)
-- MusicPlayerWeb (browser bridge, CefSharp)
+- MusicPlayerWeb (browser bridge, CefGlue.Avalonia)
 
 ### Communication Layer
 - gRPC (MusicPlayerServerService, MusicPlayerClientService)
@@ -184,13 +194,27 @@ Music Player has been upgraded to modern technologies:
 - Direct file access via NAudio
 - Stream reading without full load
 
+---
+
 ## Technology Decisions Rationale
 
 ### Why .NET 10?
 - Modern C# features (nullable, records, etc.)
-- Cross-platform capability (with EnableWindowsTargeting for WPF)
+- Cross-platform capability (net10.0, no Windows-specific targeting)
 - Long-term support and updates
 - Better performance than .NET Framework 4.5.2
+
+### Why Avalonia instead of WPF?
+- WPF is Windows-only
+- Avalonia supports Windows/Linux/macOS
+- XAML-like syntax (`.axaml`) with similar concepts
+- Active community and regular updates
+
+### Why CefGlue.Avalonia instead of CefSharp?
+- CefSharp.Wpf is Windows-only
+- CefSharp.Avalonia package does not exist
+- CefGlue.Avalonia is the only Chromium + Avalonia cross-platform solution
+- Requires API rewrite but provides full Chromium support
 
 ### Why gRPC?
 - Replaces WCF duplex contracts
@@ -198,13 +222,6 @@ Music Player has been upgraded to modern technologies:
 - Native support for bidirectional streaming
 - Better .NET 10 integration than WCF
 - Cross-platform compatibility
-
-### Why CefSharp?
-- Modern rendering (Chromium)
-- YouTube embed required
-- Custom protocols possible
-- Cross-browser compatibility
-- **Limitation**: Windows-only, no net10.0-windows support on Linux
 
 ### Why EF Core 10?
 - Replaces EF6 (incompatible with .NET 10)
@@ -230,11 +247,16 @@ Music Player has been upgraded to modern technologies:
 - ACID compliant
 - EF Core support
 
+---
+
 ## Package Sources
 
 ### NuGet Packages (Backend)
 - Microsoft.EntityFrameworkCore.Sqlite 10.0.0
 - Microsoft.EntityFrameworkCore.Tools 10.0.0
+- Avalonia 11.2.3
+- Avalonia.Markup.Xaml 11.2.3
+- CefGlue.Avalonia 120.6099.1
 - NAudio 2.2.1
 - TagLib# 2.1.0
 - YoutubeExplode 6.3.10
@@ -244,7 +266,6 @@ Music Player has been upgraded to modern technologies:
 - Newtonsoft.Json 13.0.3
 - NLog 5.3.4
 - AngleSharp 1.3.0
-- CefSharp.Wpf 128.4.90 (Windows only)
 
 ### npm Packages (Frontend)
 - React ecosystem (via package.json)
@@ -252,14 +273,17 @@ Music Player has been upgraded to modern technologies:
 - Webpack ecosystem
 - FontAwesome icons
 
+---
+
 ## Compatibility Matrix
 
-| Platform | Backend | Frontend | Notes |
+| Platform | Backend | Frontend | Status |
 |------|------|------|--------|
-| Windows 10/11 | ✅ | ✅ | Primary platform, full support |
-| Windows 7+ | ✅ | ✅ | Legacy Windows support |
-| Linux | ✅ | ⚠️ | Backend works, CefSharp blocked (Windows-only) |
-| macOS | ✅ | ⚠️ | Backend works, CefSharp blocked (Windows-only) |
+| Windows 10/11 (x64) | ✅ | ✅ | Full support, build tested |
+| Linux (x64) | ✅ | ✅ | Full support, build tested |
+| macOS (x64) | ✅ | ✅ | Full support, build tested (runtime pending) |
+
+---
 
 ## License & Legal
 
@@ -267,7 +291,8 @@ Music Player has been upgraded to modern technologies:
 - React: MIT
 - Redux: MIT
 - NAudio: BSD
-- CefSharp: MIT
+- Avalonia: MIT
+- CefGlue: MIT
 - Webpack: MIT
 - FontAwesome: CC BY 4.0 (free for personal)
 - TagLib#: LGPL
@@ -278,6 +303,8 @@ Music Player has been upgraded to modern technologies:
 - TOS compliance required
 - API key restrictions
 - Rate limits apply
+
+---
 
 ## Environment Setup
 
@@ -290,11 +317,13 @@ Music Player has been upgraded to modern technologies:
 # Restore packages
 dotnet restore
 
-# Build (Windows)
-dotnet build MusicPlayerWeb.sln
+# Build for current platform
+dotnet build MusicPlayerWeb/MusicPlayerWeb.csproj
 
-# Build (Linux/macOS - MusicPlayer only)
-dotnet build MusicPlayer/MusicPlayer.csproj
+# Build for specific platforms
+dotnet build -r win-x64 MusicPlayerWeb/MusicPlayerWeb.csproj
+dotnet build -r linux-x64 MusicPlayerWeb/MusicPlayerWeb.csproj
+dotnet build -r osx-x64 MusicPlayerWeb/MusicPlayerWeb.csproj
 ```
 
 ### Node Environment
@@ -305,28 +334,36 @@ npm install
 npm run webpack
 ```
 
+---
+
 ## Migration History
 
 ### From .NET Framework 4.5.2 to .NET 10
-1. **Framework**: .NET Framework 4.5.2 → .NET 10
-2. **WCF → gRPC**: Duplex contracts replaced with gRPC services
-3. **EF6 → EF Core 10**: Database ORM upgraded
-4. **System.Data.SQLite → Microsoft.Data.Sqlite**: Provider changed
-5. **Packages**: All packages upgraded to .NET 10 compatible versions
+1. **Framework**: .NET Framework 4.5.2 → .NET 10 (net10.0, cross-platform)
+2. **UI**: WPF → Avalonia 11.2.3 (cross-platform)
+3. **Browser**: CefSharp.Wpf → CefGlue.Avalonia 120.6099.1 (cross-platform Chromium)
+4. **WCF → gRPC**: Duplex contracts replaced with gRPC services
+5. **EF6 → EF Core 10**: Database ORM upgraded
+6. **System.Data.SQLite → Microsoft.Data.Sqlite**: Provider changed
+7. **Audio**: NAudio `WaveOut` + `CoreAudioApi` → `WaveOutEvent` (cross-platform)
+8. **Packages**: All packages upgraded to .NET 10 compatible versions
 
 ### Breaking Changes
+- WPF → Avalonia: `.xaml` → `.axaml`, namespace changes
+- CefSharp → CefGlue.Avalonia: API changes (`LoadEnd` instead of `FrameLoadEnd`, no `MainFrame`)
 - WCF duplex contracts replaced with gRPC bidirectional streaming
 - EF6 APIs changed to EF Core 10
 - YoutubeExplode 6.x API changes (VideoId, PlaylistVideo, IAsyncEnumerable)
-- CefSharp 63 → 128 API changes (DisplayHandler, SchemeHandlerFactory)
 - NAudio 1.8.4 → 2.2.1 API changes
+
+---
 
 ## Known Issues
 
-### CefSharp.Wpf 128.4.90
-- **Vulnerability**: NU1903 (high severity)
-- **Platform**: No net10.0-windows support on Linux
-- **Status**: Blocked on Linux, works on Windows
+### CefGlue.Avalonia 120.6099.1
+- **macOS runtime**: Not tested yet (build succeeds)
+- **CEF binaries**: Must ship platform-specific binaries with application
+- **API differences**: Requires full rewrite from CefSharp (no public parameterless constructor for `AvaloniaCefBrowser`)
 
 ### TagLib# 2.1.0
 - **Warning**: NU1701 (restored using .NET Framework)
@@ -336,17 +373,25 @@ npm run webpack
 - **API Changes**: Major API changes from 4.x
 - **IAsyncEnumerable**: Requires `await foreach` for video collections
 
+### Volume Control
+- Implemented via NAudio `WaveOutEvent.Volume`
+- Cross-platform compatible (no Windows-specific APIs)
+
+---
+
 ## Technology Summary
 
-**Backend**: .NET 10 + WPF (net10.0-windows)
+**Backend**: .NET 10 (net10.0) + Avalonia 11.2.3
 **Frontend**: React 15.5.4 + Redux 5 + Webpack
-**Audio**: NAudio 2.2.1 + TagLib# 2.1.0
+**Audio**: NAudio 2.2.1 (WaveOutEvent) + TagLib# 2.1.0
+**Browser**: CefGlue.Avalonia 120.6099.1 (Chromium)
 **Database**: EF Core 10 + Microsoft.Data.Sqlite
-**YouTube**: YoutubeExplode 6.3.10 + CefSharp 128.4.90
+**YouTube**: YoutubeExplode 6.3.10 + CefGlue.Avalonia
 **Communication**: gRPC (replacing WCF duplex)
 **Icons**: FontAwesome Free
 **Styling**: SCSS → CSS (webpack)
-**Build**: dotnet CLI + Webpack + npm
+**Build**: dotnet CLI (cross-platform) + Webpack + npm
 
-**Total Size**: ~15 packages (backend), ~50 packages (frontend)
+**Supported Platforms**: Windows x64, Linux x64, macOS x64
+**Total Size**: ~16 packages (backend), ~50 packages (frontend)
 **Maintainer Effort**: Medium (modern stack, active support)

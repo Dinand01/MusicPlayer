@@ -2,16 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using Xilium.CefGlue;
-using Xilium.CefGlue.Avalonia;
 using MusicPlayer;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Xilium.CefGlue.Avalonia;
 
 namespace MusicPlayerWeb
 {
@@ -24,30 +19,29 @@ namespace MusicPlayerWeb
         /// The CefGlue browser instance.
         /// </summary>
         private AvaloniaCefBrowser _browser;
-
+        
         /// <summary>
         /// The instance of the musicplayer interface.
         /// </summary>
         private MusicPlayerGate _musicPlayer;
-
+        
         /// <summary>
         /// The dispatcher for the current thread;
         /// </summary>
         private Dispatcher _dispatcher = Dispatcher.UIThread;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow" /> class.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
-
+            
             // Get the browser wrapper from XAML
             var browserWrapper = this.FindControl<Decorator>("BrowserWrapper");
-
-            // Create browser in code-behind (not in XAML)
+            
+            // Create browser using AvaloniaCefBrowser from CefGlue.Avalonia
             _browser = new AvaloniaCefBrowser();
-            _browser.Address = "custom://custom/index.html";
             
             // Add browser to the visual tree
             browserWrapper.Child = _browser;
@@ -55,27 +49,23 @@ namespace MusicPlayerWeb
             // Wait for browser to load, then set up JS interop
             _browser.LoadEnd += (sender, e) =>
             {
-                if (e.Frame.IsMain)
-                {
-                    Logger.LogInfo("CefGlue browser loaded");
-                    
-                    // Set up JS interop after browser is ready
-                    SetupJsInterop();
-                }
+                Console.WriteLine("CefGlue browser loaded");
+                
+                // Set up JS interop after browser is ready
+                SetupJsInterop();
             };
-
+            
             _musicPlayer = new MusicPlayerGate(_browser, this);
-
+            
             this.KeyDown += MainWindow_KeyDown;
         }
-
+        
         /// <summary>
         /// Set up JavaScript interop.
         /// </summary>
         private void SetupJsInterop()
         {
             // In CefGlue, inject JS object using ExecuteJavaScript
-            // Wait for frame to load, then inject MusicPlayer object
             string script = @"
                 window.MusicPlayer = {
                     togglePlay: function() { window.external && window.external.TogglePlay && window.external.TogglePlay(); },
@@ -98,7 +88,7 @@ namespace MusicPlayerWeb
             ";
             _browser.ExecuteJavaScript(script, "musicplayer-inject", 0);
         }
-
+        
         /// <summary>
         /// Handle keydown events for the main window.
         /// </summary>
@@ -118,7 +108,7 @@ namespace MusicPlayerWeb
                     break;
             }
         }
-
+        
         /// <summary>
         /// Dispose of the music player UI.
         /// </summary>
@@ -126,9 +116,8 @@ namespace MusicPlayerWeb
         {
             _musicPlayer?.Dispose();
             _musicPlayer = null;
-            CefRuntime.Shutdown();
         }
-
+        
         /// <summary>
         /// Play or Pause the music.
         /// </summary>
@@ -136,7 +125,7 @@ namespace MusicPlayerWeb
         {
             _musicPlayer.TogglePlay();
         }
-
+        
         /// <summary>
         /// Skip to the next song.
         /// </summary>

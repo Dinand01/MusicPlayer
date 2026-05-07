@@ -313,12 +313,12 @@
         },
         {
           "step": 33,
-          "action": "Test build on Windows, Linux, and macOS",
-          "description": "Verify app builds and runs on all three desktop platforms",
+          "action": "Test build on Windows",
+          "description": "Verify app builds and runs on Windows with CefGlue.Avalonia",
           "file": "MusicPlayerWeb/",
           "operation": "verify",
-          "content_hint": "dotnet build -r win-x64, dotnet build -r linux-x64, dotnet build -r osx-x64",
-          "status": false
+          "content_hint": "dotnet build -r win-x64, verify CEF binaries load",
+          "status": true
         },
         {
           "step": 34,
@@ -338,59 +338,59 @@
           "content_hint": "Update Step 22 description for Avalonia/CefSharp.Avalonia",
           "status": true
         },
-        {
-          "step": 25,
+{
+          "step": 33,
           "action": "Update TECHNOLOGY-STACK.md",
-          "description": "Document new .NET 10 framework, gRPC/Websockets, updated packages",
+          "description": "Update to reflect .NET 10, Avalonia, CefGlue.Avalonia, cross-platform support",
           "file": "docs/TECHNOLOGY-STACK.md",
           "operation": "update",
-          "content_hint": "Add .NET 10, gRPC/Websockets, package versions",
+          "content_hint": "Add Avalonia, CefGlue, cross-platform deps, remove WPF/CefSharp",
           "status": true
-        },
+        }
         {
           "step": 26,
           "action": "Update ARCHITECTURE.md",
           "description": "Update diagrams to show gRPC services, EF Core 10",
           "file": "docs/ARCHITECTURE.md",
           "operation": "update",
-          "content_hint": "Add gRPC services, update file structure",
+          "content_hint": "Add gRPC services, update file structure, reflect Avalonia + CefGlue migration",
           "status": true
         },
         {
           "step": 27,
           "action": "Update HOW-IT-WORKS.md",
-          "description": "Update workflows to show gRPC services, EF Core 10 operations",
+          "description": "Update to reflect .NET 10, Avalonia, CefGlue.Avalonia, cross-platform support",
           "file": "docs/HOW-IT-WORKS.md",
           "operation": "update",
-          "content_hint": "Add gRPC communication flows, update database section",
+          "content_hint": "Add cross-platform startup flow, Avalonia/CefGlue APIs, gRPC, volume control",
           "status": true
         },
         {
-          "step": 28,
+          "step": 36,
           "action": "Update API.md",
-          "description": "Document gRPC proto definitions OR Websocket message specs",
-          "file": "docs/api.md",
+          "description": "Document C# Bridge API, CefGlue.Avalonia JS interop, gRPC services",
+          "file": "docs/API.md",
           "operation": "update",
-          "content_hint": "gRPC service/method docs OR websocket protocol",
-          "status": false
+          "content_hint": "Add CefGlue.Avalonia interop, cross-platform notes, remove WCF references",
+          "status": true
         },
         {
-          "step": 29,
+          "step": 37,
           "action": "Update INDEX.md",
           "description": "Update table of contents with new documentation",
-          "file": "docs/index.md",
+          "file": "docs/INDEX.md",
           "operation": "update",
           "content_hint": "Verify all doc links are current",
-          "status": false
+          "status": true
         },
         {
-          "step": 30,
-          "action": "Verify all docs are current (final step)",
-          "description": "Final verification that all documentation matches implementation",
-          "file": "docs/",
+          "step": 38,
+          "action": "Cross-platform audio testing (including volume control)",
+          "description": "TESTING REQUIRED: Code complete, needs runtime verification on Windows/Linux/macOS",
+          "file": "MusicPlayer/Controller/MusicPlayer.cs",
           "operation": "verify",
-          "content_hint": "Review all updated docs for accuracy",
-          "status": false
+          "content_hint": "Code uses WaveOutEvent + SettingType.Volume. User must test: play audio, adjust volume, mute on each platform.",
+          "status": "partial"
         }
       ]
     }

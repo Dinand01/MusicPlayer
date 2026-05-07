@@ -11,33 +11,33 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.3.0" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.3.4" />
-    <PackageReference Include="taglib" Version="2.1.0" />
-    <PackageReference Include="YoutubeExplode" Version="6.4.1" />
-    <PackageReference Include="Google.Protobuf" Version="3.29.3" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-    <PackageReference Include="Grpc.Core" Version="2.46.6" />
-    <PackageReference Include="Grpc.Tools" Version="2.67.0">
+    <PackageReference Include="AngleSharp" />
+    <PackageReference Include="NAudio" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NLog" />
+    <PackageReference Include="taglib" />
+    <PackageReference Include="YoutubeExplode" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.AspNetCore" />
+    <PackageReference Include="Grpc.Core" />
+    <PackageReference Include="Grpc.Tools">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\musicplayer.proto" GrpcServices="Both" />
+    <Protobuf Include="Protos\\musicplayer.proto" GrpcServices="Both" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\DirbleApiKey.dirbleapikey" />
-    <Content Include="Resources\ReadMe.txt" />
+    <EmbeddedResource Include="Resources\\DirbleApiKey.dirbleapikey" />
+    <Content Include="Resources\\ReadMe.txt" />
   </ItemGroup>
 
 </Project>

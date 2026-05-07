@@ -14,6 +14,14 @@ namespace MusicPlayer
     internal class Db : DbContext
     {
         /// <summary>
+        /// Constructor - ensures database is created.
+        /// </summary>
+        public Db()
+        {
+            Database.EnsureCreated();
+        }
+        
+        /// <summary>
         /// Gets or sets the settings.
         /// </summary>
         public DbSet<Setting> Settings { get; set; }

@@ -239,8 +239,15 @@ _Pvt_Extensions
 GeneratedArtifacts/
 ModelManifest.xml
 
-# Paket dependency manager
-.paket/paket.exe
-
 # FAKE - F# Make
 .fake/
+
+# CEF binaries (downloaded at build time)
+CEF/
+
+# CEF runtime caches
+DawnCache/
+GPUCache/
+
+# Sqlite db
+MusicPlayer.db

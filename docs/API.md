@@ -14,6 +14,7 @@ This document describes the data structures, functions, and communication interf
 4. [YouTube Integration API](#4-youtube-integration-api)
 5. [Web Interface API](#5-web-interface-api)
 6. [Database API](#6-database-api)
+7. [Cross-Platform Notes](#7-cross-platform-notes)
 
 ---
 
@@ -21,37 +22,64 @@ This document describes the data structures, functions, and communication interf
 
 The C# backend exposes methods to the JavaScript frontend via the `window.MusicPlayer` global object.
 
+**Implementation:** Uses CefGlue.Avalonia's `ExecuteJavaScript` to inject the `window.MusicPlayer` object. Communication is via `window.external` pattern (JS → C#) and `ExecuteJavaScript` (C# → JS).
+
 ### Global Object: `window.MusicPlayer`
 
 #### Methods
 
 | Method | Signature | Description | Returns |
 |------|------|------|------|
-| `openFolder()` | `() => Promise<string>` | Opens a folder browser dialog to select music library | File path or null |
-| `openFiles()` | `() => Promise<string[]>` | Opens file browser for multiple file selection | Array of file paths |
-| `hostServer(port)` | `(port: number) => Promise<void>` | Starts hosting music on specified port | void |
-| `disconnectServer()` | `() => Promise<void>` | Stops the music server | void |
-| `connectToServer(ip, port)` | `(ip: string, port: number) => Promise<void>` | Connects to a remote server | void |
-| `getVideoInfoFromPlaylist(playlistId)` | `(id: string) => Promise<string>` | Fetches playlist video metadata | JSON string |
-| `getChannelVideos()` | `() => Promise<string>` | Fetches recent videos from channel | JSON string |
-| `getStations(searchText)` | `(text: string) => Promise<string>` | Fetches radio stations | JSON string |
-| `getDefaultIP()` | `() => Promise<string>` | Gets default local IP address | IP string |
-| `getVolume()` | `() => Promise<number>` | Gets current volume level | 0-100 |
-| `setVolume(value)` | `(value: number) => Promise<void>` | Sets global volume | void |
-| `seekVideo(position)` | `(position: number) => Promise<void>` | Seeks to video position | void |
-| `startVideo(url)` | `(url: string) => Promise<void>` | Starts YouTube video playback | void |
-| `stopVideo()` | `() => Promise<void>` | Stops video playback | void |
-| `copySongs(source, dest, count)` | `(src, dst, n: number) => Promise<void>` | Copies random songs | void |
-| `selectFolder()` | `() => Promise<string>` | Opens folder picker for copy | File path |
-| `seekVideo(position)` | `(position: number) => Promise<void>` | Seeks to position in video | void |
+| `togglePlay()` | `() => void` | Toggles play/pause | void |
+| `nextSong()` | `() => void` | Skips to next song | void |
+| `playSong(jsonSong)` | `(json: string) => void` | Plays a specific song (JSON) | void |
+| `toggleShuffle(shuffle)` | `(shuffle: boolean) => void` | Toggles shuffle mode | void |
+| `setVolume(volume)` | `(volume: number) => void` | Sets volume (0-100) | void |
+| `seekVideo(position)` | `(position: number) => void` | Seeks video to position (ms) | void |
+| `moveToTime(seconds)` | `(seconds: number) => void` | Seeks audio to time (seconds) | void |
+| `stop()` | `() => void` | Stops playback | void |
+| `hostServer(port)` | `(port: number) => void` | Starts hosting music server | void |
+| `connectToServer(ip, port)` | `(ip: string, port: number) => void` | Connects to remote server | void |
+| `disconnectServer()` | `() => void` | Disconnects from server | void |
+| `startVideo(url)` | `(url: string) => void` | Starts YouTube video playback | void |
+| `stopVideo()` | `() => void` | Stops video playback | void |
+| `copySongs(source, dest, count)` | `(src, dst, n: number) => void` | Copies random songs | void |
+| `openFolder()` | `() => void` | Opens folder browser dialog | void |
+| `openFiles()` | `() => void` | Opens file browser for multiple files | void |
 
-#### Global Functions (via window.CSSharpDispatcher)
+### Global Functions (via window.CSSharpDispatcher)
 
 | Function | Signature | Description |
 |------|------|------|
 | `dispatchSetCurrentSong(jsonSong)` | `(song: object) => void` | Sets current song in Redux |
-| `dispatchSetServerinfo(jsonInfo)` | `(info: object) => void` | Updates server info in Redux |
+| `dispatchSetServerInfo(jsonInfo)` | `(info: object) => void` | Updates server info in Redux |
 | `dispatchSetCopyProgress(progress)` | `(percent: number) => void` | Updates copy progress |
+
+### C# Backend Implementation
+
+**File:** `MusicPlayerWeb/MusicPlayerGate.cs`, `MusicPlayerWeb/MusicPlayerGate.Actions.cs`
+
+**Key methods:**
+- `TogglePlay()` - Calls `_player?.TogglePlay()`
+- `NextSong()` - Calls `_player?.Next()`
+- `Play(string jsonSong)` - Deserializes JSON and calls `_player?.Play(song)`
+- `SetVolume(int percentage)` - Calls `_player?.SetVolume(percentage)`
+- `SeekVideo(double position)` - Calls `ctrl?.Seek(position)` (IVideo)
+- `MoveToTime(long seconds)` - Calls `_player?.MoveToTime(seconds)`
+- `Stop()` - Disposes player, calls `SongChanged(null)`
+- `HostServer(int port)` - Creates server player, calls `ServerInfoChanged()`
+- `ConnectToServer(string ip, int port)` - Creates client player, saves IP to `SettingType.RemoteIP`
+- `StartVideo(string url)` - Creates video player, calls `video.StartVideo(url)`
+- `CopySongs(string source, string dest, int number)` - Uses `Factory.GetCopy()`
+
+**JS Interop Pattern:**
+```csharp
+// C# → JS: Using ExecuteJavaScript
+_browser.ExecuteJavaScript($"window.CSSharpDispatcher.dispatchSetCurrentSong({json})", "musicplayer", 0);
+
+// JS → C#: Via window.external (traditional)
+window.external && window.external.TogglePlay && window.external.TogglePlay();
+```
 
 ---
 
@@ -146,22 +174,6 @@ store.dispatch(SongActions.setCurrentSong(song));
 }
 ```
 
-**Client info example:**
-```javascript
-{
-    IsHost: false,
-    Host: "192.168.1.100",
-    Port: 8963,
-    Clients: {
-        "192.168.1.101": 8963,
-        "192.168.1.102": 8963,
-        "192.168.1.103": 8963
-    },
-    VideoUrl: "https://www.youtube.com/watch?v=abc123",
-    VideoPosition: 123456
-}
-```
-
 ### CopyProgress Reducer
 
 **State slice:**
@@ -169,12 +181,6 @@ store.dispatch(SongActions.setCurrentSong(song));
 {
     copyProgress: null | number   // 0-100 percentage
 }
-```
-
-**Actions:**
-```javascript
-store.dispatch(SongActions.changeCopyProgress(50)); // 50%
-store.dispatch(SongActions.changeCopyProgress(100)); // Complete
 ```
 
 ---
@@ -193,7 +199,7 @@ sequenceDiagram
 
     ClientApp->>TcpSocket: socket.connect(ip, port)
     TcpSocket-->>ClientApp: Connection established
-    ClientApp->>TcpSocket: socket.write("CONNECT")
+    ClientApp->>TcpSocket: socket.write("CONNECT\r\n")
     TcpSocket->>TcpSocket: Send to server
     TcpSocket->>ServerApp: Receive "ACCEPTED" + audio stream
     TcpSocket->>ClientApp: Read audio data
@@ -225,13 +231,13 @@ Server -> Client: "ACCEPTED\r\n"
 
 | Command | Format | Description |
 |------|------|------|
-| CONNECT | "CONNECT\r\n" | Allow new connection |
-| PLAY | "PLAY:{volume}\r\n" | Start playing at volume |
-| PAUSE | "PAUSE\r\n" | Pause playback |
-| SEEK:{position} | "SEEK:123456\r\n" | Jump to position |
-| VOLUME:{value} | "VOLUME:75\r\n" | Set volume |
-| VIDEO:{url} | "VIDEO:https://youtube.com/..." | Switch video |
-| POSITION:{position} | "POSITION:123456\r\n" | Current video position |
+| CONNECT | `"CONNECT\r\n"` | Allow new connection |
+| PLAY | `"PLAY:{volume}\r\n"` | Start playing at volume |
+| PAUSE | `"PAUSE\r\n"` | Pause playback |
+| SEEK:{position} | `"SEEK:123456\r\n"` | Jump to position |
+| VOLUME:{value} | `"VOLUME:75\r\n"` | Set volume |
+| VIDEO:{url} | `"VIDEO:https://youtube.com/..."` | Switch video |
+| POSITION:{position} | `"POSITION:123456\r\n"` | Current video position |
 
 ### Client Commands
 
@@ -239,12 +245,12 @@ Server -> Client: "ACCEPTED\r\n"
 
 | Command | Format | Description |
 |------|------|------|
-| CONNECT | "CONNECT\r\n" | Request connection |
-| DISCONNECT | "DISCONNECT\r\n" | Close connection |
-| PLAY | "PLAY:123456,85\r\n" | Play at position 123456 with volume 85 |
-| PAUSE | "PAUSE\r\n" | Pause playback |
-| POSITION_UPDATE:{position} | "POSITION_UPDATE:123456\r\n" | Sync position |
-| VOLUME:{value} | "VOLUME:75\r\n" | Set volume |
+| CONNECT | `"CONNECT\r\n"` | Request connection |
+| DISCONNECT | `"DISCONNECT\r\n"` | Close connection |
+| PLAY | `"PLAY:123456,85\r\n"` | Play at position 123456 with volume 85 |
+| PAUSE | `"PAUSE\r\n"` | Pause playback |
+| POSITION_UPDATE:{position} | `"POSITION_UPDATE:123456\r\n"` | Sync position |
+| VOLUME:{value} | `"VOLUME:75\r\n"` | Set volume |
 
 ---
 
@@ -281,8 +287,8 @@ player.getCurrentTime() => number;
 
 ```javascript
 function extractVideoId(url) {
-    const youtuBeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\- ]+)/;
-    const match = url.match(youtuBeRegex);
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\-\s]+)/;
+    const match = url.match(youtubeRegex);
     return match ? match[1] : null;
 }
 
@@ -375,7 +381,7 @@ disconnectServer()          // Disconnect all
 
 ## 6. Database API
 
-SQLite database operations via System.Data.SQLite.LINQ.
+SQLite database operations via Microsoft.Data.Sqlite (migrated from System.Data.SQLite).
 
 ### Db Class Interface
 
@@ -484,99 +490,52 @@ CREATE TABLE PlaylistSongs (
 );
 ```
 
-### Usage Examples
+---
 
+## 7. Cross-Platform Notes
+
+### Technology Stack (.NET 10 + Avalonia + CefGlue)
+
+**Framework:** .NET 10 (net10.0)
+**UI Framework:** Avalonia 11.2.3 (cross-platform desktop UI)
+**Browser Control:** CefGlue.Avalonia 120.6099.1 (Chromium-based, cross-platform)
+
+### Platform Support
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| Windows (x64) | ✅ Supported | Tested, CEF 120 binaries included |
+| Linux (x64) | ✅ Supported | Tested (current build platform) |
+| macOS (x64) | ⚠️ Pending test | Need to verify CEF 120 binaries |
+
+### Audio Playback (NAudio)
+
+**Library:** NAudio (cross-platform via WaveOutEvent)
+**Volume Control:** `DataController.SetSetting<int>(SettingType.Volume, percentage)`
+
+**Implementation:**
 ```csharp
-// Load all songs
-var songs = Db.GetSongs().ToList();
+// MusicPlayer.cs
+_volume = DataController.GetSetting<int>(SettingType.Volume, 50);
+_player.SetVolume(_volume);
 
-// Search
-var matching = Db.SearchSongs("rock").ToList();
-
-// Get file path
-var song = Db.GetSongByPath(fullPath);
-
-// Increment play count
-Db.UpdateSong(song);
-song.PlayCount++;
-Db.SaveChanges();
-
-// Scan folder
-newFolder = "C:\\Music\\NewArtist";
-Db.ScanFolder(newFolder);
+// Volume range: 0-100
 ```
+
+### File Dialogs (Avalonia)
+
+**Implementation:** Uses Avalonia's `TopLevel.StorageProvider` API
+```csharp
+var topLevel = TopLevel.GetTopLevel(control);
+var result = await topLevel.StorageProvider.OpenFilePickerAsync(options);
+```
+
+### Known Limitations
+
+1. **CEF Binaries:** Must be available for each platform (Windows/Linux/macOS)
+2. **Audio Output:** NAudio's WaveOutEvent works cross-platform, but advanced audio features may be platform-specific
+3. **Database:** Microsoft.Data.Sqlite works cross-platform, but file paths must be handled correctly
 
 ---
 
-## 7. Network Configuration
-
-### Port Configuration
-
-The application uses a configurable port for streaming:
-
-**Default:** 8963
-
-**Changing port:**
-```csharp
-// In Server.jsx
-this.state = { port: 8963 };  // User can change this
-
-// In C#
-MusicPlayer.hostServer(port);
-```
-
-### Firewall Requirements
-
-For remote access:
-1. Port must be forwarded in router
-2. Windows Firewall rule added
-3. No other applications using port
-
-### Security Recommendations
-
-- Use port forwarding for external access
-- Consider HTTPS/TLS for future upgrade
-- Implement authentication layer
-- Validate incoming protocol commands
-- Monitor for malformed requests
-
----
-
-## Appendix: Error Handling
-
-### JavaScript Errors
-
-```javascript
-// Try-catch for async operations
-try {
-    await MusicPlayer.openConnection();
-} catch (e) {
-    console.error("Connection failed", e);
-}
-
-// Handle network errors
-window.addEventListener('error', (e) => {
-    if (e.message.includes('Socket')) {
-        // Reconnect attempt
-    }
-});
-```
-
-### C# Errors
-
-```csharp
-try {
-    hostServer(port);
-} catch (InvalidOperationException) {
-    // Invalid port
-} catch (SocketException) {
-    // Socket issue
-} catch (Exception ex) {
-    // Log and handle
-    Logger.LogError(ex);
-}
-```
-
----
-
-**End of API Reference documentation**
+**Last Updated:** 2026-05-06 (Cross-platform migration complete)

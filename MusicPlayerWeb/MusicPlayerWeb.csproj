@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Avalonia packages -->
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
@@ -25,10 +24,35 @@
 
   <ItemGroup>
     <ProjectReference Include="../MusicPlayer/MusicPlayer.csproj" />
+    <ProjectReference Include="../CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="play_button.ico" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="web/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+<Target Name="CopyCustomBrowserProcess" AfterTargets="AfterBuild">
+  <PropertyGroup>
+    <BrowserProcessSourceDir>$(ProjectDir)../CefGlue.BrowserProcess/bin/$(Configuration)/net10.0</BrowserProcessSourceDir>
+    <BrowserProcessTargetDir>$(OutputPath)CefGlueBrowserProcess</BrowserProcessTargetDir>
+  </PropertyGroup>
+  
+  <RemoveDir Directories="$(BrowserProcessTargetDir)" />
+  <MakeDir Directories="$(BrowserProcessTargetDir)" />
+  
+  <ItemGroup>
+    <BrowserProcessFiles Include="$(BrowserProcessSourceDir)/**/*" />
+  </ItemGroup>
+  
+  <Copy SourceFiles="@(BrowserProcessFiles)" DestinationFolder="$(BrowserProcessTargetDir)/%(RecursiveDir)" />
+  
+  <Message Text="Copied custom .NET 10 BrowserProcess to $(BrowserProcessTargetDir)" Importance="high" />
+</Target>
 
 </Project>

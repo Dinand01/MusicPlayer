@@ -1,11 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using MusicPlayer;
 using System;
-using System.IO;
-using System.Linq;
 using Xilium.CefGlue.Avalonia;
 
 namespace MusicPlayerWeb
@@ -25,14 +21,6 @@ namespace MusicPlayerWeb
         /// </summary>
         private MusicPlayerGate _musicPlayer;
         
-        /// <summary>
-        /// The dispatcher for the current thread;
-        /// </summary>
-        private Dispatcher _dispatcher = Dispatcher.UIThread;
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow" /> class.
-        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -54,8 +42,12 @@ namespace MusicPlayerWeb
                 // Set up JS interop after browser is ready
                 SetupJsInterop();
             };
-            
+
             _musicPlayer = new MusicPlayerGate(_browser, this);
+            // Set the URL using the Address property
+            // Note: CefGlue normalizes URL to lowercase, so folder is "web" (lowercase)
+            Console.WriteLine("Setting browser Address property...");
+            _browser.Address = "local://web/Pages/index.html";
             
             this.KeyDown += MainWindow_KeyDown;
         }

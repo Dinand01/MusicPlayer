@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Xilium.CefGlue.BrowserProcess</AssemblyName>
+    <RootNamespace>Xilium.CefGlue.BrowserProcess</RootNamespace>
+    <RuntimeIdentifiers>osx-x64;osx-arm64;win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ObjectBinding\CefGlueGlobalScript.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ObjectBinding\CefGlueGlobalScript.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CefGlue.Common" />
+    <PackageReference Include="System.Runtime.Loader" />
+  </ItemGroup>
+
+</Project>

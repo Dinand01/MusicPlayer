@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <DotnetVersion>net10.0</DotnetVersion>
-    <AvaloniaVersion>11.2.3</AvaloniaVersion>
-    <CefRedistVersion>75.1.0</CefRedistVersion>
-    <CefRedistLinuxVersion>75.1.0</CefRedistLinuxVersion>
-    <CefRedistOSXVersion>75.1.0</CefRedistOSXVersion>
+    <AvaloniaVersion>11.3.14</AvaloniaVersion>
+    <CefRedistVersion>147.0.10</CefRedistVersion>
+    <CefRedistLinuxVersion>147.0.10</CefRedistLinuxVersion>
+    <CefRedistOSXVersion>147.0.10</CefRedistOSXVersion>
   </PropertyGroup>
 </Project>

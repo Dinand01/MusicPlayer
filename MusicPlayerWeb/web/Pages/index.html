@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title>MusicPlayer</title>
+        <script src="https://www.youtube.com/iframe_api"></script>
+    </head>
+    <body>
+        <div id="react-root"></div>
+        <script type="text/javascript">
+            // CefGlue-compatible shim for MusicPlayer object
+            window.MusicPlayer = window.MusicPlayer || null;
+            
+            // Notify .NET that the page is ready to bind objects
+            if (window.external && typeof window.external.cefQuery === 'function') {
+                window.external.cefQuery({ request: 'pageReady' });
+            }
+            
+            // Test the MusicPlayer object after a short delay
+            setTimeout(() => {
+                if (window.MusicPlayer) {
+                    console.log('Testing MusicPlayer methods...');
+                    
+                    // Test getDefaultIP
+                    window.MusicPlayer.getDefaultIP().then(result => {
+                        console.log('getDefaultIP result:', result);
+                    }).catch(err => {
+                        console.error('getDefaultIP error:', err);
+                    });
+                    
+                    // Test getSongs (should return empty array or null)
+                    window.MusicPlayer.getSongs(0, '').then(result => {
+                        console.log('getSongs result:', result);
+                    }).catch(err => {
+                        console.error('getSongs error:', err);
+                    });
+                    
+                    // Test getCurrentSong
+                    window.MusicPlayer.getCurrentSong().then(result => {
+                        console.log('getCurrentSong result:', result);
+                    }).catch(err => {
+                        console.error('getCurrentSong error:', err);
+                    });
+                    
+                } else {
+                    console.error('MusicPlayer object not found!');
+                }
+            }, 1500);
+        </script>
+    </body>
+</html>

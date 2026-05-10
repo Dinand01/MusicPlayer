@@ -9,7 +9,7 @@ namespace MusicPlayerWeb
     /// </summary>
     public class SchemeHandlerFactory : CefSchemeHandlerFactory
     {
-        public const string SchemeName = "custom";
+        public const string SchemeName = "local";
         private string _baseDirectory;
 
         public SchemeHandlerFactory(string baseDirectory)

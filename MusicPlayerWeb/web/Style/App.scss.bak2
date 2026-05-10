@@ -1,0 +1,628 @@
+@import "bootstrap/scss/bootstrap";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts/";
+@import "@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "@fortawesome/fontawesome-free/scss/solid.scss";
+@import "@fortawesome/fontawesome-free/scss/brands.scss";
+@import "@fortawesome/fontawesome-free/scss/regular.scss";
+@import '~rc-slider/assets/index.css';
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Colors http://paletton.com/#uid=3450u0kllllaFw0g0qFqFg0w0aF */
+$color-primary-0: #333B78;	// Main Primary color */
+$color-primary-1: #4D5DD4;
+$color-primary-2: #3846B6;
+$color-primary-3: #1F2239;
+$color-primary-4: #111322;
+
+$color-secondary-1-0: #699D35;	// Main Secondary color (1) */
+$color-secondary-1-1: #9AF140;
+$color-secondary-1-2: #8CE82F;
+$color-secondary-1-3: #374A24;
+$color-secondary-1-4: #202D13;
+
+$color-secondary-2-0: #94335C;	// Main Secondary color (2) */
+$color-secondary-2-1: #EB3E87;
+$color-secondary-2-2: #DC2C76;
+$color-secondary-2-3: #462231;
+$color-secondary-2-4: #2A121C;
+
+$color-white: #FFFFFF;
+
+.appRoot, #react-root {
+    width: 100%;
+    height: 100%; 
+    background-color: $color-primary-4;
+}
+
+.mainContainer {
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+h1, h2, h3, p, div, span {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, p, i, div {
+    color: $color-white;
+}
+
+h1, h2, h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+p {
+    margin: 0;
+}
+
+div {
+    background-color: inherit;
+}
+
+a {
+    background-color: inherit;
+    color: $color-secondary-1-0;
+    text-decoration: none;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+button, button > i {
+    color: $color-secondary-1-3;
+}
+
+button:disabled {
+     opacity: 0.5;
+}
+
+button:focus {
+    outline: none !important;
+}
+
+input[Type=Text]:disabled {
+    background-color: lightgray;
+}
+
+input {
+    display: inline-block;
+    margin: 5px;
+}
+
+.primary-button {
+    background-color: inherit;
+    border: 5px $color-white solid;
+    border-radius: 18px;
+    color: $color-white;
+    font-weight: bold;
+    padding: 0 15px;
+}
+
+    .primary-button:hover {
+        border-color: $color-secondary-1-1;
+        color: $color-secondary-1-1;
+    }
+
+.iconButton {
+    background-color: transparent;
+    color: white;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    margin: 2px;
+}
+
+    .iconButton > i {
+        color: inherit;
+    }
+
+    .iconButton:hover > i {
+        color: $color-secondary-1-1;
+    }
+
+.text-red {
+    color: $color-secondary-2-0;
+}
+
+button.text-red:hover > i {
+    color: $color-secondary-2-2;
+}
+
+.navigation {
+    height: 30px;
+    list-style: none;
+    padding: 5px;
+    padding-left: 0;
+    padding-top: 0;
+}
+
+.navigation > li {
+    width: 50px;
+    background-color: $color-primary-0;
+    display: table;
+    height: calc(100% - 7px);
+    cursor: pointer;
+    float: left;
+    margin-bottom: 2px;
+}
+
+.navigation > li {
+    margin-right: 1px; 
+}
+
+.navigation > li:hover {
+    outline: 2px solid $color-secondary-1-2;
+    background-color: $color-secondary-1-1;
+}
+
+.navigation > li:hover i {
+    color: $color-primary-4;
+}
+
+.navigation > li > a {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.sliderHeightMax .slick-slider, .sliderHeightMax .slick-list, .sliderHeightMax .slick-track, .sliderHeightMax .slick-slide > div, .sliderHeightMax .slick-slide > div > div {
+    height: 100%;
+}
+
+.menu, .playlist {
+    display: table;
+}
+
+.menu {
+    height: 100%;
+    width: calc(100% - 50px);
+    padding: 25px;
+    position: relative;
+}
+
+.menu > div, .playlist > div {
+    display: table-cell;
+    vertical-align: middle;
+    position: relative;
+}
+
+.menu-carousel-slide {
+    padding: 10%;
+}
+
+.menu-carousel-slide > div {
+    text-align: center;
+    padding: 5% 0;
+}
+
+    .menu-carousel-slide > div:hover i {
+        color: $color-secondary-1-2;
+        cursor: pointer;
+    }
+
+.slick-prev {
+    z-index: 1;
+    left: 5px;
+}
+
+.slick-next {
+    right: 5px;
+}
+
+    .slick-prev:before, .slick-next:before {
+        font-size: 2rem;
+        color: $color-primary-1;
+    }
+
+.playlist-pages {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.songImage > i{
+    font-size: 30vw;
+    padding-left: 20px;
+}
+
+.songImage > img {
+    width: 100%;
+}
+
+.song-position {
+    cursor: pointer;
+}
+
+    .song-position, .song-position > div {
+        color: $color-secondary-2-1;
+        background-color: inherit;
+    }
+
+    .song-position > div {
+        margin: 0;
+    }
+
+    .song-position .rc-slider-handle {
+        margin-left: 0;
+        border: none;
+        width: 0.5rem;
+        height: 1rem;
+        margin-top: -0.33rem;
+    }
+
+    .song-position:hover .rc-slider-handle {
+        background-color: $color-secondary-1-1;
+    }
+
+    .song-position .rc-slider-step {
+        background-color: $color-secondary-1-2;
+    }
+
+    .song-position .rc-slider-rail, .song-position .rc-slider-step{
+        height: 0.1rem;
+        top: 0.4rem;
+    }
+
+    .song-position .rc-slider-disabled {
+        cursor: not-allowed !important;
+    }
+
+    .song-position .rc-slider-disabled .rc-slider-step, .rc-slider-disabled .rc-slider-handle {
+        background-color: lightgray !important;
+        color: lightgray !important;
+    }
+
+.scroll {
+    overflow-y: auto;
+}
+
+    .scroll::-webkit-scrollbar { 
+        display: none;  // Safari and Chrome
+    }
+
+.highlight:hover {
+    color: $color-secondary-1-1 !important;
+    cursor: pointer;
+}
+
+    .highlight:hover div {
+        color: inherit !important;
+    }
+
+.h-35-px {
+    min-height: 35px;
+}
+
+form input[type=text] {
+    padding: 5px;
+    height: 25px;
+}
+
+.valid {
+    border-color: $color-secondary-1-1;
+}
+
+.invalid {
+    border-color: $color-secondary-2-1;
+}
+
+.volumeSlider {
+    height: 24px;
+    width:100px;
+    position: relative;
+}
+
+.volumeSlider > div {
+    width: 75px;
+    margin-top: 0;
+    margin-right: 2px;
+    height: 24px;
+}
+
+.volumeSlider > button {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.volumeSlider .rc-slider-rail{
+    height: 0;
+    width: 0;
+    border-bottom: 24px solid transparent;
+    border-left: 75px solid $color-primary-4;
+    background-color: transparent;
+    margin-top: 0;
+    z-index: 2;
+    border-radius: 0;
+    top: 0;
+}
+
+.volumeSlider .rc-slider-track {
+    visibility: visible;
+    left: 0%;
+    bottom: 0;
+    top: 0;
+    background-color: $color-secondary-1-2;
+    border-radius: 0;
+    height: 100%;
+}
+
+.volumeSlider .rc-slider-handle {
+    z-index: 3;
+    width: 4px;
+    background-color: transparent;
+    height: 100%;
+    border: 0px;
+    border-radius: 0px;
+    margin-left: 0;
+}
+
+.songlist {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.songlist-head {
+    display: table-row;
+    padding: 5px 0 5px 0; 
+}
+
+.songlist-head > input {
+    float: right;
+}
+
+.songlist-body {
+    display: table-row;
+    height: 100%;
+}
+
+.songlist-body > div {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.songlist-header {
+    display: table-row;
+}
+
+.songlist-header > div {
+    width: 100%;
+    display: table;
+}
+
+.songlist-header > div > div {
+    display: table-cell;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.songlist-songs {
+    height: 100%;
+    display: table-row;
+}
+
+.songlist-songs > div {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.songlist-songs > div::-webkit-scrollbar { 
+    display: none; 
+}
+
+.songlist-songs > div > div {
+    display: table;
+    width: 100%;
+}
+
+.songlist-item {
+    display: table-row;
+    cursor: pointer;
+}
+
+.songlist-item:hover > div {
+    color: $color-secondary-1-1 !important;
+}
+
+.songlist-item > div {
+    display: table-cell;
+    padding-left: 5px;
+    padding-right: 5px;
+    word-break: break-all;
+    word-wrap: break-word;
+    font-size: 0.75em;
+}
+
+.server-connect {
+    padding: 1em;
+}
+
+.server-connect > input {
+    margin-left: 0;
+    margin-bottom: 1em;
+}
+
+.server-connect > p {
+    margin-bottom: 1em;
+}
+
+.server-connect > button {
+    display: block;
+}
+
+.server-clients {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.server-clients > div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.server-clients > div > div {
+    display: inline-block;
+}
+
+.server-clients > div > div > p {
+    width: 100%;
+}
+
+.server-clients > div > div > button {
+    margin-top: 1em;
+}
+
+.copy-files-form {
+    margin: 1em;
+    display: flex;
+    flex-flow: row wrap;
+    height: calc(100% - 2em);
+    width: calc(100% - 2em);
+}
+
+.copy-files-form h2 {
+    text-align: left;
+}
+
+.copy-files-form > div {
+    text-align: center;
+}
+
+.copy-files-form > div > div {
+    display: table-cell;
+    
+}
+
+.copy-files-form > div button,
+.copy-files-form > div input {
+    display: inline-block;
+}
+
+.copy-progress {
+    display: table;
+    height: 100%;
+    width: 100%;   
+}
+
+.copy-progress > div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.flex-1x {
+    flex: 1 100%;
+}
+
+.flex-2x {
+    flex: 1 50%;
+}
+
+.video {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.video > header, .video > section {
+    display: table-row;
+    width: 100%;
+    padding: 5px;
+}
+
+.video > section {
+    height: 100%;
+}
+
+.video > header  input {
+    margin-left: 5px;
+    width: calc(100% - 15px);
+}
+
+.video iframe {
+    width: 100%;
+    height: calc(100% - 10px);
+}
+
+.video > section > i {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 800%;
+}
+
+.video-thumb-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    align-items: center;
+    height: 100%;
+    justify-content: space-between;
+    overflow-y: scroll;
+}
+
+.video-thumb-container::-webkit-scrollbar { 
+    display: none; 
+}
+
+.video-thumb {
+    width: 200px;
+    height: 100px;
+    text-align: center;
+    background-color: black;
+    float: left;
+    margin: 5px;
+    position: relative;
+    cursor: pointer;
+}
+
+.video-thumb > img {
+    display: inline-block;
+    height: 100%;
+}
+
+.video-thumb > p {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: small;
+}
+
+.video-thumb > p:hover {
+    font-weight: bold;
+    font-size: inherit;
+}
+
+.loader {
+    position: sticky;
+    left: 50%;
+    top: 50%;
+}
+
+.loader-center {
+    position: fixed !important;
+    top: 50% !important;
+    left: 25% !important;
+}

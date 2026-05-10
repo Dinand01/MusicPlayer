@@ -1,10 +1,10 @@
-﻿import path from 'path'; 
+﻿import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-export default () => ({  
+export default () => ({
     entry: [
-      path.join(__dirname, 'Scripts/App/ReduxApp.jsx'),
+        path.join(__dirname, 'Scripts/App/ReduxApp.jsx'),
     ],
     output: {
         path: path.join(__dirname, 'Scripts/Build'),
@@ -12,43 +12,51 @@ export default () => ({
     },
     module: {
         rules: [
-          {
-              test: /.jsx?$/,
-              exclude: /node_modules/,
-              include: path.join(__dirname, 'Scripts/App'),
-              use: [
-                {
-                    loader: 'babel-loader',
-                    options: {
-                        babelrc: false,
-                        //plugins: ['transform-runtime'],
-                        presets: [
-                          ['es2015', { modules: false }],
-                          ['react']
-                        ],
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                include: path.join(__dirname, 'Scripts/App'),
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            babelrc: false,
+                            presets: [
+                                ['es2015', { modules: false }],
+                                ['react']
+                            ],
+                        }
                     }
-                }
-              ]
-          },
-          {
-              test: /\\.(scss|sass)$/,
-              use: ExtractTextPlugin.extract({
-                  //resolve-url-loader may be chained before sass-loader if necessary
-                  use: ['css-loader', 'sass-loader']
-              })
-          },
-          {
-              test: /\\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
-              loader: 'url-loader?limit=30000&name=[name]-[hash].[ext]'
-          }
+                ]
+            },
+            {
+                test: /\.(scss|sass)$/i,
+                use: ExtractTextPlugin.extract({
+                    //resolve-url-loader may be chained before sass-loader if necessary
+                    use: [
+                        { loader: 'css-loader' },
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                                implementation: require('sass'),
+                                includePaths: [path.resolve(__dirname, 'node_modules')]
+                            }
+                        }
+                    ]
+                })
+            },
+            {
+                test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
+                loader: 'url-loader?limit=30000&name=[name]-[hash].[ext]'
+            }
         ]
     },
     plugins: [
-      new HtmlWebpackPlugin({
-          filename: '../../Pages/index.html',
-          template: './Pages/index.html',
-          inject: 'body'
-      }),
-      new ExtractTextPlugin('App.css')
-    ],
+        new HtmlWebpackPlugin({
+            filename: '../../Pages/index.html',
+            template: './Pages/index.html',
+            inject: 'body'
+        }),
+        new ExtractTextPlugin('App.css')
+    ]
 });

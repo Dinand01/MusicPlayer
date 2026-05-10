@@ -29,21 +29,27 @@ namespace MusicPlayerWeb
             var browserWrapper = this.FindControl<Decorator>("BrowserWrapper");
             
             // Create browser using AvaloniaCefBrowser from CefGlue.Avalonia
+            // CEF is already initialized in Program.cs
             _browser = new AvaloniaCefBrowser();
-            
-            // Add browser to the visual tree
-            browserWrapper.Child = _browser;
+            Console.WriteLine("AvaloniaCefBrowser created successfully");
             
             // Wait for browser to load, then set up JS interop
             _browser.LoadEnd += (sender, e) =>
             {
-                Console.WriteLine("CefGlue browser loaded");
-                
-                // Set up JS interop after browser is ready
-                SetupJsInterop();
+                // Only handle the main frame
+                if (e.Frame.IsMain)
+                {
+                    Console.WriteLine("CefGlue browser loaded");
+                    
+                    // Set up JS interop after browser is ready
+                    SetupJsInterop();
+                }
             };
-
+            
+            // Add browser to the visual tree
+            browserWrapper.Child = _browser;
             _musicPlayer = new MusicPlayerGate(_browser, this);
+            
             // Set the URL using the Address property
             // Note: CefGlue normalizes URL to lowercase, so folder is "web" (lowercase)
             Console.WriteLine("Setting browser Address property...");
@@ -58,7 +64,7 @@ namespace MusicPlayerWeb
         private void SetupJsInterop()
         {
             // In CefGlue, inject JS object using ExecuteJavaScript
-            string script = @"
+string script = @"
                 window.MusicPlayer = {
                     togglePlay: function() { window.external && window.external.TogglePlay && window.external.TogglePlay(); },
                     nextSong: function() { window.external && window.external.NextSong && window.external.NextSong(); },
@@ -75,7 +81,14 @@ namespace MusicPlayerWeb
                     stopVideo: function() { window.external && window.external.StopVideo && window.external.StopVideo(); },
                     copySongs: function(source, dest, number) { window.external && window.external.CopySongs && window.external.CopySongs(source, dest, number); },
                     openFolder: function() { window.external && window.external.OpenFolder && window.external.OpenFolder(); },
-                    openFiles: function() { window.external && window.external.OpenFiles && window.external.OpenFiles(); }
+                    openFiles: function() { window.external && window.external.OpenFiles && window.external.OpenFiles(); },
+                    getDefaultIP: function() { return new Promise(function(resolve, reject) { window.external && window.external.GetDefaultIP && window.external.GetDefaultIP(function(result) { resolve(result); }); }); },
+                    getSongs: function(index, querry) { return new Promise(function(resolve, reject) { window.external && window.external.GetSongs && window.external.GetSongs(index, querry, function(result) { resolve(result); }); }); },
+                    getCurrentSong: function() { return new Promise(function(resolve, reject) { window.external && window.external.GetCurrentSong && window.external.GetCurrentSong(function(result) { resolve(result); }); }); },
+                    getShuffle: function() { return new Promise(function(resolve, reject) { window.external && window.external.GetShuffle && window.external.GetShuffle(function(result) { resolve(result); }); }); },
+                    getVolume: function() { return new Promise(function(resolve, reject) { window.external && window.external.GetVolume && window.external.GetVolume(function(result) { resolve(result); }); }); },
+                    getRadioStations: function(searchText) { return new Promise(function(resolve, reject) { window.external && window.external.GetRadioStations && window.external.GetRadioStations(searchText, function(result) { resolve(result); }); }); },
+                    getRadioStation: function(id) { return new Promise(function(resolve, reject) { window.external && window.external.GetRadioStation && window.external.GetRadioStation(id, function(result) { resolve(result); }); }); }
                 };
             ";
             _browser.ExecuteJavaScript(script, "musicplayer-inject", 0);

@@ -14,6 +14,7 @@ Music Player is a **cross-platform desktop application** upgraded to modern tech
 - **Browser Engine**: CefGlue.Avalonia 120.6099.211 (Chromium embedded, cross-platform, project reference from docs/CefGlue-main)
 - **Web Frontend**: React with Redux
 - **Audio Processing**: NAudio library (cross-platform with `WaveOutEvent`)
+- **Build Optimization**: `web/node_modules/` excluded from output copy to prevent MSBuild file copy errors
 - **Metadata**: TagLib# 2.1.0
 - **YouTube**: YoutubeExplode library
 - **Database**: SQLite via Microsoft.Data.Sqlite (EF Core 10)

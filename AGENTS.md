@@ -44,8 +44,8 @@ This agent is responsible for:
 ## Task Planning
 
 Task structure, JSON format, and step examples are now maintained in the **Music Player Task Planning** skill:
-- **Skill name**: `music-player-task-planning` (load with `skill_view(name='music-player-task-planning')`)
-- **Skill location**: `.hermes/skills/music-player/music-player-task-planning/SKILL.md`
+- **Skill name**: `music-player-task-planning` (load with `skill(name='music-player-task-planning')`)
+- **Skill location**: `.opencode/skills/music-player-task-planning/SKILL.md`
 
 ---
 
@@ -137,8 +137,8 @@ Continue? (y/n)"
 ### Documentation Update Detection
 
 Documentation update triggers and response templates are now maintained in the **Music Player Docs Maintenance** skill:
-- **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
-- **Skill location**: `.hermes/skills/music-player/music-player-docs-maintenance/SKILL.md`
+- **Skill name**: `music-player-docs-maintenance` (load with `skill(name='music-player-docs-maintenance')`)
+- **Skill location**: `.opencode/skills/music-player-docs-maintenance/SKILL.md`
 
 ---
 
@@ -185,8 +185,8 @@ Documentation update triggers and response templates are now maintained in the *
 ## Documentation Files Management
 
 The list of files maintained, read/write rules, and never-touch guidelines are now in the **Music Player Docs Maintenance** skill:
-- **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
-- **Skill location**: `.hermes/skills/music-player/music-player-docs-maintenance/SKILL.md`
+- **Skill name**: `music-player-docs-maintenance` (load with `skill(name='music-player-docs-maintenance')`)
+- **Skill location**: `.opencode/skills/music-player-docs-maintenance/SKILL.md`
 
 ---
 

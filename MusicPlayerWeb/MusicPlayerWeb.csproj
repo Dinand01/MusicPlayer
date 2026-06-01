@@ -9,6 +9,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>play_button.ico</ApplicationIcon>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

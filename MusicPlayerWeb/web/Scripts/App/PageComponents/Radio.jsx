@@ -1,108 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 import RadioList from '../Parts/Radio/RadioList.jsx';
 import { parseJSON } from '../Helpers/Methods.jsx';
 
-/**
- * @class The internet radio selection page.
- */
-export default class Radio extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            searchText: "",
-            allStations: [],
-            stations: [],
-            index: 0
-        };
-    }
+const Radio = ({ match, history }) => {
+    const [searchText, setSearchText] = useState("");
+    const [allStations, setAllStations] = useState([]);
+    const [stations, setStations] = useState([]);
+    const [index, setIndex] = useState(0);
 
-    /**
-     * @desc The component will mount.
-     */
-    componentWillMount() {
-        this.getStations();
-    }
+    useEffect(() => {
+        getStations();
+    }, [searchText]);
 
-    /**
-     * @desc refresh data when the child component unmounts.
-     * @param {*} nextprops The xext properties.
-     */
-    componentWillReceiveProps(nextprops) {
-        if (!this.props.match.isExact && nextprops.match.isExact) {
-            this.getStations();
+    useEffect(() => {
+        // When returning to this route (isExact changes from false to true)
+        if (match.isExact) {
+            getStations();
         }
-    }
+    }, [match.isExact]);
 
-    /**
-     * @desc The search text changed.
-     * @param {string} text The search text. 
-     */
-    changeSearchText(text) {
-        this.setState({
-            searchText: text,
-            stations: []
-        }, () => {
-            this.getStations();
-        });
-    } 
+    const changeSearchText = (text) => {
+        setSearchText(text);
+    };
 
-    /**
-     * @desc Gets radio stations from the backend.
-     */
-    getStations() {
-        MusicPlayer.getRadioStations(this.state.searchText).then((json) => {
+    const getStations = () => {
+        MusicPlayer.getRadioStations(searchText).then((json) => {
             let stations = parseJSON(json);
             if (stations && stations.length) {
-                this.setState({
-                    allStations: stations,
-                    index: 0
-                }, () => this.requestSongs(this.state.index, 25));
+                setAllStations(stations);
+                setIndex(0);
+                requestSongs(0, 25);
             }
         });
-    }
+    };
 
-    /**
-     * @desc Request more stations.
-     * @param {number} skip The amount of stations to skip. 
-     * @param {*} amount The amount of stations to take.
-     */
-    requestSongs(skip, amount) {
-        if (this.state.allStations && this.state.allStations.length) {
+    const requestSongs = (skip, amount) => {
+        if (allStations && allStations.length) {
             skip = skip > 0 ? skip : 0;
-            this.setState({
-                stations: this.state.stations.concat(this.state.allStations.slice(skip, skip + amount))
-            });
+            setStations(prevStations => prevStations.concat(allStations.slice(skip, skip + amount)));
         }
+    };
+
+    if (!match.isExact) {
+        return null;
     }
 
-    /**
-     * @desc Renders the page.
-     */
-    render() {
-        if (!this.props.match.isExact) {
-            return null;
-        }
-
-        return(
-            <div className="row h-100">
-                <div className="col">
-                    <div className="h-100 d-flex flex-column">
-                        <div className="row justify-content-center h-35-px">
-                            <div className="col">
-                                <input type="text" className="w-100 ml-0" placeholder="Search" value={this.state.searchText} onChange={e => this.changeSearchText(e.target.value)} />
-                            </div>
-                            <div className="col-1">
-                                <button className="iconButton h-100" onClick={() => this.props.history.push("/radio/0")}>
-                                    <i className="fas fa-plus-square fa-2x"></i>
-                                </button>
-                            </div>
+    return(
+        <div className="row h-100">
+            <div className="col">
+                <div className="h-100 d-flex flex-column">
+                    <div className="row justify-content-center h-35-px">
+                        <div className="col">
+                            <input type="text" className="w-100 ml-0" placeholder="Search" value={searchText} onChange={e => changeSearchText(e.target.value)} />
                         </div>
-                        <div className="row justify-content-center flex-grow-1 pt-2">
-                            <RadioList radioStations={this.state.stations} requestSongs={(skip, amount) => this.requestSongs(skip, amount) } />
+                        <div className="col-1">
+                            <button className="iconButton h-100" onClick={() => history.push("/radio/0")}>
+                                <i className="fas fa-plus-square fa-2x"></i>
+                            </button>
                         </div>
                     </div>
+                    <div className="row justify-content-center flex-grow-1 pt-2">
+                        <RadioList radioStations={stations} requestSongs={(skip, amount) => requestSongs(skip, amount)} />
+                    </div>
                 </div>
-            </div> 
-        )
-    }
-}
+            </div>
+        </div> 
+    );
+};
+
+export default withRouter(Radio);

@@ -1,54 +1,30 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-class Server extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            port: 8963
-        };
-    }
+const Server = () => {
+    const serverInfo = useSelector(state => state.serverInfo);
+    const [port, setPort] = useState(8963);
 
-    shouldComponentUpdate(nextprops, nextstate) {
-        if (JSON.stringify(nextprops) !== JSON.stringify(this.props) || JSON.stringify(nextstate) !== JSON.stringify(this.state)){
-            return true;
-        }
+    const hostServer = () => {
+        MusicPlayer.hostServer(port);
+    };
 
-        return false;
-    }
-
-    /**
-     * @description Host a server.
-     */
-    hostServer() {
-        MusicPlayer.hostServer(this.state.port);
-    }
-
-    /**
-     * @description Disconnects the server.
-     */
-    disconnectServer() {
+    const disconnectServer = () => {
         MusicPlayer.disconnectServer();
-    }
+    };
 
-    /**
-     * @description Render the connect options.
-     */
-    renderConnect() {
+    const renderConnect = () => {
         return (
             <div className="server-connect">
                 <h2>Host music</h2>
                 <p>By port forwarding the following port to your pc people can listen in on your music.</p>
-                <input type="number" value={this.state.port} onChange={(e) => this.setState({port: e.target.value})} />
-                <button className="primary-button" onClick={() => this.hostServer()}>Host</button>
+                <input type="number" value={port} onChange={(e) => setPort(e.target.value)} />
+                <button className="primary-button" onClick={hostServer}>Host</button>
             </div>
-        )
-    }
+        );
+    };
 
-    /**
-     * @description Render the server info.
-     */
-    renderServerInfo() {
+    const renderServerInfo = () => {
         return (
             <div className="server-clients col">
                 <div>
@@ -56,33 +32,24 @@ class Server extends React.Component {
                         <p>Connected Clients:</p>
                         {(() => {
                             let res = [];
-                            for (var key in this.props.serverInfo.Clients) {
-                                res.push(<p key={key}>{key}: {this.props.serverInfo.Clients[key]}</p>);
+                            for (var key in serverInfo.Clients) {
+                                res.push(<p key={key}>{key}: {serverInfo.Clients[key]}</p>);
                             }
-
                             return res;
                         })()}
-                        <button onClick={() => this.disconnectServer()} className="primary-button">Disconnect</button>
+                        <button onClick={disconnectServer} className="primary-button">Disconnect</button>
                     </div>
                 </div>
             </div>
-        )
-    }
-
-    render() {
-        return (
-            <div className="row h-100">
-                {!this.props.serverInfo && this.renderConnect()}
-                {this.props.serverInfo && this.renderServerInfo()}
-            </div>
         );
-    }
-}
-
-function mapStateToProps(state) {
-  return { 
-      serverInfo: state.serverInfo
     };
-}
 
-export default connect(mapStateToProps)(Server);
+    return (
+        <div className="row h-100">
+            {!serverInfo && renderConnect()}
+            {serverInfo && renderServerInfo()}
+        </div>
+    );
+};
+
+export default Server;

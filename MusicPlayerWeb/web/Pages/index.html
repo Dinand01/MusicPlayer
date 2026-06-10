@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-      <meta charset="utf-8" />
-      <title>MusicPlayer</title>
-      <script src="https://www.youtube.com/iframe_api"></script>
-  <link href="../Scripts/Build/App.css" rel="stylesheet"></head>
-  <body>
-      <div id="react-root"></div>
-      <div id="debug" style="position:fixed;top:0;left:0;width:100%;background:yellow;color:black;padding:5px;z-index:9999;"></div>
-      <script type="text/javascript">
-          // CefGlue-compatible shim for MusicPlayer object
+    <head>
+        <meta charset="utf-8"/>
+        <title>MusicPlayer</title>
+        <script src="https://www.youtube.com/iframe_api"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+        <script defer="defer" src="../Scripts/Build/bundle.js"></script>
+        <link href="../Scripts/Build/App.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="react-root"></div>
+        <div id="debug" style="position:fixed;top:0;left:0;width:100%;background:yellow;color:black;padding:5px;z-index:9999;"></div>
+        <script>// CefGlue-compatible shim for MusicPlayer object
           window.MusicPlayer = window.MusicPlayer || null;
           
           // Notify .NET that the page is ready to bind objects
@@ -48,7 +49,6 @@
                   debugDiv.innerHTML = 'MusicPlayer object NOT found!';
               }
           }, 1500);
-      </script>
-      <script type="text/javascript" src="../Scripts/Build/bundle.js"></script>
-  <script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script><script type="text/javascript" src="../Scripts/Build/bundle.js"></script></body>
+        </script>
+    </body>
 </html>

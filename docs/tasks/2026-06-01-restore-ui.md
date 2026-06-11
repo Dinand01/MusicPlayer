@@ -2,7 +2,7 @@
 
 **Task ID:** `2026-06-01-restore-ui`
 **Date:** `2026-06-01`
-**Status:** `pending`
+**Status:** COMPLETED - All steps executed successfully. Modern Webpack 5 toolchain installed and configured.
 **Linked JSON Task:** `docs/tasks.json` → task ID `2026-06-01-restore-ui`
 
 ---
@@ -195,11 +195,11 @@ Perform a final check that all required UI resources are present and correct.
 
 ## Documentation Updates Required
 
-- [ ] `docs/HOW-IT-WORKS.md` - Add note about UI restoration and webpack build process.
-- [ ] `docs/TECHNOLOGY-STACK.md` - Ensure Bootstrap, slick-carousel, Fontawesome listed (they already are).
-- [ ] `docs/API.md` - No change needed.
-- [ ] `docs/FEATURES.md` - No change needed.
-- [ ] `docs/INDEX.md` - Update if new docs added (none).
+- [x] `docs/HOW-IT-WORKS.md` - Add note about UI restoration and webpack build process.
+- [x] `docs/TECHNOLOGY-STACK.md` - Ensure Bootstrap, slick-carousel, Fontawesome listed (they already are).
+- [x] `docs/API.md` - No change needed.
+- [x] `docs/FEATURES.md` - No change needed.
+- [x] `docs/INDEX.md` - Update if new docs added (none).
 
 ---
 

@@ -154,7 +154,7 @@ The API covers:
 │   ├── MusicPlayerWeb.csproj   # net10.0 + Avalonia + CefGlue
 │   ├── MainWindow.axaml         # Avalonia XAML
 │   ├── MusicPlayerGate.*.cs     # C# ↔ JS bridge
-│   └── Web/                    # React frontend
+│   └── web/                    # React frontend
 │       ├── Pages/
 │       ├── Scripts/
 │       ├── Style/
@@ -231,7 +231,7 @@ dotnet build MusicPlayerWeb/MusicPlayerWeb.csproj -r osx-x64
 ### Build Frontend (React)
 
 ```bash
-cd MusicPlayerWeb/Web
+cd MusicPlayerWeb/web
 npm install
 npm run webpack
 ```

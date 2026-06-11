@@ -194,90 +194,68 @@ JavaScript bridge that:
 
 ### 8. Build & Tooling
 
-#### 8.1 Webpack Configuration
+#### 8.1 Webpack Configuration (v5.107.2)
 - Babel for JSX/ES6 transpilation
 - SASS/SCSS for CSS preprocessing
-- URL loader for assets < 30KB
-- HTMLWebpackPlugin for entry point
-- ExtractTextPlugin for CSS splitting
+- Asset modules for file loading (webpack 5 native)
+- HTMLWebpackPlugin for entry point generation
+- MiniCssExtractPlugin for CSS splitting
 
 #### 8.2 npm Scripts
 - `npm run webpack` - Production build
 - `npm run start` - Watch mode for development
 
-#### 8.3 React Versions (legacy)
-- React 15.5.4 (Note: outdated)
-- React Router 4.1.1 (legacy)
-- Redux 3.6.0 (legacy)
+#### 8.3 React Versions (current)
+- React 18.3.1
+- React Router 4.1.1
+- Redux 5.0.1
 
 ### 9. System Integration
 
-#### 9.1 Windows Integration (WPF)
-- File dialogs (OpenFolder, OpenFiles)
-- Windows Registry (installer)
+#### 9.1 Cross-Platform Integration (Avalonia)
+- File dialogs (OpenFolder, OpenFiles) - Avalonia StorageProvider
+- Avalonia-based UI (Windows/Linux/macOS)
 - System tray integration (via MainWindow)
 - Direct file system access
 
-#### 9.2 Installer
-- Creates shortcut
-- Writes registry entries
-- Installs dependencies
-- Configures initial folder
-
-#### 9.3 PowerShell Scripts
-- `Initialize.ps1` - Quick setup script
-- Can be run from command line
-- Automated configuration
+#### 9.2 CefGlue.Avalonia Browser
+- Uses CefGlue.Avalonia 120.6099.1 for embedded Chromium
+- Cross-platform browser support
+- Custom scheme handler for local file loading
 
 ## Feature Limitations & Notes
 
 ### Current Limitations
-1. **React Version**: Uses React 15.5.4 (very outdated)
-   - Migrate to v16+ recommended
-   
+1. **macOS Testing**: CEF binaries build verified but runtime testing pending
 2. **YouTube API**: Uses iframe embed API
    - Not official YData API
    - Subject to YouTube policy changes
-   
+
 3. **Network Protocols**: Custom TCP implementation
    - Not HTTP-based
    - Requires port forwarding for remote access
-   
-4. **Browser**: CefSharp embedded
-   - Windows only
-   - Requires system DLLs
 
 ### Best Practices
-- Use `Initialize.ps1` for setup
 - Configure firewall for streaming port
 - Use strong network connections for best streaming
 - Store radio station lists locally
 - Regular music library scans
 
 ### Platform Support
-- **Windows**: Primary platform
-- Requires .NET Framework 4.5.2
-- No Linux/Mac support currently
+- **Windows**: ✅ Build tested
+- **Linux**: ✅ Build tested (current platform)
+- **macOS**: ⚠️ Build verified, runtime testing pending
+- Requires .NET 10
 
 ### Security Considerations
 - Streaming port exposure (firewall required)
-- YouTube API key security
-- No HTTPS enforcement currently
 - Client authentication not implemented
 
 ## Future Enhancement Possibilities
 
-### Recommended Upgrades
-- Migrate React to v17+
-- Use React 18 concurrent features
-- Modernize Redux to 5.x
-- Switch to modern CSS framework
-- Implement HTTPS/TLS options
-- Add authentication
-- Cross-platform via .NET MAUI
-- Use official YouTube Data API v3
-- Implement proper streaming protocols (Icecast/Shoutcast)
-- WebSocket for real-time updates
+### Already Implemented
+- ✅ Cross-platform via Avalonia + CefGlue.Avalonia
+- ✅ .NET 10 upgrade complete
 
 ### Potential Features
 - Spotify/Apple Music integration

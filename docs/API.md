@@ -538,4 +538,4 @@ var result = await topLevel.StorageProvider.OpenFilePickerAsync(options);
 
 ---
 
-**Last Updated:** 2026-05-06 (Cross-platform migration complete)
+**Last Updated:** 2026-06-11 (Webpack 5 upgrade documented)

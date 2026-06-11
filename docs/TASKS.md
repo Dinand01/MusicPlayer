@@ -39,26 +39,26 @@
 ### Task 3: Upgrade Webpack to 5.x
 
 **ID:** `2026-06-01-modern-toolchain`  
-**Status:** pending  
+**Status:** complete  
 **Task File:** `docs/tasks/2026-06-01-upgrade-webpack.md`
 
 #### Steps:
 
 | # | Action | File(s) | Status |
 |---|--------|---------|--------|
-| 0 | Solution Discovery | `MusicPlayerWeb/web/` | ❌ |
-| 1 | Backup current package.json and webpack config | `MusicPlayerWeb/web/package.json` | ❌ |
-| 2 | Update webpack and webpack-cli to version 5.x | `MusicPlayerWeb/web/package.json` | ❌ |
-| 3 | Update babel-loader to version 8.x+ | `MusicPlayerWeb/web/package.json` | ❌ |
-| 4 | Update css-loader to version 5.x+ | `MusicPlayerWeb/web/package.json` | ❌ |
-| 5 | Update sass-loader to version 12.x+ | `MusicPlayerWeb/web/package.json` | ❌ |
-| 6 | Update extract-text-webpack-plugin or replace with mini-css-extract-plugin | `MusicPlayerWeb/web/package.json` | ❌ |
-| 7 | Update html-webpack-plugin to version 5.x+ | `MusicPlayerWeb/web/package.json` | ❌ |
-| 8 | Update url-loader and file-loader to versions compatible with webpack 5 | `MusicPlayerWeb/web/package.json` | ❌ |
-| 9 | Update webpack.config.babel.js for webpack 5 compatibility | `MusicPlayerWeb/web/webpack.config.babel.js` | ❌ |
-| 10 | Test webpack build with updated dependencies | `MusicPlayerWeb/web/` | ❌ |
-| 11 | Verify generated assets | `MusicPlayerWeb/web/Scripts/Build/` | ❌ |
-| 12 | Update documentation | `docs/TECHNOLOGY-STACK.md` | ❌ |
+| 0 | Solution Discovery | `MusicPlayerWeb/web/` | ✅ |
+| 1 | Backup current package.json and webpack config | `MusicPlayerWeb/web/package.json` | ✅ |
+| 2 | Update webpack and webpack-cli to version 5.x | `MusicPlayerWeb/web/package.json` | ✅ |
+| 3 | Update babel-loader to version 8.x+ | `MusicPlayerWeb/web/package.json` | ✅ |
+| 4 | Update css-loader to version 5.x+ | `MusicPlayerWeb/web/package.json` | ✅ |
+| 5 | Update sass-loader to version 12.x+ | `MusicPlayerWeb/web/package.json` | ✅ |
+| 6 | Update extract-text-webpack-plugin or replace with mini-css-extract-plugin | `MusicPlayerWeb/web/package.json` | ✅ |
+| 7 | Update html-webpack-plugin to version 5.x+ | `MusicPlayerWeb/web/package.json` | ✅ |
+| 8 | Update url-loader and file-loader to versions compatible with webpack 5 | `MusicPlayerWeb/web/package.json` | ✅ |
+| 9 | Update webpack.config.babel.js for webpack 5 compatibility | `MusicPlayerWeb/web/webpack.config.babel.js` | ✅ |
+| 10 | Test webpack build with updated dependencies | `MusicPlayerWeb/web/` | ✅ |
+| 11 | Verify generated assets | `MusicPlayerWeb/web/Scripts/Build/` | ✅ |
+| 12 | Update documentation | `docs/TECHNOLOGY-STACK.md` | ✅ |
 
 ---
 
@@ -83,8 +83,6 @@
 | 8 | Verify index.html has correct tags | `MusicPlayerWeb/web/Pages/index.html` | ✅ |
 | 9 | Verify bundle.js size | `MusicPlayerWeb/web/Scripts/Build/bundle.js` | ✅ |
 | 10 | Final verification of UI resources | `MusicPlayerWeb/web/` | ✅ |
-
----
 
 ### Task 1: Upgrade to .NET 10
 
@@ -120,13 +118,13 @@
 | 21 | Implement gRPC client connection in Factory.cs | `MusicPlayer/Factory.cs, MusicPlayer/Controller/ClientConnection.cs.bak` | ✅ |
 | 22 | Restore Javascript interop in MusicPlayerGate with CefGlue.Avalonia | `MusicPlayerWeb/MusicPlayerGate.cs, MusicPlayerWeb/MusicPlayerGate.Data.cs` | ✅ |
 | 23 | Fix remaining TODOs (MusicPlayer.cs thread exception) | `MusicPlayer/Controller/MusicPlayer.cs` | ✅ |
-| 24 | Final integration test - full application build and test | `MusicPlayer.sln` | ⚠️ partial |
+| 24 | Final integration test - full application build and test | `MusicPlayer.sln` | ✅ |
 | 25 | Solution Discovery - Cross-Platform Audit | `docs/tasks/2026-05-06-upgrade-dotnet-10.md` | ✅ |
 | 26 | Update TECHNOLOGY-STACK.md | `docs/TECHNOLOGY-STACK.md` | ✅ |
 | 27 | Update ARCHITECTURE.md | `docs/ARCHITECTURE.md` | ✅ |
 | 28 | Update HOW-IT-WORKS.md | `docs/HOW-IT-WORKS.md` | ✅ |
 | 29 | Update API.md | `docs/API.md` | ✅ |
 | 30 | Update INDEX.md | `docs/INDEX.md` | ✅ |
-| 31 | Cross-platform audio testing (including volume control) | `MusicPlayer/Controller/MusicPlayer.cs` | ⚠️ partial |
+| 31 | Cross-platform audio testing (including volume control) | `MusicPlayer/Controller/MusicPlayer.cs` | ✅ |
 
 ---

@@ -1,6 +1,6 @@
 # How It Works
 
-Last updated: 2026-05-06
+Last updated: 2026-06-11
 Status: Updated for .NET 10 + Avalonia + CefGlue.Avalonia
 
 ---

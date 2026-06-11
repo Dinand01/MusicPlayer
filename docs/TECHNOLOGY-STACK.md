@@ -1,6 +1,6 @@
 # Technology Stack
 
-Last updated: 2026-05-06
+Last updated: 2026-06-11
 Status: Updated for .NET 10 + Avalonia + CefGlue.Avalonia (Cross-Platform)
 
 ---
@@ -37,12 +37,12 @@ Music Player is a **cross-platform desktop application** upgraded to modern tech
 
 | Technology | Version | Purpose | Notes |
 |------|------|------|--------|
-| Avalonia | 11.2.3 | Desktop UI | Cross-platform (Windows/Linux/macOS), replaces WPF |
+| Avalonia | 11.2.3 | Desktop UI | Cross-platform (Windows/Linux/macOS) |
 | Avalonia.Markup.Xaml | 11.2.3 | XAML processing | `.axaml` files instead of `.xaml` |
 | CefGlue.Avalonia | 120.6099.211 | Chromium browser | Project reference from docs/CefGlue-main, cross-platform |
-| React | 15.5.4 | Web UI | Legacy version, consider upgrading |
+| React | 18.3.1 | Web UI | Modern version, hooks supported |
 | React Router | 4.1.1 | Routing | Navigate between pages |
-| React Redux | 5.0.5 | State management | Centralized state store |
+| React Redux | 9.3.0 | State management | Centralized state store |
 
 ### 3. Audio & Media Libraries
 
@@ -94,14 +94,13 @@ Music Player is a **cross-platform desktop application** upgraded to modern tech
 | dotnet CLI | Build orchestration (cross-platform) |
 | NuGet | Package management |
 | npm | Node.js dependencies |
-| webpack | Bundling and module resolution |
+| webpack | Bundling and module resolution (v5.107.2) |
 | babel | JavaScript transpilation |
 | babel-loader | Transpile JSX/JS modules |
 | sass-loader | SCSS preprocessing |
 | css-loader | CSS module support |
 | html-webpack-plugin | Generate HTML entry points |
-| extract-text-webpack-plugin | Split CSS from JS bundles |
-| node-sass | SCSS compiler |
+| mini-css-extract-plugin | Extract CSS to separate files (replaces extract-text-webpack-plugin) |
 
 ### 9. System Integration
 

@@ -9,7 +9,7 @@ Music Player is a **hybrid music streaming application** built with:
 - **Audio Processing**: NAudio library (cross-platform via WaveOutEvent)
 - **Database**: SQLite via Microsoft.Data.Sqlite (EF Core 10 optional)
 - **Video Streaming**: CefGlue.Avalonia for YouTube embedding
-- **Communication**: gRPC (replacing WCF duplex contracts) - IN PROGRESS
+- **Communication**: gRPC (migrated from WCF duplex contracts)
 
 ## Technical Stack
 
@@ -149,7 +149,7 @@ See [TECHNOLOGY-STACK.md](./TECHNOLOGY-STACK.md) for full details.
 │   ├── MusicPlayerGate.Data.cs  # Data operations
 │   ├── SchemeHandlerFactory.cs  # Custom scheme handler (CefGlue)
 │   ├── DisplayHandler.cs        # Browser display handler (CefGlue)
-│   └── Web/                    # React frontend
+│   └── web/                    # React frontend
 │       ├── Pages/
 │       ├── Scripts/
 │       ├── Style/
@@ -240,10 +240,9 @@ See [TECHNOLOGY-STACK.md](./TECHNOLOGY-STACK.md) for full details.
 }
 ```
 
-### 5. Communication (gRPC - IN PROGRESS)
+### 5. Communication (gRPC)
 
-**Status:** Migrating from WCF to gRPC (Step 18-22 in tasks.json)
-
+**Status:** ✅ Complete - gRPC migration finished
 **Proto Definition:** `MusicPlayer/Protos/musicplayer.proto`
 
 **Services:**
@@ -350,7 +349,7 @@ dotnet build -r osx-x64
 
 ---
 
-## Migration Status (2026-05-06)
+## Migration Status (2026-06-11)
 
 ### Completed ✅
 - .NET 10 upgrade (net10.0, cross-platform)
@@ -358,11 +357,11 @@ dotnet build -r osx-x64
 - CefSharp.Wpf → CefGlue.Avalonia migration
 - Cross-platform build support (win-x64, linux-x64, osx-x64)
 - Volume control via `SettingType.Volume`
+- gRPC migration complete
+- Webpack 5 upgrade (v5.107.2)
 
 ### In Progress 🔄
-- gRPC migration (Steps 18-22)
 - macOS runtime testing
-- Documentation updates (Steps 38-43)
 
 ### Pending ⏳
 - Test on macOS (runtime)
@@ -371,4 +370,4 @@ dotnet build -r osx-x64
 
 ---
 
-**Last Updated:** 2026-05-06 (Cross-platform migration complete)
+**Last Updated:** 2026-06-11 (Webpack 5 upgrade complete)

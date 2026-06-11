@@ -34,7 +34,8 @@ Will add these to task. Continue?
 ## Files Maintained
 
 ### Read (to understand state):
-- `docs/tasks.json` - Active tasks
+- `docs/TASKS.md` - Active tasks (PRIMARY)
+- `docs/tasks.json` - Active tasks (auto-generated)
 - `docs/.tasks-backup.json` - Backup tasks
 - `docs/architecture.md` - System architecture
 - `docs/features.md` - Feature list
@@ -44,7 +45,7 @@ Will add these to task. Continue?
 - `docs/index.md` - Table of contents
 
 ### Write (to maintain state):
-- `docs/tasks.json` - Add/remove/update tasks
+- `docs/TASKS.md` - Add/remove/update tasks (PRIMARY)
 - `docs/.tasks-backup.json` - Backup created when updated
 
 ### Never Touch (by default):

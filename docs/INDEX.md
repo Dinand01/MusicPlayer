@@ -38,7 +38,7 @@ This documentation captures the **current state** of the repository (migrated to
 | [Technology Stack](./TECHNOLOGY-STACK.md) | Technologies, libraries, and dependencies |
 | [How It Works](./HOW-IT-WORKS.md) | Detailed inner workings of features |
 | [API Reference](./API.md) | Data structures, functions, and protocols |
-| [Task List](./tasks.json) | Current development tasks and progress |
+| [Task List](./TASKS.md) | Current development tasks and progress |
 
 ---
 
@@ -160,7 +160,7 @@ The API covers:
 │       ├── Style/
 │       └── Resources/
 ├── docs/                         # Documentation
-│   ├── tasks.json              # Task list
+│   ├── TASKS.md                # Task list (PRIMARY)
 │   ├── API.md
 │   ├── ARCHITECTURE.md
 │   ├── HOW-IT-WORKS.md
@@ -248,8 +248,8 @@ dotnet run --project MusicPlayerWeb/MusicPlayerWeb.csproj
 
 For detailed guidelines on maintaining project documentation, including update triggers, file management rules, and verification steps, refer to the **Music Player Docs Maintenance** skill:
 
-- **Skill location**: `.hermes/skills/music-player/music-player-docs-maintenance/SKILL.md`
-- **Skill name**: `music-player-docs-maintenance` (load with `skill_view(name='music-player-docs-maintenance')`)
+- **Skill location**: `.opencode/skills/music-player-docs-maintenance/SKILL.md`
+- **Skill name**: `music-player-docs-maintenance` (load with `skill(name='music-player-docs-maintenance')`)
 
 ### Quick Rules
 

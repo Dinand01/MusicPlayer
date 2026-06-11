@@ -5,71 +5,59 @@ description: Task planning guidelines for Music Player Maintainer agent, includi
 
 # Music Player Task Planning
 
-## Task JSON Format
+## Task Registry Format
 
-Use this structure for `docs/tasks.json`:
+Use `docs/TASKS.md` as the primary editable task registry. Tasks are listed newest-first so agents can read the beginning of the file to find the current priority task.
 
-```json
-{
-  "meta": {
-    "agent_name": "Documentation-Maintainer",
-    "storage_file": "docs/tasks.json"
-  },
-  "tasks": [
-    {
-      "id": "unique-identifier",
-      "title": "Short summary of task",
-      "status": "pending|in_progress|complete",
-      "subtasks": [
-        {
-          "step": 1,
-          "action": "File operation or command",
-          "description": "Detailed description of what to do",
-          "file": "relative/path/to/file",
-          "operation": "create|update|delete|verify",
-          "content_hint": "Notes about content, examples, etc.",
-          "status": true|false
-        }
-      ]
-    }
-  ]
-}
-```
+### Markdown Structure
+
+```markdown
+# Task Registry
+
+**Meta:**
+- **Agent Name:** MusicPlayer-Maintainer
+- **Last Updated:** yyyy-MM-dd
+
+## Active Tasks (N)
+
+### Task N: [Task Title]
+
+**ID:** `yyyy-MM-dd-description`  
+**Status:** pending|in_progress|complete  
+**Task File:** `docs/tasks/[task-id].md`
+
+#### Steps:
+
+| # | Action | File(s) | Status |
+|---|--------|---------|--------|
+| 0 | Solution Discovery | `path/to/file` | ✅/❌/⚠️ |
+| 1 | Convert project to SDK format | `file.csproj` | ✅ |
+
+---
+
+## Status Symbols
+
+Use these symbols in the markdown table Status column:
+- ✅ - Completed
+- ❌ - Not completed / Pending
+- ⚠️ - Partial / In progress
+- 🔄 - In progress
+
+---
 
 ## Step Examples
 
 ### Documentation Update Step
-```json
-{
-  "step": 5,
-  "action": "Update ARCHITECTURE.md",
-  "description": "Add new WebSocket server component",
-  "file": "docs/architecture.md",
-  "operation": "update",
-  "content_hint": "Add component in server streaming architecture section"
-}
+```markdown
+| 5 | Update ARCHITECTURE.md | `docs/architecture.md` | ❌ |
 ```
 
 ### Code Implementation Step
-```json
-{
-  "step": 3,
-  "action": "Implement Spotify connector service",
-  "description": "Create SpotifyAPI class with OAuth 2.0",
-  "file": "MusicPlayer/SpotifyAPI.cs",
-  "operation": "create",
-  "content_hint": "Include OAuth flow, token refresh, song fetching methods"
-}
+```markdown
+| 3 | Convert MusicPlayer.csproj to SDK-style format | `MusicPlayer/MusicPlayer.csproj` | ❌ |
 ```
 
 ### Feature Documentation Step
-```json
-{
-  "step": 7,
-  "action": "Add Spotify feature to FEATURES.md",
-  "description": "Document Spotify integration feature",
-  "file": "docs/features.md",
-  "operation": "update",
-  "content_hint": "Add new section under 'Music Source Integration'"
-}
+```markdown
+| 7 | Add Spotify feature to FEATURES.md | `docs/features.md` | ❌ |
 ```

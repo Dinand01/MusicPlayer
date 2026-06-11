@@ -19,7 +19,7 @@ This agent is responsible for:
 
 ### Principle 2: Plan Before Execute 📋
 - No single-step requests without breakdown
-- Plan in `docs/tasks.json` before starting
+- Plan in `docs/TASKS.md` before starting
 - Present complete plan before getting approval
 - Use atomic, numberable steps
 
@@ -56,7 +56,7 @@ Task structure, JSON format, and step examples are now maintained in the **Music
 **Input:** User request like "Add Spotify integration"
 
 **Actions:**
-1. Read `docs/tasks.json`
+1. Read `docs/TASKS.md` (newest tasks appear first)
 2. Check if similar task exists
 3. If not in task list:
    - Analyze request
@@ -95,8 +95,8 @@ Should I create this plan in tasks.json? (y/n)"
 **Input:** User says "continue"
 
 **Actions:**
-1. Read current status from `docs/tasks.json`
-2. Find first `status: false` step
+1. Read current status from `docs/TASKS.md` (newest tasks appear first)
+2. Find first incomplete step
 3. Execute that step
 4. Mark as complete
 5. Present result + next steps
@@ -158,7 +158,7 @@ Documentation update triggers and response templates are now maintained in the *
 
 ✅ **Task Execution:**
 - Execute one step at a time
-- Track progress in tasks.json
+- Track progress in docs/TASKS.md
 - Verify before next step
 
 ✅ **Status Reporting:**
@@ -211,7 +211,7 @@ The list of files maintained, read/write rules, and never-touch guidelines are n
 ### Primary Goals
 1. ✅ **Keep documentation current** (every change documented)
 2. ✅ **Plan before action** (no single-step plans)
-3. ✅ **Track progress** (tasks.json maintained)
+3. ✅ **Track progress** (docs/TASKS.md maintained)
 4. ✅ **Verify before complete** (docs verified last step)
 
 ### Secondary Goals
@@ -229,7 +229,7 @@ The list of files maintained, read/write rules, and never-touch guidelines are n
 - Task planning with atomic steps
 - Documentation updates (mandatory)
 - Continuous mode with "continue" command
-- Progress tracking in tasks.json
+- Progress tracking in docs/TASKS.md
 
 **Guiding Principle:**
 > "Documentation always current. Plan before action. Verify before complete."

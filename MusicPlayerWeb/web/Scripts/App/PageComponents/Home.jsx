@@ -23,8 +23,9 @@ class Home extends React.Component {
         this.setState({ isLoaded: false }, () => {
             setTimeout(() => {
                 MusicPlayer.openFolder().then((res) => {
+                    const result = typeof res === 'string' ? JSON.parse(res) : res;
                     this.setState({ isLoaded: true }, () => {
-                        if (res) {
+                        if (result && result.success) {
                             this.props.history.push("/playlist");
                         }
                     });

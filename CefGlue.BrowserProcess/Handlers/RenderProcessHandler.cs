@@ -8,10 +8,10 @@ namespace Xilium.CefGlue.BrowserProcess.Handlers
 {
     internal class RenderProcessHandler : CefRenderProcessHandler
     {
-        private CefBrowser _browser;
-        private string _crashPipeName;
-        private JavascriptExecutionEngineRenderSide _javascriptExecutionEngine;
-        private JavascriptToNativeDispatcherRenderSide _javascriptToNativeDispatcher;
+        private CefBrowser? _browser;
+        private string? _crashPipeName;
+        private JavascriptExecutionEngineRenderSide? _javascriptExecutionEngine;
+        private JavascriptToNativeDispatcherRenderSide? _javascriptToNativeDispatcher;
         
         private readonly MessageDispatcher _messageDispatcher = new MessageDispatcher();
 

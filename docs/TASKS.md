@@ -34,7 +34,30 @@
 
 ---
 
-## Active Tasks (3)
+## Active Tasks (4)
+
+### Task 4: Fix JavaScript Interop for CefGlue.Avalonia
+
+**ID:** `2026-06-11-js-interop-fix`  
+**Status:** in_progress  
+**Task File:** `docs/tasks/2026-06-11-js-interop-fix.md`
+
+#### Steps:
+
+| # | Action | File(s) | Status |
+|---|--------|---------|--------|
+| 0 | Solution Discovery - Analyze JS interop issue | `MusicPlayerWeb/MainWindow.xaml.cs` | ✅ |
+| 1 | Fix JavaScript interop in MainWindow.xaml.cs (remove window.external) | `MusicPlayerWeb/MainWindow.xaml.cs` | ✅ |
+| 2 | Register MusicPlayerGate as native JS object | `MusicPlayerWeb/MusicPlayerGate.cs` | ✅ |
+| 3 | Update openFolder()/openFiles() to return Promises | `MusicPlayerWeb/MusicPlayerGate.Actions.cs` | ✅ |
+| 4 | Update index.html test code | `MusicPlayerWeb/web/Pages/index.html` | ✅ |
+| 5 | Build and test application | `MusicPlayerWeb/` | ❌ |
+| 6 | Update API.md documentation | `docs/API.md` | ❌ |
+| 7 | Update HOW-IT-WORKS.md documentation | `docs/HOW-IT-WORKS.md` | ❌ |
+| 8 | Update ARCHITECTURE.md documentation | `docs/ARCHITECTURE.md` | ❌ |
+| 9 | Verify all docs current | `docs/INDEX.md` | ❌ |
+
+---
 
 ### Task 3: Upgrade Webpack to 5.x
 

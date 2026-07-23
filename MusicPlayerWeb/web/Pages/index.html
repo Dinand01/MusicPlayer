@@ -10,45 +10,5 @@
     </head>
     <body>
         <div id="react-root"></div>
-        <div id="debug" style="position:fixed;top:0;left:0;width:100%;background:yellow;color:black;padding:5px;z-index:9999;"></div>
-        <script>// CefGlue-compatible shim for MusicPlayer object
-          window.MusicPlayer = window.MusicPlayer || null;
-          
-          // Notify .NET that the page is ready to bind objects
-          if (window.external && typeof window.external.cefQuery === 'function') {
-              window.external.cefQuery({ request: 'pageReady' });
-          }
-          
-          // Test the MusicPlayer object after a short delay
-          setTimeout(() => {
-              const debugDiv = document.getElementById('debug');
-              if (window.MusicPlayer) {
-                  debugDiv.innerHTML = 'MusicPlayer object found! Testing...';
-                  // Test getDefaultIP
-                  window.MusicPlayer.getDefaultIP().then(result => {
-                      debugDiv.innerHTML += '<br>getDefaultIP result: ' + result;
-                  }).catch(err => {
-                      debugDiv.innerHTML += '<br>getDefaultIP error: ' + err;
-                  });
-                  
-                  // Test getSongs (should return empty array or null)
-                  window.MusicPlayer.getSongs(0, '').then(result => {
-                      debugDiv.innerHTML += '<br>getSongs result: ' + result;
-                  }).catch(err => {
-                      debugDiv.innerHTML += '<br>getSongs error: ' + err;
-                  });
-                  
-                  // Test getCurrentSong
-                  window.MusicPlayer.getCurrentSong().then(result => {
-                      debugDiv.innerHTML += '<br>getCurrentSong result: ' + result;
-                  }).catch(err => {
-                      debugDiv.innerHTML += '<br>getCurrentSong error: ' + err;
-                  });
-                  
-              } else {
-                  debugDiv.innerHTML = 'MusicPlayer object NOT found!';
-              }
-          }, 1500);
-        </script>
     </body>
 </html>

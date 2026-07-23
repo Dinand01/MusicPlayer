@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "MusicPlayerWeb/MusicPlayerWeb.csproj",
+                "-c",
+                "Development"
+            ],
+            "problemMatcher": ["$msCompile"],
+            "isBackground": true,
+        }
+    ]
+}

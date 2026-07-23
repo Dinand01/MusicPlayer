@@ -23,79 +23,71 @@ namespace MusicPlayerWeb
         /// <summary>
         /// Load all audio files in a folder.
         /// </summary>
-        /// <returns>A boolean indicating whether anything was opened.</returns>
-        public bool OpenFolder()
+        /// <returns>A JSON string indicating whether anything was opened.</returns>
+        public async Task<string> OpenFolder()
         {
-            bool result = false;
-            Dispatcher.UIThread.Post(async () =>
+            var topLevel = GetTopLevel(_owner);
+            if (topLevel == null) return JsonConvert.SerializeObject(new { success = false });
+            
+            var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
-                var topLevel = GetTopLevel(_owner);
-                if (topLevel == null) return;
-                
-                var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-                {
-                    Title = "Select Music Folder",
-                    SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyMusic))
-                });
-                
-                if (folder != null && folder.Count > 0)
-                {
-                    LoadFolder(folder[0].Path.LocalPath);
-                    result = true;
-                }
+                Title = "Select Music Folder",
+                SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyMusic))
             });
-            return result;
+            
+            if (folder != null && folder.Count > 0)
+            {
+                LoadFolder(folder[0].Path.LocalPath);
+                return JsonConvert.SerializeObject(new { success = true });
+            }
+            return JsonConvert.SerializeObject(new { success = false });
         }
 
         /// <summary>
         /// Load all audio files in a folder.
         /// </summary>
         /// <param name="files">The files to load.</param>
-        /// <returns>A boolean indicating whether anything was opened.</returns>
-        public bool OpenFiles(string[] files = null)
+        /// <returns>A JSON string indicating whether anything was opened.</returns>
+        public async Task<string> OpenFiles(string[] files = null)
         {
             NewPlayer();
             if (files == null)
             {
-                bool result = false;
-                Dispatcher.UIThread.Post(async () =>
+                var topLevel = GetTopLevel(_owner);
+                if (topLevel == null) return JsonConvert.SerializeObject(new { success = false });
+                
+                var resultFiles = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
-                    var topLevel = GetTopLevel(_owner);
-                    if (topLevel == null) return;
-                    
-                    var resultFiles = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                    Title = "Select Audio Files",
+                    AllowMultiple = true,
+                    FileTypeFilter = new[] 
                     {
-                        Title = "Select Audio Files",
-                        AllowMultiple = true,
-                        FileTypeFilter = new[] 
+                        new FilePickerFileType("Audio files") 
                         {
-                            new FilePickerFileType("Audio files") 
-                            {
-                                Patterns = new[] { "*.mp3", "*.flac", "*.wma" }
-                            },
-                            new FilePickerFileType("All files") 
-                            {
-                                Patterns = new[] { "*.*" }
-                            }
+                            Patterns = new[] { "*.mp3", "*.flac", "*.wma" }
+                        },
+                        new FilePickerFileType("All files") 
+                        {
+                            Patterns = new[] { "*.*" }
                         }
-                    });
-                    
-                    if (resultFiles != null && resultFiles.Count > 0)
-                    {
-                        var paths = resultFiles.Select(f => f.Path.LocalPath).ToArray();
-                        var song = _player.LoadFiles(paths).FirstOrDefault();
-                        _player.Play(song);
-                        result = true;
                     }
                 });
-                return result;
+                
+                if (resultFiles != null && resultFiles.Count > 0)
+                {
+                    var paths = resultFiles.Select(f => f.Path.LocalPath).ToArray();
+                    var song = _player.LoadFiles(paths).FirstOrDefault();
+                    _player.Play(song);
+                    return JsonConvert.SerializeObject(new { success = true });
+                }
+                return JsonConvert.SerializeObject(new { success = false });
             }
             else
             {
                 var song = _player.LoadFiles(files).FirstOrDefault();
                 _player.Play(song);
-                return true;
+                return JsonConvert.SerializeObject(new { success = true });
             }
         }
 
